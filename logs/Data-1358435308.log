@@ -1,8 +1,0 @@
-[17/Jan 15:08:28] DEBUG : org.jbox2d.testbed.framework.j2d.TestPanelJ2D - dbImage is null, creating a new one
-[17/Jan 15:08:28] DEBUG : org.reflections.Reflections - going to scan these urls:
-	file:/afs/inf.ed.ac.uk/user/s10/s1039116/workspace/SDP/UoE-SDP-2013-Group-6/bin/
-
-[17/Jan 15:08:28] INFO : org.reflections.Reflections - Reflections took 321 ms to scan 1 urls, producing 79 keys and 278 values 
-[17/Jan 15:08:28] DEBUG : balle.strategy.StrategyFactory - ---------------------- getRunnableStrategies
-[17/Jan 15:08:28] DEBUG : balle.strategy.StrategyFactory - Found 19 runnable strategies
-[17/Jan 15:08:29] INFO : balle.strategy.StrategyRunner - StrategyRunner initialised
