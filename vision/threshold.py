@@ -16,6 +16,9 @@ class Threshold:
         
     def __getDefaults(self):
         self._values = None
+
+        # Blur? FPS drops from 17 to 15.
+        self._blur = 3
         
         path = self.filepath.format(self._pitch)
         self._values = util.loadFromFile(path)
@@ -44,6 +47,9 @@ class Threshold:
         assert frame.getColorSpace() == ColorSpace.HSV, "Image must be HSV!"
 
         iplframe = frame.getBitmap()
+
+        if (self._blur > 0):
+            cv.Smooth(iplframe, iplframe, cv.CV_BLUR, self._blur)
 
         crossover = False
         if threshmin[0] > threshmax[0]:
@@ -77,12 +83,15 @@ class Threshold:
         
         self.__saveDefaults()
 
+    def updateBlur(self, blur):
+        self._blur = blur
+
 """
 defaults[0] for the main pitch, and defaults[1] for the other table
 """
 defaults =[
         {
-        'yellow' : [[28, 28, 120], [48, 255, 255]],
+        'yellow' : [[20, 23, 131], [39, 255, 255]],
         'blue' : [[83,  54,  74], [115, 255, 255]],
         'ball' : [[0, 160, 100], [10, 255, 255]]
         },

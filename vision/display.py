@@ -91,7 +91,7 @@ class Gui:
         self._lastFrameTime = thisFrameTime
 
         layer = self._layers['raw'].dl()
-        layer.ezViewText('{0:.2f} fps'.format(fps), (10, 10))
+        layer.ezViewText('{0:.1f} fps'.format(fps), (10, 10))
 
     def drawCrosshair(self, pos, layerName = None):
         size = self._layers['raw'].size()
@@ -249,6 +249,8 @@ class ThresholdGui:
         cv.CreateTrackbar('S max', self.window, 0, 255, self.__onTrackbarChanged)
         cv.CreateTrackbar('V max', self.window, 0, 255, self.__onTrackbarChanged)
 
+        cv.CreateTrackbar('Blur', self.window, 0, 20, self.__onTrackbarChanged)
+
     def __onTrackbarChanged(self, x):
 
         allvalues = []
@@ -263,6 +265,7 @@ class ThresholdGui:
             allvalues.append(values)
 
         self.threshold.updateValues(self.currentEntity, allvalues)
+        self.threshold.updateBlur(cv.GetTrackbarPos('Blur', self.window))
 
     def toggleShowOnGui(self):
         self._showOnGui = not self._showOnGui
@@ -279,7 +282,7 @@ class ThresholdGui:
         """
         
         self.currentEntity = name
-        self.setTrackbarValues(self.threshold._values[name])
+        self.setTrackbarValues(self.threshold._values[name], self.threshold._blur)
 
         # Make sure trackbars update immediately
         cv.WaitKey(2)
@@ -287,10 +290,11 @@ class ThresholdGui:
         if self._showOnGui:
             self._gui.switchLayerset(name)
 
-    def setTrackbarValues(self, values):
+    def setTrackbarValues(self, values, blur):
         for i, which in enumerate(['min', 'max']):
             for j, channel in enumerate(['H', 'S', 'V']):
                 cv.SetTrackbarPos('{0} {1}'.format(channel, which), \
                         self.window, values[i][j])
+        cv.SetTrackbarPos('Blur', self.window, blur)
 
 
