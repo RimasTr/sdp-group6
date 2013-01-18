@@ -1,2 +1,0 @@
-Power Config File:
-900;7.136026E-4
