@@ -17,6 +17,7 @@ from display import Gui, ThresholdGui
 HOST = 'localhost' 
 PORT = 28546 
 
+# Not really used anywhere?
 PITCH_SIZE = (243.8, 121.9)
 
 # Distinct between field size line or entity line
@@ -25,7 +26,7 @@ PITCH_SIZE_BIT  = 'P';
 
 class Vision:
     
-    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize):
+    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds):
                
         self.running = True
         self.connected = False
@@ -45,7 +46,7 @@ class Vision:
         self.cap.loadCalibration(os.path.join(sys.path[0], calibrationPath))
 
         self.gui = Gui()
-        self.threshold = Threshold(pitchnum)
+        self.threshold = Threshold(pitchnum, resetThresholds)
         self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.preprocessor = Preprocessor(resetPitchSize)
         self.features = Features(self.gui, self.threshold)
@@ -179,12 +180,15 @@ if __name__ == "__main__":
     parser.add_option('-r', '--reset', action='store_true', dest='resetPitchSize', default=False,
                       help='Don\'t restore the last run\'s saved pitch size')
 
+    parser.add_option('-c', '--colours', action='store_true', dest='resetThresholds', default=False,
+                      help='Don\'t restore the last run\'s saved colour\'s thresholds')
+
     (options, args) = parser.parse_args()
 
     if options.pitch not in [0,1]:
         parser.error('Pitch must be 0 or 1')
 
-    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize)
+    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds)
 
 
 

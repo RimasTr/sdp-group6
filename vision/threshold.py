@@ -8,9 +8,10 @@ class Threshold:
     # File for storing temporary threshold defaults
     filepath = os.path.join('data', 'threshdefaults_{0}')
 
-    def __init__(self, pitch):
+    def __init__(self, pitch, resetThresholds):
         
         self._pitch = pitch
+        self._resetThresholds = resetThresholds
         self.__getDefaults()
         
     def __getDefaults(self):
@@ -19,7 +20,7 @@ class Threshold:
         path = self.filepath.format(self._pitch)
         self._values = util.loadFromFile(path)
 
-        if self._values is None:
+        if (self._values is None) or (self._resetThresholds):
             self._values = defaults[self._pitch]
             
     def __saveDefaults(self):
@@ -81,7 +82,7 @@ defaults[0] for the main pitch, and defaults[1] for the other table
 """
 defaults =[
         {
-        'yellow' : [[23, 28, 155], [42, 255, 255]],
+        'yellow' : [[28, 28, 120], [48, 255, 255]],
         'blue' : [[83,  54,  74], [115, 255, 255]],
         'ball' : [[0, 160, 100], [10, 255, 255]]
         },

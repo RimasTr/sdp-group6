@@ -9,5 +9,7 @@ vision/data
 *.log
 *~
 *.swp
+*.jpg
+*.jpeg
 JBox2d.log
 res/
