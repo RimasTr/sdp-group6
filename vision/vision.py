@@ -181,7 +181,7 @@ if __name__ == "__main__":
                       help='Don\'t restore the last run\'s saved pitch size')
 
     parser.add_option('-c', '--colours', action='store_true', dest='resetThresholds', default=False,
-                      help='Don\'t restore the last run\'s saved colour\'s thresholds')
+                      help='Don\'t restore the last run\'s saved colour\'s thresholds and blur')
 
     (options, args) = parser.parse_args()
 

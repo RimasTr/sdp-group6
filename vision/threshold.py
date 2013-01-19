@@ -6,7 +6,8 @@ from SimpleCV import Image, ColorSpace
 class Threshold:
     
     # File for storing temporary threshold defaults
-    filepath = os.path.join('data', 'threshdefaults_{0}')
+    filepathThresh = os.path.join('data', 'threshdefaults_{0}')
+    filepathBlur = os.path.join('data', 'blurdefaults_{0}')
 
     def __init__(self, pitch, resetThresholds):
         
@@ -17,17 +18,25 @@ class Threshold:
     def __getDefaults(self):
         self._values = None
 
-        # Blur? FPS drops from 17 to 15.
-        self._blur = 3
-        
-        path = self.filepath.format(self._pitch)
-        self._values = util.loadFromFile(path)
+        pathThresh = self.filepathThresh.format(self._pitch)
+        self._values = util.loadFromFile(pathThresh)
 
         if (self._values is None) or (self._resetThresholds):
             self._values = defaults[self._pitch]
             
+        # Blur? FPS drops from 17 to 15.
+        self._blur = None
+        pathBlur = self.filepathBlur.format(self._pitch)
+        self._blur = util.loadFromFile(pathBlur)
+        
+        if (self._blur is None) or (self._resetThresholds):
+            self._blur = defaultBlur[self._pitch]
+        
+            
     def __saveDefaults(self):
-        util.dumpToFile(self._values, self.filepath.format(self._pitch))
+        util.dumpToFile(self._values, self.filepathThresh.format(self._pitch))
+        util.dumpToFile(self._blur, self.filepathBlur.format(self._pitch))
+        
 
     def yellowT(self, frame):
         return self.threshold(frame, self._values['yellow'][0], self._values['yellow'][1])
@@ -85,6 +94,8 @@ class Threshold:
 
     def updateBlur(self, blur):
         self._blur = blur
+        
+        self.__saveDefaults()
 
 """
 defaults[0] for the main pitch, and defaults[1] for the other table
@@ -100,3 +111,8 @@ defaults =[
         'blue' : [[57,  29,  43], [92, 255, 255]],
         'ball' : [[0, 160, 100], [7, 255, 255]]
         }]
+
+
+# defaultBlur[0] for the main pitch and default [1] for the other one
+
+defaultBlur = [3, 3]
