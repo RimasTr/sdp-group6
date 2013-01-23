@@ -110,6 +110,7 @@ public class Communicator2 {
         return connected;
     }
 
+//Shouldn't this bit be removed?
 	public static void main(String[] args) {
 		Communicator2 com = new Communicator2();
 	}
