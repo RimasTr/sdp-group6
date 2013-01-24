@@ -241,11 +241,11 @@ class ThresholdGui:
 
     def __createTrackbars(self):
 
-        cv.CreateTrackbar('H min', self.window, 0, 255, self.__onTrackbarChanged)
+        cv.CreateTrackbar('H min', self.window, 0, 179, self.__onTrackbarChanged)
         cv.CreateTrackbar('S min', self.window, 0, 255, self.__onTrackbarChanged)
         cv.CreateTrackbar('V min', self.window, 0, 255, self.__onTrackbarChanged)
 
-        cv.CreateTrackbar('H max', self.window, 0, 255, self.__onTrackbarChanged)
+        cv.CreateTrackbar('H max', self.window, 0, 179, self.__onTrackbarChanged)
         cv.CreateTrackbar('S max', self.window, 0, 255, self.__onTrackbarChanged)
         cv.CreateTrackbar('V max', self.window, 0, 255, self.__onTrackbarChanged)
 
