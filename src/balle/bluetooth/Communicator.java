@@ -2,17 +2,18 @@ package balle.bluetooth;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 
 public class Communicator {
 
-    private final static String NAME      = "4s";
-    private final static String MAC       = "00:16:53:0A:07:1D";
+	private final static String NAME = "group6";
+	private final static String MAC = "00:16:53:08:A0:E6";
 
     private boolean             connected = false;
-    NXTConnector                conn;
+	NXTConnector conn;
     DataOutputStream            dos;
     int                         m         = 5;
     int                         m2        = 0;
@@ -21,8 +22,9 @@ public class Communicator {
      * Constructor method, initializes connections.
      */
     public Communicator() {
-        conn = connect();
-        dos = conn.getDataOut();
+		conn = connect();
+		OutputStream os = conn.getOutputStream();
+		dos = new DataOutputStream(os);
     }
 
     /**
@@ -30,11 +32,11 @@ public class Communicator {
      * 
      * @return The connection object.
      */
-    private NXTConnector connect() {
-        NXTConnector conn = new NXTConnector();
-        conn.setDebug(true);
-        System.out.println("Connecting to " + NAME + "...");
-        connected = conn.connectTo(NAME, MAC, NXTCommFactory.BLUETOOTH);
+	private NXTConnector connect() {
+		NXTConnector conn = new NXTConnector();
+		conn.setDebug(true);
+		System.out.println("Connecting to " + NAME + "...");
+		connected = conn.connectTo(NAME, MAC, NXTCommFactory.BLUETOOTH);
 
         if (!connected) {
             System.err.println("Failed to connect to any NXT");
@@ -42,7 +44,7 @@ public class Communicator {
             return null;
         } else {
             System.out.println("Connection initialised\n");
-            return conn;
+			return conn;
         }
     }
 
@@ -81,7 +83,7 @@ public class Communicator {
             dos.writeInt(-1);
             dos.flush();
             dos.close();
-            conn.close();
+			conn.close();
             connected = false;
         } catch (IOException e) {
             System.err.println(e);

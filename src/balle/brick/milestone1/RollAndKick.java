@@ -1,5 +1,6 @@
 package balle.brick.milestone1;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
@@ -21,7 +22,12 @@ public class RollAndKick {
 
         boolean movingForward = false;
         boolean isAccelerating = false;
-        while (true) {
+		boolean go = true;
+		while (go) {
+			if (Button.ESCAPE.isDown()) {
+				go = false;
+			}
+
             if (sensorLeft.isPressed() || sensorRight.isPressed()) {
                 drawMessage("Whoops, wall!");
                 controller.stop();
@@ -41,18 +47,15 @@ public class RollAndKick {
                 movingForward = true;
                 isAccelerating = true;
                 controller.reset();
-                controller.forward(200);
+				controller.forward(100);
             } else {
                 float distance = controller.getTravelDistance();
-                if (distance > 1000) {
+				if (distance >= 3) {
+					controller.forward(0);
                     drawMessage("Kick!");
-                    controller.kick();
+					controller.gentleKick(100, 30);
                     break;             
-                }
-                else  if (distance > 100 && isAccelerating) {
-                	controller.forward(300);
-                	isAccelerating = false;
-                } else {
+				} else {
                     drawMessage(Float.toString(distance));
                 }
             }

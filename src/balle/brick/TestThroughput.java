@@ -16,7 +16,7 @@ public class TestThroughput {
     public static void main(String[] args) {
         while (true) {
             // Enter button click will halt the program
-            if (Button.ENTER.isPressed())
+			if (Button.ENTER.isDown())
                 break;
 
             drawMessage("Connecting...");
@@ -34,14 +34,14 @@ public class TestThroughput {
             int receivedMessages = 0;
             mainLoop: while (true) {
                 // Enter button click will halt the program
-                if (Button.ENTER.isPressed()) {
+				if (Button.ENTER.isDown()) {
                     break;
                 }
                 try {
                     // no input available
                     while (input.available() == 0) {
                         // Enter button click will halt the program
-                        if (Button.ENTER.isPressed()) {
+						if (Button.ENTER.isDown()) {
                             break mainLoop;
                         }
                     }

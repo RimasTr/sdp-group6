@@ -1,7 +1,8 @@
 package balle.brick;
 
-import lejos.nxt.Motor;
-import lejos.robotics.navigation.TachoPilot;
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTRegulatedMotor;
+import lejos.robotics.navigation.DifferentialPilot;
 import balle.controller.Controller;
 import balle.controller.ControllerListener;
 
@@ -16,16 +17,18 @@ import balle.controller.ControllerListener;
  * @author sauliusl
  */
 public class BrickController implements Controller {
-    TachoPilot pilot;
+	DifferentialPilot pilot;
     public int maxPilotSpeed = 600; // 20
                                     // for
                                     // friendlies
 
-    public final Motor LEFT_WHEEL = Motor.B;
-    public final Motor RIGHT_WHEEL = Motor.C;
-    public final Motor KICKER = Motor.A;
+	public final NXTRegulatedMotor LEFT_WHEEL = new NXTRegulatedMotor(
+			MotorPort.B);
+	public final NXTRegulatedMotor RIGHT_WHEEL = new NXTRegulatedMotor(
+			MotorPort.C);
+	public final NXTRegulatedMotor KICKER = new NXTRegulatedMotor(MotorPort.A);
 
-    public final boolean INVERSE_WHEELS = true;
+	public final boolean INVERSE_WHEELS = false;
 
     public final float WHEEL_DIAMETER = 0.0816f; // metres
     public final float TRACK_WIDTH = 0.155f; // metres
@@ -38,17 +41,17 @@ public class BrickController implements Controller {
 
     public BrickController() {
 
-        pilot = new TachoPilot(WHEEL_DIAMETER, TRACK_WIDTH, LEFT_WHEEL,
-                RIGHT_WHEEL, INVERSE_WHEELS);
-        pilot.setMoveSpeed(maxPilotSpeed);
-        pilot.setTurnSpeed(45); // 45 has been working fine.
-        pilot.regulateSpeed(true);
-        LEFT_WHEEL.regulateSpeed(true);
-        RIGHT_WHEEL.regulateSpeed(true);
-        LEFT_WHEEL.smoothAcceleration(true);
-        RIGHT_WHEEL.smoothAcceleration(true);
-        KICKER.smoothAcceleration(false);
-        KICKER.regulateSpeed(false);
+		pilot = new DifferentialPilot(WHEEL_DIAMETER, TRACK_WIDTH, LEFT_WHEEL,
+				RIGHT_WHEEL, INVERSE_WHEELS);
+        pilot.setTravelSpeed(maxPilotSpeed);
+        pilot.setRotateSpeed(45); // 45 has been working fine.
+
+		// LEFT_WHEEL.regulateSpeed(true);
+		// RIGHT_WHEEL.regulateSpeed(true);
+		// LEFT_WHEEL.smoothAcceleration(true);
+		// RIGHT_WHEEL.smoothAcceleration(true);
+		// KICKER.smoothAcceleration(false);
+		// KICKER.regulateSpeed(false);
 
     }
 
@@ -108,30 +111,31 @@ public class BrickController implements Controller {
     public void gentleKick(int speed, int angle) {
         KICKER.setSpeed(speed);
         KICKER.resetTachoCount();
-        KICKER.rotateTo(angle);
-        KICKER.rotateTo(0);
+		KICKER.rotateTo(-10);
+		KICKER.rotateTo(angle);
+		KICKER.rotateTo(0);
     }
 
     public float getTravelDistance() {
-        return pilot.getTravelDistance();
+        return pilot.getMovementIncrement();
     }
 
     public void reset() {
         pilot.reset();
     }
 
-    private void setMotorSpeed(Motor motor, int speed) {
+	private void setMotorSpeed(NXTRegulatedMotor motor, int speed) {
         boolean forward = true;
         if (speed < 0) {
             forward = false;
             speed = -1 * speed;
         }
 
-        motor.setSpeed(speed);
+		motor.setSpeed(speed);
         if (forward)
-            motor.forward();
+			motor.forward();
         else
-            motor.backward();
+			motor.backward();
     }
 
     @Override
@@ -156,20 +160,20 @@ public class BrickController implements Controller {
 
     @Override
     public void backward(int speed) {
-        pilot.setMoveSpeed(speed);
+        pilot.setTravelSpeed(speed);
         pilot.backward();
     }
 
     @Override
     public void forward(int speed) {
-        pilot.setMoveSpeed(speed);
+        pilot.setTravelSpeed(speed);
         pilot.forward();
 
     }
 
     @Override
     public void rotate(int deg, int speed) {
-        pilot.setTurnSpeed(speed);
+        pilot.setRotateSpeed(speed);
         pilot.rotate(deg / GEAR_ERROR_RATIO);
     }
 

@@ -15,6 +15,7 @@ public class TestThroughput {
 
     public void send(int count) {
         long startedSending = System.currentTimeMillis();
+		System.out.printf("Sending : %d\n", count);
         System.out.printf("Started sending : %s\n", startedSending);
         for (int i = 0; i < count; i++) {
             controller.setWheelSpeeds(200, 200);

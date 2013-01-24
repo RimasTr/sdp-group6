@@ -125,7 +125,7 @@ public class Roboto {
 
         while (true) {
             // Enter button click will halt the program
-            if (Button.ENTER.isPressed())
+			if (Button.ENTER.isDown())
                 break;
 
             drawMessage("Connecting...");
@@ -146,12 +146,12 @@ public class Roboto {
 
             while (true) {
                 // Enter button click will halt the program
-                if (Button.ENTER.isPressed()) {
+				if (Button.ENTER.isDown()) {
                     controller.stop();
                     listener.cancel();
                     break;
                 }
-                if (Button.ESCAPE.isPressed()) {
+				if (Button.ESCAPE.isDown()) {
                     return;
                 }
                 try {

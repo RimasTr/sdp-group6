@@ -16,7 +16,7 @@ public class TestBluetooth extends Frame implements KeyListener {
 	 */
 	TextField t1;
 	BluetoothController controller;
-	int currentWheelSpeed = 500;
+	int currentWheelSpeed = 200;
 	int currentTurnAngle = 180;
 
 	public TestBluetooth() {
