@@ -180,8 +180,8 @@ if __name__ == "__main__":
     parser.add_option('-r', '--reset', action='store_true', dest='resetPitchSize', default=False,
                       help='Don\'t restore the last run\'s saved pitch size')
 
-    parser.add_option('-c', '--colours', action='store_true', dest='resetThresholds', default=False,
-                      help='Don\'t restore the last run\'s saved colour\'s thresholds and blur')
+    parser.add_option('-t', '--thresholds', action='store_true', dest='resetThresholds', default=False,
+                      help='Don\'t restore the last run\'s saved thresholds and blur values')
 
     (options, args) = parser.parse_args()
 
