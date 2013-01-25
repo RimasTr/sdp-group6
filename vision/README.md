@@ -5,10 +5,15 @@ The vision system is in the `vision/` directory.
 To run the vision system, execute `vision/vision.py`. It accepts several parameters:
 
 `-h, --help`: Show this help message and exit
+
 `-p PITCH, --pitch=PITCH`: PITCH should be 0 for main pitch, 1 for the other pitch
+
 `-f FILE, --file=FILE`: Use FILE as input instead of capturing from Camera
+
 `-s, --stdout`: Send output to stdout instead of using a socket
+
 `-r, --reset`: Don't restore the last run's saved pitch size
+
 `-t, --thresholds`: Don't restore the last run's saved thresholds and blur values
 
 So if you're only playing with the vision system (the simulator is not running), you should use i.e.:
