@@ -34,6 +34,8 @@ public class TestBluetooth extends Frame implements KeyListener {
 	}
 
 	public void keyPressed(KeyEvent e) {
+
+		// Movement
 		if (e.getKeyChar() == 'w')
 		{
 			System.out.println("Forward!");
@@ -54,16 +56,22 @@ public class TestBluetooth extends Frame implements KeyListener {
 			System.out.println("Left");
 			controller.setWheelSpeeds(currentWheelSpeed * 3 / 4, currentWheelSpeed);
 		}
+
+		// Kick
 		else if (e.getKeyChar() == 'x')
 		{
 			System.out.println("Kick!");
 			controller.kick();
 		}
+
+		// Stop
 		else if (e.getKeyChar() == 'q')
 		{
 			System.out.println("Stop!");
 			controller.stop();
 		}
+
+		// Change speed
 		else if (e.getKeyChar() == 'e')
 		{
 			currentWheelSpeed += 10;
@@ -76,6 +84,8 @@ public class TestBluetooth extends Frame implements KeyListener {
 			if (currentWheelSpeed < 0) currentWheelSpeed = 0;
 			System.out.println("Speed: " +  currentWheelSpeed);
 		}
+
+		// Change turn angle
 		else if (e.getKeyChar() == 't') {
 			currentTurnAngle += 5;
 			System.out.println("Angle: " + currentTurnAngle);
@@ -84,9 +94,13 @@ public class TestBluetooth extends Frame implements KeyListener {
 			currentTurnAngle -= 5;
 			System.out.println("Angle: " + currentTurnAngle);
 		}
+
+		// Rotate
 		else if (e.getKeyChar() == ' '){
 			controller.rotate(currentTurnAngle,180);
 		}
+
+		// Penalty Kick
 		else if (e.getKeyChar() == 'k'){
 			System.out.println("Penalty Kick!");
 			controller.penaltyKick();

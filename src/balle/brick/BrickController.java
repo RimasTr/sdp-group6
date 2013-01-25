@@ -31,7 +31,7 @@ public class BrickController implements Controller {
 	public final boolean INVERSE_WHEELS = false;
 
     public final float WHEEL_DIAMETER = 0.0816f; // metres
-    public final float TRACK_WIDTH = 0.155f; // metres
+	public final float TRACK_WIDTH = 0.128f; // metres
 
     public static final int MAXIMUM_MOTOR_SPEED = 900;
 

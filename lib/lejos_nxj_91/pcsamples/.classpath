@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1027418/Eclipse/sdp-group6/lib/lejos_nxj_91/lib/pc/pccomm-src.zip"/>
 	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1027418/Eclipse/sdp-group6/lib/lejos_nxj_91/lib/pc/pctools.jar"/>
 	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1027418/Eclipse/sdp-group6/lib/lejos_nxj_91/lib/pc/pctools-src.zip"/>
-	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1027418/Eclipse/sdp-group6/lib/bluecove-2.1.0/bluecove-2.1.0.jar"/>
-	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1027418/Eclipse/sdp-group6/lib/bluecove-2.1.0/bluecove-gpl-2.1.0.jar"/>
+	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
