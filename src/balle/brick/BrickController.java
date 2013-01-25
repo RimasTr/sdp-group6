@@ -90,22 +90,35 @@ public class BrickController implements Controller {
 
         isKicking = true;
 
+		// Move kicker back
+		KICKER.setSpeed(400);
+		KICKER.resetTachoCount();
+		KICKER.rotateTo(-5, false);
+
+		// Kick
         KICKER.setSpeed(900);
         KICKER.resetTachoCount();
-        KICKER.forward();
+		KICKER.rotateTo(30, false);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(80);
-                } catch (InterruptedException e) {
-                    //
-                }
-                KICKER.rotateTo(0);
-                isKicking = false;
-            }
-        }).start();
+		// Reset
+		KICKER.rotateTo(-30, false);
+		isKicking = false;
+		KICKER.flt();
+
+		// // Try to reset
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// try {
+		// Thread.sleep(80);
+		// } catch (InterruptedException e) {
+		//
+		// }
+		// KICKER.rotateTo(0);
+		// isKicking = false;
+		// }
+		// }).start();
+
     }
 
     public void gentleKick(int speed, int angle) {

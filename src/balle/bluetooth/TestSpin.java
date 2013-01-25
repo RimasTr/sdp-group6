@@ -1,7 +1,6 @@
 package balle.bluetooth;
 
 import java.awt.Frame;
-import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -15,8 +14,8 @@ public class TestSpin extends Frame implements KeyListener {
 	 * 
 	 */
 	BluetoothController controller;
-	int pl = 0;
-	int pr = 100;
+	int pl = -900;
+	int pr = 900;
 	int state = 0;
 	long timer;
 	double fiveTurnsDistance = 5 * 0.5105;

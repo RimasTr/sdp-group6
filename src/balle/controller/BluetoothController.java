@@ -87,8 +87,10 @@ public class BluetoothController implements Controller {
     @Override
     public void forward(int speed) {
         try {
-            connection.send(new MessageMove(speed, speed).hash());
-			propogate(speed, speed);
+			int left = (int) (speed * 1.025);
+			int right = speed;
+			connection.send(new MessageMove(left, right).hash());
+			propogate(left, right);
         } catch (InvalidOpcodeException e) {
             System.err
                     .println("Failed to send message FORWARD -- invalid opcode");
