@@ -23,6 +23,10 @@ class Features:
 
     def extractFeatures(self, frame):
 
+        if (self.threshold._blur > 0 and self.threshold._displayBlur):
+            frameBmp = frame.getBitmap()
+            cv.Smooth(frameBmp, frameBmp, cv.CV_BLUR, self.threshold._blur)
+
         hsv = frame.toHSV()
         ents = {'yellow': None, 'blue': None, 'ball': None}
         yellow = self.threshold.yellowT(hsv).smooth(grayscale=True)

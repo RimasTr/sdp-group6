@@ -9,10 +9,11 @@ class Threshold:
     filepathThresh = os.path.join('data', 'threshdefaults_{0}')
     filepathBlur = os.path.join('data', 'blurdefaults_{0}')
 
-    def __init__(self, pitch, resetThresholds):
+    def __init__(self, pitch, resetThresholds, displayBlur):
         
         self._pitch = pitch
         self._resetThresholds = resetThresholds
+        self._displayBlur = displayBlur
         self.__getDefaults()
         
     def __getDefaults(self):
@@ -57,7 +58,7 @@ class Threshold:
 
         iplframe = frame.getBitmap()
 
-        if (self._blur > 0):
+        if (self._blur > 0 and not self._displayBlur):
             cv.Smooth(iplframe, iplframe, cv.CV_BLUR, self._blur)
 
         crossover = False

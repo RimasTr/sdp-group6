@@ -16,6 +16,8 @@ To run the vision system, execute `vision/vision.py`. It accepts several paramet
 
 `-t, --thresholds`: Don't restore the last run's saved thresholds and blur values
 
+`-b, --blur`: Display blurred stream
+
 So if you're only playing with the vision system (the simulator is not running), you should use i.e.:
 
 `python vision/vision.py -str -p 0`
