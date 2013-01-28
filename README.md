@@ -8,7 +8,7 @@ Setting up your computer & Vision system
 =======================================
 
 Clone the git archive to your Eclipse workspace (See the git tutorial by Rimas for more info).
-Download the Vision libraries (Thanks to Toms/Rimas) here: *link to come*
+Download the Vision libraries (Thanks to Toms/Rimas) here: https://www.dropbox.com/s/zvfgl8weytgp33l/visionlib.zip
 Place the 'visionlib' folder in the the sdp-group6 folder.
 
 Open terminal and type:
