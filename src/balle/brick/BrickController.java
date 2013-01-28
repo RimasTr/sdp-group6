@@ -93,27 +93,22 @@ public class BrickController implements Controller {
 		// Move kicker back
 		KICKER.setSpeed(400);
 		KICKER.resetTachoCount();
-		KICKER.rotate(-1, false);
-		// KICKER.rotateTo(-1, false);
+
+		KICKER.rotate(-5, false);
+		KICKER.forward();
+		KICKER.waitComplete();
 
 		// Kick
         KICKER.setSpeed(900);
-		KICKER.rotate(12, false);
+		KICKER.rotate(30, false);
+		KICKER.waitComplete();
 
-		// Try to reset
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(80);
-				} catch (InterruptedException e) {
+		KICKER.rotateTo(0, false);
+		KICKER.waitComplete();
+		KICKER.flt();
 
-				}
-				KICKER.rotateTo(0, false);
-				KICKER.flt();
-				isKicking = false;
-			}
-		}).start();
+		isKicking = false;
+
 
     }
 
