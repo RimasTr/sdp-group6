@@ -77,7 +77,7 @@ You the code should now compile with only a few problems (The balle.brick.* clas
 Again if not, make sure the SDP library contains the following libraries:* Go to 'Build Path > Configure Build Path'
 * Select 'SDP' then 'Edit' on the right hand side.
 * Now select 'User Libaries'
-* Select 'SDP' then 'Add JARs' on the right hand side.
+* Click new and name the library 'SDP' then click 'Add JARs' on the right hand side.
 * Now navigate to /sdp-group6/lib/ and all the .JAR files.
 * Click 'OK', 'Finish' and then 'OK'.
 
