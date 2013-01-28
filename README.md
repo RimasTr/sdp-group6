@@ -7,7 +7,7 @@ University of Edinburgh - Software Design Project 2013 - Group 6
 Setting up your computer & Vision system
 ----------------------------------------
 
-Clone the git archive to your Eclipse workspace (See the git tutorial by Rimas for more info).  
+Clone the git archive to your Eclipse workspace ([Guide by Rimas](https://github.com/RimasTr/sdp-group6/wiki/Github-Quick-Start-Guide "Git Guide")).  
 Download the Vision libraries (Thanks to Toms/Rimas) on Dropbox [here](https://www.dropbox.com/s/zvfgl8weytgp33l/visionlib.zip "Vision Libraries").  
 Place the 'visionlib' folder in the the sdp-group6 folder.
 
@@ -104,6 +104,8 @@ Every time you open Eclipse, you must open it from the terminal.
 
 5/ Eclipse is now running and all code should be working.
 If not, please let me know asap!
+
+*Check out the [Bluetooth](https://github.com/RimasTr/sdp-group6/blob/master/src/balle/bluetooth/README) and [Brick](https://github.com/RimasTr/sdp-group6/blob/master/src/balle/brick/README) READMEs too for extra information.*
 
 *Jack*
 
