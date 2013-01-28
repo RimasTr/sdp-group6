@@ -13,3 +13,4 @@ vision/data
 *.jpeg
 JBox2d.log
 res/
+visionlib/
