@@ -64,7 +64,7 @@ There are several steps that must be taken before the code can compile and run s
 * Right-click on the project folder in the Package Explorer (left hand side of Eclipse).
 * Go to 'Build Path > Add libraries'	
 * Now select 'LeJOS Library Container' and click 'Next'.
-* Select the 'PC Libraries' and click finish.
+* Select the 'PC Libraries' and click finish.* Now do the steps above againa and add 'NXT Libraries'.
 
 If you get an error here, it may be because you already have the older libraries loaded.
 Select go to 'Build Path > Configure Build Path'
