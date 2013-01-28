@@ -18,12 +18,17 @@ class Threshold:
         
     def __getDefaults(self):
         self._values = None
+        # Normalizing at startup?
+        self._normalize = False
+        self._normalDiff = 0
+        # Average HSV value for normalization
+        self._normalVal = 111
 
         pathThresh = self.filepathThresh.format(self._pitch)
         self._values = util.loadFromFile(pathThresh)
 
         if (self._values is None) or (self._resetThresholds):
-            self._values = defaults[self._pitch]
+            self._values = dict(defaults[self._pitch])
             
         # Blur? FPS drops from 17 to 15.
         self._blur = None
@@ -40,7 +45,11 @@ class Threshold:
         
 
     def yellowT(self, frame):
-        return self.threshold(frame, self._values['yellow'][0], self._values['yellow'][1])
+        return self.threshold(frame,
+            [self._values['yellow'][0][0], self._values['yellow'][0][1],
+            # + normalization
+                self._values['yellow'][0][2] + self._normalDiff],
+            self._values['yellow'][1])
 
     def blueT(self, frame):
         return self.threshold(frame, self._values['blue'][0], self._values['blue'][1])
@@ -60,6 +69,11 @@ class Threshold:
 
         if (self._blur > 0 and not self._displayBlur):
             cv.Smooth(iplframe, iplframe, cv.CV_BLUR, self._blur)
+            
+        if (self._normalize):
+            avg = self.get_average_val(iplframe)
+            self._normalDiff = int(avg - self._normalVal)
+            self._normalize = False
 
         crossover = False
         if threshmin[0] > threshmax[0]:
@@ -97,6 +111,23 @@ class Threshold:
         self._blur = blur
         
         self.__saveDefaults()
+        
+    def normalizeImg(self):
+        self._normalize = True
+    
+    def get_average_val(self, frame):
+        sum = 0
+        c = 0
+        w = frame.width
+        h = frame.height
+        # Only look at the middle of the frame:
+        for i in range(w/20, 19*w/20):
+            for j in range(h/5, 4*h/5):
+                s = cv.Get2D(frame, j, i)
+                sum += s[2]
+                c += 1
+        avg = sum / c
+        return avg
 
 """
 defaults[0] for the main pitch, and defaults[1] for the other table

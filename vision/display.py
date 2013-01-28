@@ -238,6 +238,8 @@ class ThresholdGui:
         keyHandler.addListener('r', ball)
 
         keyHandler.addListener('t', self.toggleShowOnGui)
+        
+        keyHandler.addListener('n', self.normalizeImg)
 
     def __createTrackbars(self):
 
@@ -274,6 +276,10 @@ class ThresholdGui:
             self._gui.switchLayerset(self.currentEntity)
         else:
             self._gui.switchLayerset('default')
+    
+    def normalizeImg(self):
+        self.threshold.normalizeImg()
+        self.changeEntity(self.currentEntity)
 
     def changeEntity(self, name):
         """

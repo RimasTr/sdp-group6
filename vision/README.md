@@ -33,3 +33,5 @@ You can change the active layer by pressing **Y** (for Yellow), **B** (for Blue)
 You can regulate the thresholds with the trackbars. H, S and V stands for **H**ue (ranges from 0 to 179, represents the colour), **S**aturation (ranges from 0 to 255), and **V**alue (ranges from 0 to 255, represents the brightness).
 
 Press **T** to see the area which is detected with the current values of the thresholds. Press **T** again to go back to normal mode.
+
+Press **N** to normalize the brightness of the frame (in case yellow T is not detected properly).
