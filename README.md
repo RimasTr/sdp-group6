@@ -15,21 +15,21 @@ Open terminal and type:
 > gedit ~/.bashrc
 
 Add the following lines, make sure to change *PathToYourWorkspaceFromHome* to your own path to your workspace, e.g. I do 'export BASE=~/Eclipse/sdp-group6':	
->export BASE=~/*PathToYourWorkspaceFromHome*/sdp-group6/
+>export BASE=~/*PathToYourWorkspaceFromHome*/sdp-group6/  
 >
->export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/lib/python2.6/site-packages
->export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/opencv2.3/lib/python2.6/site-packages
->export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/sdl_font/lib
->export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/opencv2.3/lib/
->
->export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/visionlib/sdl_font/lib
->export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/visionlib/lib/python2.6/site-packages
->export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/visionlib/opencv2.3/lib/
->
->export NXJ_HOME=$BASE/lib/lejos_nxj
->export PATH=$PATH:$NXJ_HOME/bin
->export LOCALBASE=$LOCALBASE:$BASE/lib
->export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/lib/libbluetooth
+>export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/lib/python2.6/site-packages  
+>export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/opencv2.3/lib/python2.6/site-packages  
+>export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/sdl_font/lib  
+>export PYTHONPATH=$PYTHONPATH:$BASE/visionlib/opencv2.3/lib/  
+>  
+>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/visionlib/sdl_font/lib  
+>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/visionlib/lib/python2.6/site-packages  
+>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/visionlib/opencv2.3/lib/  
+>  
+>export NXJ_HOME=$BASE/lib/lejos_nxj  
+>export PATH=$PATH:$NXJ_HOME/bin  
+>export LOCALBASE=$LOCALBASE:$BASE/lib    
+>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASE/lib/libbluetooth  
 
 
 Save it.
