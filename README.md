@@ -100,7 +100,8 @@ Now it should be working!
 Now exit Eclipse.
 Every time you open Eclipse, you must open it from the terminal.
 
-> eclipse-4.2
+> eclipse-4.2 &  
+*The and symbol (&) will run the process in the background so you can continue to use the same terminal.*
 
 5/ Eclipse is now running and all code should be working.
 If not, please let me know asap!

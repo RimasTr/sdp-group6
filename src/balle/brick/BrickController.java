@@ -28,7 +28,7 @@ public class BrickController implements Controller {
 			MotorPort.C);
 	public final NXTRegulatedMotor KICKER = new NXTRegulatedMotor(MotorPort.A);
 
-	public final boolean INVERSE_WHEELS = false;
+	public final boolean INVERSE_WHEELS = true;
 
     public final float WHEEL_DIAMETER = 0.0816f; // metres
 	public final float TRACK_WIDTH = 0.128f; // metres
@@ -45,13 +45,7 @@ public class BrickController implements Controller {
 				RIGHT_WHEEL, INVERSE_WHEELS);
         pilot.setTravelSpeed(maxPilotSpeed);
         pilot.setRotateSpeed(45); // 45 has been working fine.
-
-		// LEFT_WHEEL.regulateSpeed(true);
-		// RIGHT_WHEEL.regulateSpeed(true);
-		// LEFT_WHEEL.smoothAcceleration(true);
-		// RIGHT_WHEEL.smoothAcceleration(true);
-		// KICKER.smoothAcceleration(false);
-		// KICKER.regulateSpeed(false);
+		pilot.setAcceleration(1);
 
     }
 
@@ -91,25 +85,21 @@ public class BrickController implements Controller {
         isKicking = true;
 
 		// Move kicker back
-		KICKER.setSpeed(400);
-		KICKER.resetTachoCount();
-
-		KICKER.rotate(-5, false);
-		KICKER.forward();
+		KICKER.rotateTo(-5);
 		KICKER.waitComplete();
 
 		// Kick
-        KICKER.setSpeed(900);
-		KICKER.rotate(30, false);
+		KICKER.rotateTo(30);
 		KICKER.waitComplete();
 
-		KICKER.rotateTo(0, false);
+		// Reset
+		KICKER.rotateTo(-30);
 		KICKER.waitComplete();
+
+
 		KICKER.flt();
 
 		isKicking = false;
-
-
     }
 
     public void gentleKick(int speed, int angle) {

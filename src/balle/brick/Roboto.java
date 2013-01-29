@@ -125,7 +125,7 @@ public class Roboto {
 
         while (true) {
             // Enter button click will halt the program
-			if (Button.ENTER.isDown())
+			if (Button.ENTER.isDown() || Button.ESCAPE.isDown())
                 break;
 
             drawMessage("Connecting...");

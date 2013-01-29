@@ -87,7 +87,7 @@ public class BluetoothController implements Controller {
     @Override
     public void forward(int speed) {
         try {
-			int left = (int) (speed * 1.025);
+			int left = speed;
 			int right = speed;
 			connection.send(new MessageMove(left, right).hash());
 			propogate(left, right);
