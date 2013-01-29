@@ -88,7 +88,7 @@ public class BluetoothController implements Controller {
     public void forward(int speed) {
         try {
 			int left = speed;
-			int right = speed;
+			int right = (int) (speed * 1.01);
 			connection.send(new MessageMove(left, right).hash());
 			propogate(left, right);
         } catch (InvalidOpcodeException e) {

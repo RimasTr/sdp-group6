@@ -30,8 +30,8 @@ public class BrickController implements Controller {
 
 	public final boolean INVERSE_WHEELS = true;
 
-    public final float WHEEL_DIAMETER = 0.0816f; // metres
-	public final float TRACK_WIDTH = 0.128f; // metres
+	public final float WHEEL_DIAMETER = 81.6f; // mm
+	public final float TRACK_WIDTH = 128f; // mm
 
     public static final int MAXIMUM_MOTOR_SPEED = 900;
 
@@ -45,7 +45,7 @@ public class BrickController implements Controller {
 				RIGHT_WHEEL, INVERSE_WHEELS);
         pilot.setTravelSpeed(maxPilotSpeed);
         pilot.setRotateSpeed(45); // 45 has been working fine.
-		pilot.setAcceleration(1);
+		pilot.setAcceleration(250);
 
     }
 
@@ -83,6 +83,8 @@ public class BrickController implements Controller {
         }
 
         isKicking = true;
+
+		KICKER.setSpeed(900);
 
 		// Move kicker back
 		KICKER.rotateTo(-5);
