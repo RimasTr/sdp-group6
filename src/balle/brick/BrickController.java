@@ -167,6 +167,12 @@ public class BrickController implements Controller {
 
     }
 
+	public void forward(int left, int right) {
+		LEFT_WHEEL.setSpeed(left);
+		RIGHT_WHEEL.setSpeed(right);
+		pilot.forward();
+	}
+
     @Override
     public void rotate(int deg, int speed) {
         pilot.setRotateSpeed(speed);
