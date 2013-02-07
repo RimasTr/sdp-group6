@@ -22,7 +22,7 @@ PITCH_SIZE_BIT  = 'P';
 
 class Vision:
     
-    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds, displayBlur):
+    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds, displayBlur, normalizeAtStartup):
                
         self.running = True
         self.connected = False
@@ -46,7 +46,7 @@ class Vision:
             self.gui = Gui(self.preprocessor.pitch_size)
         else:
             self.gui = Gui()
-        self.threshold = Threshold(pitchnum, resetThresholds, displayBlur)
+        self.threshold = Threshold(pitchnum, resetThresholds, displayBlur, normalizeAtStartup)
         self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.features = Features(self.gui, self.threshold)
         
@@ -184,13 +184,17 @@ if __name__ == "__main__":
 
     parser.add_option('-b', '--blur', action='store_true', dest='displayBlur', default=False,
                       help='Display blurred stream')
+                      
+    parser.add_option('-n', '--normalize', action='store_true', dest='normalizeAtStartup', default=False,
+                      help='Normalize at startup')
+
 
     (options, args) = parser.parse_args()
 
     if options.pitch not in [0,1]:
         parser.error('Pitch must be 0 or 1')
 
-    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds, options.displayBlur)
+    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds, options.displayBlur, options.normalizeAtStartup)
 
 
 
