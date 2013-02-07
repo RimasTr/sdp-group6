@@ -37,7 +37,7 @@ class Gui:
         }
 
         self._currentLayerset = self.layersets['default']
-        self._display = Display()
+        self._display = Display((720, 540))
         self._eventHandler = Gui.EventHandler()
         self._lastMouseState = 0
         self._showMouse = True
