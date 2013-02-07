@@ -41,10 +41,13 @@ class Vision:
         calibrationPath = os.path.join('calibration', 'pitch{0}'.format(pitchnum))
         self.cap.loadCalibration(os.path.join(sys.path[0], calibrationPath))
 
-        self.gui = Gui()
+        self.preprocessor = Preprocessor(resetPitchSize)
+        if self.preprocessor.hasPitchSize:
+            self.gui = Gui(self.preprocessor.pitch_size)
+        else:
+            self.gui = Gui()
         self.threshold = Threshold(pitchnum, resetThresholds, displayBlur)
         self.thresholdGui = ThresholdGui(self.threshold, self.gui)
-        self.preprocessor = Preprocessor(resetPitchSize)
         self.features = Features(self.gui, self.threshold)
         
         eventHandler = self.gui.getEventHandler()
