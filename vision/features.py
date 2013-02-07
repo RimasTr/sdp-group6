@@ -6,10 +6,11 @@ from threshold import Threshold
 
 class Features:
     # Sizes of various features
-    # Format: (area_min, area_max)
+    # Format: (area_min, area_expected, area_max)
 
-    Sizes = { 'ball'     : (20, 300),
-          'T'         : (100, 800),
+    Sizes = { 'ball'     : (20, 131, 300),
+          'yellow'         : (100, 379, 800),
+          'blue'         : (100, 580, 800),
         }
 
     def __init__(self, display, threshold):
@@ -32,8 +33,8 @@ class Features:
         self._display.updateLayer('threshB', blue)
         self._display.updateLayer('threshR', ball)
 
-        ents['yellow'] = self.findEntity(yellow, 'T')
-        ents['blue'] = self.findEntity(blue, 'T')
+        ents['yellow'] = self.findEntity(yellow, 'yellow')
+        ents['blue'] = self.findEntity(blue, 'blue')
         ents['ball'] = self.findEntity(ball, 'ball')
 
         self._display.updateLayer('yellow', ents['yellow'])
@@ -51,16 +52,18 @@ class Features:
         
         size = self.Sizes[which]
         blobmaker = BlobMaker()
-        blobs = blobmaker.extractFromBinary(image, image, minsize=size[0], maxsize=size[1])
+        blobs = blobmaker.extractFromBinary(image, image, minsize=size[0], maxsize=size[2])
 
         if blobs is None:
             return Entity()
 
         entityblob = None
+        mindiff = 9999
         for blob in blobs:
-            if self.sizeMatch(blob, which):
+            diff = self.sizeMatch(blob, which)
+            if diff >= 0 and diff < mindiff:
                 entityblob = blob
-                break
+                mindiff = diff
         
         if entityblob is None:
             return Entity()
@@ -71,16 +74,16 @@ class Features:
         return entity
 
     def sizeMatch(self, feature, which):
-        width = feature.width()
-        length = feature.length()
-
         expected = self.Sizes[which]
 
-        # return expected[0] < width < expected[1] \
-        #     and expected[2] < length < expected[3]
-
         area = feature.area()
-        return expected[0] < area < expected[1]
+            
+        if (expected[0] < area < expected[2]):
+            # Absolute difference from expected size:
+            return abs(area-expected[1])
+        
+        # No match
+        return -1
 
 class Entity:
 
