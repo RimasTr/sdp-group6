@@ -9,17 +9,18 @@ class Threshold:
     filepathThresh = os.path.join('data', 'threshdefaults_{0}')
     filepathBlur = os.path.join('data', 'blurdefaults_{0}')
 
-    def __init__(self, pitch, resetThresholds, displayBlur):
+    def __init__(self, pitch, resetThresholds, displayBlur, normalizeAtStartup):
         
         self._pitch = pitch
         self._resetThresholds = resetThresholds
         self._displayBlur = displayBlur
+        self._normalizeAtStartup = normalizeAtStartup
         self.__getDefaults()
         
     def __getDefaults(self):
         self._values = None
         # Normalizing at startup?
-        self._normalize = False
+        self._normalize = self._normalizeAtStartup
         self._normalDiff = 0
         # Average HSV value for normalization
         self._normalVal = 111

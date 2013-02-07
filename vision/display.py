@@ -17,7 +17,7 @@ class Gui:
             'ball': ['threshR', 'ball']
             }
 
-    def __init__(self):
+    def __init__(self, size=(720, 540)):
         self._layers = {
                 # Base layers
                 'raw': None,
@@ -37,7 +37,7 @@ class Gui:
         }
 
         self._currentLayerset = self.layersets['default']
-        self._display = Display()
+        self._display = Display(size)
         self._eventHandler = Gui.EventHandler()
         self._lastMouseState = 0
         self._showMouse = True

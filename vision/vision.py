@@ -4,7 +4,6 @@ import os
 import time
 import math
 import socket
-#import cv
 
 from optparse import OptionParser
 
@@ -17,16 +16,13 @@ from display import Gui, ThresholdGui
 HOST = 'localhost' 
 PORT = 28546 
 
-# Not really used anywhere?
-PITCH_SIZE = (243.8, 121.9)
-
 # Distinct between field size line or entity line
 ENTITY_BIT = 'E';
 PITCH_SIZE_BIT  = 'P';
 
 class Vision:
     
-    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds, displayBlur):
+    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds, displayBlur, normalizeAtStartup):
                
         self.running = True
         self.connected = False
@@ -45,10 +41,13 @@ class Vision:
         calibrationPath = os.path.join('calibration', 'pitch{0}'.format(pitchnum))
         self.cap.loadCalibration(os.path.join(sys.path[0], calibrationPath))
 
-        self.gui = Gui()
-        self.threshold = Threshold(pitchnum, resetThresholds, displayBlur)
-        self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.preprocessor = Preprocessor(resetPitchSize)
+        if self.preprocessor.hasPitchSize:
+            self.gui = Gui(self.preprocessor.pitch_size)
+        else:
+            self.gui = Gui()
+        self.threshold = Threshold(pitchnum, resetThresholds, displayBlur, normalizeAtStartup)
+        self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.features = Features(self.gui, self.threshold)
         
         eventHandler = self.gui.getEventHandler()
@@ -185,13 +184,17 @@ if __name__ == "__main__":
 
     parser.add_option('-b', '--blur', action='store_true', dest='displayBlur', default=False,
                       help='Display blurred stream')
+                      
+    parser.add_option('-n', '--normalize', action='store_true', dest='normalizeAtStartup', default=False,
+                      help='Normalize at startup')
+
 
     (options, args) = parser.parse_args()
 
     if options.pitch not in [0,1]:
         parser.error('Pitch must be 0 or 1')
 
-    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds, options.displayBlur)
+    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds, options.displayBlur, options.normalizeAtStartup)
 
 
 
