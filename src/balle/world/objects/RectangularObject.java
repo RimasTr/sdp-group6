@@ -25,8 +25,8 @@ public class RectangularObject extends MovingPoint implements FieldObject {
 			AngularVelocity angularVelocity,
             Orientation orientation, double width, double height) {
         super(position, velocity);
-        this.width = width;
-        this.height = height;
+		this.width = width;
+		this.height = height;
         this.orientation = orientation;
 		this.angularVelocity = angularVelocity;
     }
