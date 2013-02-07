@@ -91,11 +91,11 @@ public class BrickController implements Controller {
 		KICKER.waitComplete();
 
 		// Kick
-		KICKER.rotateTo(30);
+		KICKER.rotateTo(45);
 		KICKER.waitComplete();
 
 		// Reset
-		KICKER.rotateTo(-30);
+		KICKER.rotateTo(-45);
 		KICKER.waitComplete();
 
 
