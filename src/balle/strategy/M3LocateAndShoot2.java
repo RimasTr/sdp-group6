@@ -49,7 +49,7 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 				controller.kick();
 				LOG.info("Kicking");
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(50);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
