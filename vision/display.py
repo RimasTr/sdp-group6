@@ -11,10 +11,11 @@ class Gui:
     the rest must be features and will be drawn on top
     """
     layersets = {
-            'default': ['raw', 'yellow', 'blue', 'ball'],
+            'default': ['raw', 'yellow', 'blue', 'ball', 'dot'],
             'yellow': ['threshY', 'yellow'],
             'blue': ['threshB', 'blue'],
-            'ball': ['threshR', 'ball']
+            'ball': ['threshR', 'ball'],
+            'dot': ['threshD', 'dot']
             }
 
     def __init__(self, size=(720, 540)):
@@ -24,11 +25,13 @@ class Gui:
                 'threshY': None,
                 'threshB': None,
                 'threshR': None,
+                'threshD': None,
 
                 # Overlay layers
                 'yellow': None,
                 'blue': None,
                 'ball' : None,
+                'dot' : None,
                 }
 
         # These layers are drawn regardless of the current layerset
@@ -231,11 +234,13 @@ class ThresholdGui:
         def yellow(): self.changeEntity('yellow')
         def blue(): self.changeEntity('blue')
         def ball(): self.changeEntity('ball')
+        def dot(): self.changeEntity('dot')
         
         keyHandler = self._gui.getEventHandler()
         keyHandler.addListener('y', yellow)
         keyHandler.addListener('b', blue)
         keyHandler.addListener('r', ball)
+        keyHandler.addListener('d', dot)
 
         keyHandler.addListener('t', self.toggleShowOnGui)
         

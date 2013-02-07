@@ -57,6 +57,9 @@ class Threshold:
 
     def ball(self, frame):
         return self.threshold(frame, self._values['ball'][0], self._values['ball'][1])
+        
+    def dot(self, frame):
+        return self.threshold(frame, self._values['dot'][0], self._values['dot'][1])
     
     def threshold(self, frame, threshmin, threshmax):
         """
@@ -137,12 +140,14 @@ defaults =[
         {
         'yellow' : [[20, 23, 131], [39, 255, 255]],
         'blue' : [[83,  54,  74], [115, 255, 255]],
-        'ball' : [[0, 160, 100], [10, 255, 255]]
+        'ball' : [[0, 160, 100], [10, 255, 255]],
+        'dot' : [[37, 72, 102], [63, 255, 141]]
         },
         {
-        'yellow' : [[17, 147, 183], [44, 255, 255]],
+        'yellow' : [[17, 147, 183], [39, 255, 255]],
         'blue' : [[57,  29,  43], [92, 255, 255]],
-        'ball' : [[0, 160, 100], [7, 255, 255]]
+        'ball' : [[0, 160, 100], [7, 255, 255]],
+        'dot' : [[37, 72, 102], [63, 255, 141]]
         }]
 
 

@@ -11,6 +11,7 @@ class Features:
     Sizes = { 'ball'     : (20, 131, 300),
           'yellow'         : (100, 379, 800),
           'blue'         : (100, 580, 800),
+          'dot'     : (20, 50, 300),
         }
 
     def __init__(self, display, threshold):
@@ -24,22 +25,26 @@ class Features:
             cv.Smooth(frameBmp, frameBmp, cv.CV_BLUR, self.threshold._blur)
 
         hsv = frame.toHSV()
-        ents = {'yellow': None, 'blue': None, 'ball': None}
+        ents = {'yellow': None, 'blue': None, 'ball': None, 'dot': None}
         yellow = self.threshold.yellowT(hsv).smooth(grayscale=True)
         blue = self.threshold.blueT(hsv).smooth(grayscale=True)
         ball = self.threshold.ball(hsv).smooth(grayscale=True)
+        dot = self.threshold.dot(hsv).smooth(grayscale=True)
 
         self._display.updateLayer('threshY', yellow)
         self._display.updateLayer('threshB', blue)
         self._display.updateLayer('threshR', ball)
+        self._display.updateLayer('threshD', dot)
 
         ents['yellow'] = self.findEntity(yellow, 'yellow')
         ents['blue'] = self.findEntity(blue, 'blue')
         ents['ball'] = self.findEntity(ball, 'ball')
+        ents['dot'] = self.findEntity(dot, 'dot')
 
         self._display.updateLayer('yellow', ents['yellow'])
         self._display.updateLayer('blue', ents['blue'])
         self._display.updateLayer('ball', ents['ball'])
+        self._display.updateLayer('dot', ents['dot'])
 
         return ents
 
@@ -62,6 +67,7 @@ class Features:
         for blob in blobs:
             diff = self.sizeMatch(blob, which)
             if diff >= 0 and diff < mindiff:
+                print '---'
                 entityblob = blob
                 mindiff = diff
         
@@ -77,7 +83,7 @@ class Features:
         expected = self.Sizes[which]
 
         area = feature.area()
-            
+        print which, area
         if (expected[0] < area < expected[2]):
             # Absolute difference from expected size:
             return abs(area-expected[1])
