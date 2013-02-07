@@ -4,7 +4,6 @@ import os
 import time
 import math
 import socket
-#import cv
 
 from optparse import OptionParser
 
@@ -16,9 +15,6 @@ from display import Gui, ThresholdGui
 
 HOST = 'localhost' 
 PORT = 28546 
-
-# Not really used anywhere?
-PITCH_SIZE = (243.8, 121.9)
 
 # Distinct between field size line or entity line
 ENTITY_BIT = 'E';
