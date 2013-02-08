@@ -20,7 +20,7 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 	Coord startingCoordinate = null;
 	Coord currentCoordinate = null;
 	Boolean dribbling_finished = false;
-	Boolean kicking_finished = false;
+	Boolean kicking = false;
 
 	// private static final double DISTANCE_TO_TRAVEL = 0.3; // in metres
 
@@ -37,8 +37,7 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 		Robot ourRobot = snapshot.getBalle();
 		Goal oppGoal = snapshot.getOpponentsGoal();
 
-		if (kicking_finished) {
-			controller.stop();
+		if (kicking) {
 			return;
 		}
 
@@ -46,15 +45,11 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 				&& !(ourRobot.getPosition() == null)) {
 
 			if (ourRobot.getPosition().dist(oppGoal.getPosition()) <= 0.5) {
-				controller.kick();
 				LOG.info("Kicking");
-				try {
-					Thread.sleep(50);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				kicking = true;
+				controller.kick();
 				LOG.info("Kicking finished");
-				kicking_finished = true;
+				controller.stop();
 				return;
 			}
 
