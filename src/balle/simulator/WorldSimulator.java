@@ -497,26 +497,24 @@ public class WorldSimulator {
 			// TODO: change kicker shape to include edges
 
 			kickerShape = new PolygonShape();
-			
-			Vec2 vertices[] = new Vec2[8];
-			for (int i = 0; i < vertices.length; i++) {
-				vertices[i] = new Vec2();
-			}
-
-			vertices[0].set(0.0f, 0.0f);
-			vertices[1].set(0.0f, (2.0f * kickerWidth));
-			vertices[2].set((0.5f * kickerLength), (2.0f * kickerWidth));
-			vertices[3].set((0.5f * kickerLength), kickerWidth);
-			vertices[4].set(kickerLength - (0.2f * kickerLength), kickerWidth);
-			vertices[5].set(kickerLength - (0.2f * kickerLength), (2 * kickerWidth));
-			vertices[6].set(kickerLength, (2.0f * kickerWidth));
-			vertices[7].set(kickerLength, 0.0f);
-
-			int count = 8;
-
-			kickerShape.set(vertices, count);
-
-			// kickerShape.setAsBox(kickerLength, kickerWidth);
+			/*
+			 * Vec2 vertices[] = new Vec2[8]; for (int i = 0; i <
+			 * vertices.length; i++) { vertices[i] = new Vec2(); }
+			 * 
+			 * vertices[0].set(0.0f, 0.0f); vertices[1].set(0.0f, (2.0f *
+			 * kickerWidth)); vertices[2].set((0.5f * kickerLength), (2.0f *
+			 * kickerWidth)); vertices[3].set((0.5f * kickerLength),
+			 * kickerWidth); vertices[4].set(kickerLength - (0.2f *
+			 * kickerLength), kickerWidth); vertices[5].set(kickerLength - (0.2f
+			 * * kickerLength), (2 * kickerWidth));
+			 * vertices[6].set(kickerLength, (2.0f * kickerWidth));
+			 * vertices[7].set(kickerLength, 0.0f);
+			 * 
+			 * int count = 8;
+			 * 
+			 * kickerShape.set(vertices, count);
+			 */
+			kickerShape.setAsBox(kickerLength, kickerWidth);
 
 			// BodyDef kickerBodyDef = new BodyDef();
 			kickerBodyDef.type = BodyType.DYNAMIC;
