@@ -9,7 +9,7 @@ class Features:
     # Format: (area_min, area_expected, area_max)
 
     Sizes = { 'ball'     : (20, 131, 300),
-          'yellow'         : (100, 379, 800),
+          'yellow'         : (300, 450, 800),
           'blue'         : (100, 580, 800),
         }
 
