@@ -67,64 +67,6 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 			return;
 		}
 
-		// goto_executor.
-		//
-		// if (kicking_finished) {
-		// return;
-		// }
-		//
-		// if (dribbling_finished) {
-		// controller.kick();
-		// LOG.info("Kicking");
-		// try {
-		// Thread.sleep(1000);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// LOG.info("Kicking finished");
-		// kicking_finished = true;
-		// return;
-		// }
-		//
-		// if (dribble_executor.isPossible(snapshot)) {
-		//
-		// if (startingCoordinate == null) {
-		// startingCoordinate = snapshot.getBalle().getPosition();
-		// LOG.info("Beginning dribbling...");
-		// }
-		//
-		// currentCoordinate = snapshot.getBalle().getPosition();
-		// LOG.info(currentCoordinate.dist(startingCoordinate));
-		// if (currentCoordinate.dist(startingCoordinate) < DISTANCE_TO_TRAVEL)
-		// {
-		// LOG.info("Still dribbling, "
-		// + (DISTANCE_TO_TRAVEL - currentCoordinate
-		// .dist(startingCoordinate)) + " to go");
-		// dribble_executor.step(controller, snapshot);
-		// } else {
-		// dribbling_finished = true;
-		// LOG.info("Finished dribbling.");
-		// controller.stop();
-		// }
-		//
-		// }
-		//
-		// else {
-		//
-		// LOG.info("Ball is too far away, moving closer");
-		// goto_executor.updateTarget(snapshot.getBall());
-		// if (goto_executor.isPossible(snapshot)) {
-		// goto_executor.step(controller, snapshot);
-		// }
-		//
-		// else {
-		// LOG.info("Fail");
-		// return;
-		// }
-		//
-		// }
-		// return;
-
 	}
 
 	@FactoryMethod(designator = "M3LocandShoot", parameterNames = {})
