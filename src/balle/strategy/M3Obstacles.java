@@ -3,8 +3,8 @@ package balle.strategy;
 import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
-import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.planner.AbstractPlanner;
+import balle.strategy.planner.GoToBallSafeProportional;
 import balle.world.Coord;
 import balle.world.Snapshot;
 
@@ -17,31 +17,53 @@ public class M3Obstacles extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(M3Obstacles.class);
 
-	GoToObjectPFN goto_executor;
+	//GoToObjectPFN goto_executor;
+	GoToBallSafeProportional goto_executor;
 	Coord startingCoordinate = null;
+	Coord initialCoordinate = null;
+	boolean startRecorded = false;
+	boolean goneForward = false;
 
 	public M3Obstacles() {
-		goto_executor = new GoToObjectPFN(0);
+		goto_executor = new GoToBallSafeProportional(1, 0.2, true);
 	}
 
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
 
-
 		startingCoordinate = snapshot.getBalle().getPosition();
-		goto_executor.updateTarget(snapshot.getOpponent());
 
-		if (goto_executor.isPossible(snapshot)) {
+		// if (!startRecorded) {
+		// initialCoordinate = startingCoordinate;
+		// startRecorded = true;
+		// }
+		//
+		// if (initialCoordinate.dist(snapshot.getOpponent().getPosition()) <=
+		// 0.30) {
+		// // Starting closer than 15 centimetres
+		// LOG.info("Too close can't avoid");
+		// controller.forward(500);
+		// goneForward = true;
+		// }
+		//
+		// if (goneForward
+		// && snapshot.getOpponent().getPosition()
+		// .dist(startingCoordinate) > 0.3) {
+		// // GoneForward and crash and backed up so now stop
+		// controller.stop();
+		// }
 
-			if (snapshot.getOpponent().getPosition().dist(startingCoordinate) > 30) {
-				LOG.info("Rolling forward");
-				goto_executor.step(controller, snapshot);
-			} else {
-				LOG.info("Cannot proceed any further");
-				controller.stop();
-			}
+		LOG.info("Navigating to ball");
+		goto_executor.step(controller, snapshot);
+
+		if (snapshot.getBall().getPosition().dist(startingCoordinate) <= 0.17) {
+			LOG.info("Reached Goal");
+			controller.stop();
+			return;
 		}
+
+				// controller.stop();
 
 		return;
 	}
