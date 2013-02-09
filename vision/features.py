@@ -164,10 +164,9 @@ class Entity:
 
         if feature is not None:
             feature.draw(layer=layer)
-
+            center = self._coordinates
+            layer.circle((int(center[0]), int(center[1])), radius=2, filled=1)
             if angle and self._hasAngle:
-                #center = (feature.minRectX(), feature.minRectY())
-                center = self._coordinates
                 angle = self.angle()
                 endx = center[0] + 30 * math.cos(angle)
                 endy = center[1] + 30 * math.sin(angle)
