@@ -9,7 +9,7 @@ function install_lejos {
 
     echo "> Downloading lejos to $lLOCATION"
 
-    wget -O "$lLOCATION" "http://downloads.sourceforge.net/project/lejos/lejos-NXJ/0.8.5beta/lejos_NXJ_0_8_5beta.tar.gz?r=&ts=1327495476&use_mirror=kent" \
+    wget -O "$lLOCATION" "http://downloads.sourceforge.net/project/lejos/lejos-NXJ/0.9.1beta/leJOS_NXJ_0.9.1beta-3.tar.gz?r=&ts=1360451745&use_mirror=garr" \
     && echo "> extracting $lLOCATION" \
     && cd $LIB \
     && tar xvf $lLOCATION \
