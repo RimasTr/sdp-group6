@@ -33,9 +33,9 @@ class Features:
         self._display.updateLayer('threshB', blue)
         self._display.updateLayer('threshR', ball)
 
-        ents['yellow'] = self.findEntity(yellow, 'yellow')
-        ents['blue'] = self.findEntity(blue, 'blue')
-        ents['ball'] = self.findEntity(ball, 'ball')
+        ents['yellow'] = self.findEntity(yellow, 'yellow', hsv)
+        ents['blue'] = self.findEntity(blue, 'blue', hsv)
+        ents['ball'] = self.findEntity(ball, 'ball', hsv)
 
         self._display.updateLayer('yellow', ents['yellow'])
         self._display.updateLayer('blue', ents['blue'])
@@ -43,7 +43,7 @@ class Features:
 
         return ents
 
-    def findEntity(self, image, which):
+    def findEntity(self, image, which, orig):
 
         # Work around OpenCV crash on some nearly black images
         nonZero = cv.CountNonZero(image.getGrayscaleMatrix())
@@ -69,7 +69,7 @@ class Features:
             return Entity()
         
         notBall = which != 'ball'
-        entity = Entity.fromFeature(entityblob, notBall, notBall)
+        entity = Entity.fromFeature(entityblob, notBall, notBall, orig.getBitmap())
 
         return entity
 
@@ -88,13 +88,17 @@ class Features:
 class Entity:
 
     @classmethod
-    def fromFeature(cls, feature, hasAngle, useBoundingBox = True):
+    def fromFeature(cls, feature, hasAngle, useBoundingBox = True, image = None):
         entity = Entity(hasAngle)
         if useBoundingBox:
             entity._coordinates = feature.coordinates()
         else:
-            entity._coordinates = feature.centroid();
+            entity._coordinates = feature.centroid()
+        
         entity._feature = feature
+        
+        if hasAngle:
+            entity._angle = entity.angle(image)
 
         return entity
 
@@ -112,7 +116,7 @@ class Entity:
     def coordinates(self):
         return self._coordinates
 
-    def angle(self):
+    def angle(self, image = None):
         """
         Calculates the orientation of the entity
         """
@@ -149,10 +153,43 @@ class Entity:
             # and flip the previous answer if necessary
             center = (feature.minRectX(), feature.minRectY())
             roughAngle = math.atan2(center[1] - cy, center[0] - cx) 
-
             if abs(self._angle - roughAngle) > (math.pi / 2):
                 self._angle += math.pi
+            
+            if image != None:
+                # Trying to confirm the direction by checking points around the centroid
+                dist = 13       # Distance from the centroid in px
+                diff = 0.85     # Angle in rads
+                angle = self._angle
+                
+                p_centr = cv.Get2D(image, int(cy), int(cx))
+                
+                x = int(cx - dist * math.cos(angle+diff))
+                y = int(cy - dist * math.sin(angle+diff))
+                p_right1 = cv.Get2D(image, y, x)
 
+                x = int(cx - dist * math.cos(angle-diff))
+                y = int(cy - dist * math.sin(angle-diff))
+                p_right2 = cv.Get2D(image, y, x)
+                
+                x = int(cx + dist * math.cos(angle+diff))
+                y = int(cy + dist * math.sin(angle+diff))
+                p_wrong1 = cv.Get2D(image, y, x)
+
+                x = int(cx + dist * math.cos(angle-diff))
+                y = int(cy + dist * math.sin(angle-diff))
+                p_wrong2 = cv.Get2D(image, y, x)
+                            
+                diff = 0
+                for i in range(0,2): # Compare only hue and saturation
+                    diff += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
+                    diff += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
+                
+                if diff < 0: # Probably facing the wrong direction
+                    # Maybe "diff < -20" or something like that would work better.
+                    # TODO: Requires some testing at various conditions.
+                    self._angle += math.pi
+                
         return self._angle
 
     def draw(self, layer, angle=True):
@@ -173,6 +210,28 @@ class Entity:
 
                 degrees = abs(self._angle - math.pi)  / math.pi * 180 
 
-                layer.line(center, (endx, endy), antialias=False);
+                layer.line(center, (endx, endy), antialias=False)
+
+                """
+                Draw points which are considered in direction confirmation:
+                
+                dist = 13
+                diff = 0.85
+
+                endx = int(center[0] - dist * math.cos(angle+diff))
+                endy = int(center[1] - dist * math.sin(angle+diff))
+                layer.circle((endx, endy), radius=2, filled=1)
+
+                endx = int(center[0] - dist * math.cos(angle-diff))
+                endy = int(center[1] - dist * math.sin(angle-diff))
+                layer.circle((endx, endy), radius=2, filled=1)
 
 
+                endx = int(center[0] + dist * math.cos(angle+diff))
+                endy = int(center[1] + dist * math.sin(angle+diff))
+                layer.circle((endx, endy), radius=2, filled=1)
+
+                endx = int(center[0] + dist * math.cos(angle-diff))
+                endy = int(center[1] + dist * math.sin(angle-diff))
+                layer.circle((endx, endy), radius=2, filled=1)
+                """
