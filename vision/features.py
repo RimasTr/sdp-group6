@@ -9,7 +9,7 @@ class Features:
     # Format: (area_min, area_expected, area_max)
 
     Sizes = { 'ball'     : (20, 131, 300),
-          'yellow'         : (300, 450, 800),
+          'yellow'         : (300, 450, 1000),
           'blue'         : (100, 580, 800),
         }
 
@@ -86,7 +86,6 @@ class Features:
         return -1
 
 class Entity:
-
     @classmethod
     def fromFeature(cls, feature, hasAngle, useBoundingBox = True, image = None):
         entity = Entity(hasAngle)
@@ -115,6 +114,13 @@ class Entity:
     
     def coordinates(self):
         return self._coordinates
+
+    def move (self, (cx, cy), angle, distance):
+        x = int(cx + distance * math.cos(angle))
+        y = int(cy + distance * math.sin(angle))
+        x = min(max(0, x), self._ResX)
+        y = min(max(0, y), self._ResY)
+        return (x, y)
 
     def angle(self, image = None):
         """
@@ -161,32 +167,31 @@ class Entity:
                 dist = 13       # Distance from the centroid in px
                 diff = 0.85     # Angle in rads
                 angle = self._angle
-                
+                self._ResX = image.width - 1
+                self._ResY = image.height - 1
                 p_centr = cv.Get2D(image, int(cy), int(cx))
                 
-                x = int(cx - dist * math.cos(angle+diff))
-                y = int(cy - dist * math.sin(angle+diff))
+                (x, y) = self.move((cx, cy), angle+diff, -dist)
                 p_right1 = cv.Get2D(image, y, x)
 
-                x = int(cx - dist * math.cos(angle-diff))
-                y = int(cy - dist * math.sin(angle-diff))
+                (x, y) = self.move((cx, cy), angle-diff, -dist)
                 p_right2 = cv.Get2D(image, y, x)
                 
-                x = int(cx + dist * math.cos(angle+diff))
-                y = int(cy + dist * math.sin(angle+diff))
+
+                (x, y) = self.move((cx, cy), angle+diff, dist)
                 p_wrong1 = cv.Get2D(image, y, x)
 
-                x = int(cx + dist * math.cos(angle-diff))
-                y = int(cy + dist * math.sin(angle-diff))
+                (x, y) = self.move((cx, cy), angle-diff, dist)
                 p_wrong2 = cv.Get2D(image, y, x)
-                            
-                diff = 0
+                                            
+                difference = 0.0
+
                 for i in range(0,2): # Compare only hue and saturation
-                    diff += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
-                    diff += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
-                
-                if diff < 0: # Probably facing the wrong direction
-                    # Maybe "diff < -20" or something like that would work better.
+                    difference += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
+                    difference += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
+
+                if difference < -50: # Probably facing the wrong direction
+                    # Maybe "diff < -50" or something like that would work better.
                     # TODO: Requires some testing at various conditions.
                     self._angle += math.pi
                 
@@ -214,24 +219,19 @@ class Entity:
 
                 """
                 Draw points which are considered in direction confirmation:
-                
+                """
                 dist = 13
                 diff = 0.85
 
-                endx = int(center[0] - dist * math.cos(angle+diff))
-                endy = int(center[1] - dist * math.sin(angle+diff))
+                (endx, endy) = self.move((center[0], center[1]), angle+diff, -dist)
                 layer.circle((endx, endy), radius=2, filled=1)
 
-                endx = int(center[0] - dist * math.cos(angle-diff))
-                endy = int(center[1] - dist * math.sin(angle-diff))
+                (endx, endy) = self.move((center[0], center[1]), angle-diff, -dist)
                 layer.circle((endx, endy), radius=2, filled=1)
 
-
-                endx = int(center[0] + dist * math.cos(angle+diff))
-                endy = int(center[1] + dist * math.sin(angle+diff))
+                (endx, endy) = self.move((center[0], center[1]), angle+diff, dist)
                 layer.circle((endx, endy), radius=2, filled=1)
 
-                endx = int(center[0] + dist * math.cos(angle-diff))
-                endy = int(center[1] + dist * math.sin(angle-diff))
+                (endx, endy) = self.move((center[0], center[1]), angle-diff, dist)
                 layer.circle((endx, endy), radius=2, filled=1)
-                """
+
