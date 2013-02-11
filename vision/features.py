@@ -219,7 +219,7 @@ class Entity:
 
                 """
                 Draw points which are considered in direction confirmation:
-                """
+
                 dist = 13
                 diff = 0.85
 
@@ -234,4 +234,5 @@ class Entity:
 
                 (endx, endy) = self.move((center[0], center[1]), angle-diff, dist)
                 layer.circle((endx, endy), radius=2, filled=1)
+                """
 
