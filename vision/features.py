@@ -189,8 +189,8 @@ class Entity:
                 for i in range(0,2): # Compare only hue and saturation
                     difference += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
                     difference += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
-
-                if difference < -50: # Probably facing the wrong direction
+                # print difference
+                if difference < -10: # Probably facing the wrong direction
                     # Maybe "diff < -50" or something like that would work better.
                     # TODO: Requires some testing at various conditions.
                     self._angle += math.pi
