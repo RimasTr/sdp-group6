@@ -37,7 +37,7 @@ public class Dribble extends AbstractPlanner {
                                                                              // 0.02;
 
     private boolean triggerHappy;
-	private boolean kicked;
+	private boolean kicked = false;
 
     public boolean isTriggerHappy() {
         return triggerHappy;
@@ -115,6 +115,7 @@ public class Dribble extends AbstractPlanner {
                     && shouldStopDribblingDueToDribbleLength()
                     && !facingOwnGoalSide)
                 controller.kick();
+			setKicked(true);
             currentSpeed = INITIAL_CURRENT_SPEED;
             turnSpeed = INITIAL_TURN_SPEED;
             firstDribbled = currentTime;

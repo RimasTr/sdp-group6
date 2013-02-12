@@ -7,7 +7,6 @@ import balle.strategy.planner.AbstractPlanner;
 import balle.strategy.planner.GoToBallSafeProportional;
 import balle.world.Coord;
 import balle.world.Snapshot;
-import balle.world.objects.Goal;
 import balle.world.objects.Robot;
 
 public class M3LocateAndShoot2 extends AbstractPlanner {
@@ -20,7 +19,8 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 	Coord startingCoordinate = null;
 	Coord currentCoordinate = null;
 	Boolean dribbling_finished = false;
-	Boolean kicking = false;
+	Boolean finished = false;
+	Boolean arrived = true;
 
 	// private static final double DISTANCE_TO_TRAVEL = 0.3; // in metres
 
@@ -35,29 +35,27 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 			throws ConfusedException {
 
 		Robot ourRobot = snapshot.getBalle();
-		Goal oppGoal = snapshot.getOpponentsGoal();
+		// Goal oppGoal = snapshot.getOpponentsGoal();
 
-		if (kicking) {
+		if (finished) {
 			return;
 		}
 
 		if (ourRobot.possessesBall(snapshot.getBall())
 				&& !(ourRobot.getPosition() == null)) {
+
+			if (!arrived) {
+				LOG.info("Arrived at ball, beginning dribble");
+				arrived = true;
+			}
+
 			goto_executor.stop(controller);
 
 			if (dribble_executor.hasKicked()) {
 				dribble_executor.stop(controller);
 				controller.stop();
+				finished = true;
 			}
-
-			// if (ourRobot.getPosition().dist(oppGoal.getPosition()) <= 0.5) {
-			// LOG.info("Kicking");
-			// kicking = true;
-			// controller.kick();
-			// LOG.info("Kicking finished");
-			// controller.stop();
-			// return;
-			// }
 
 			else {
 				dribble_executor.step(controller, snapshot);
