@@ -21,13 +21,18 @@ public class SocketVisionReader extends Reader {
     public static final int    PORT           = 28546;
 	// these values are not set in stone
 	// pick them as you wish
-	private static final double TRESHOLD = 1.2;
-	private static final double DTRESHOLD = 5;
+	private static final double DISTMINTRESHOLD = 1.2;
+	private static final double DISTMAXTRESHOLD = 15;
+	private static final double DIRMINTRESHOLD = 5;
+	private static final double DIRMAXTRESHOLD = 30;
+
     public static final String ENTITY_BIT     = "E";
     public static final String PITCH_SIZE_BIT = "P";
     public static final String GOAL_POS_BIT   = "G";
 	private double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, d1 = 0,
 			d2 = 0;
+	private boolean bx1 = false, bx2 = false, bx3 = false, by1 = false,
+			by2 = false, by3 = false, bd1 = false, bd2 = false;
 
 
     public SocketVisionReader() {
@@ -93,23 +98,66 @@ public class SocketVisionReader extends Reader {
 				double x3p=Double.parseDouble(tokens[7]);
 				double y3p=Double.parseDouble(tokens[8]);
 
-				if (Math.abs(x1p - x1) > TRESHOLD && x1p > 0)
+				if ((Math.abs(x1p - x1) > DISTMINTRESHOLD && x1p > 0 && Math
+						.abs(x1p - x1) < DISTMAXTRESHOLD) || x1 == 0)
 					x1 = x1p;
-				if (Math.abs(y1p - y1) > TRESHOLD && y1p > 0)
+				else if (Math.abs(x1p - x1) > DISTMAXTRESHOLD && bx1 == false)
+					bx1 = true;
+				else if (bx1) {
+					bx1 = false;
+					x1 = x1p;
+				}
+				if ((Math.abs(y1p - y1) > DISTMINTRESHOLD && y1p > 0 && Math
+						.abs(y1p - y1) < DISTMAXTRESHOLD) || y1 == 0)
 					y1 = y1p;
-				if (Math.abs(d1p - d1) > DTRESHOLD && d1p > 0)
+				else if (Math.abs(y1p - y1) > DISTMAXTRESHOLD && by1 == false)
+					by1 = true;
+				else if (by1) {
+					by1 = false;
+					y1 = y1p;
+				}
+				if ((Math.abs(d1p - d1) > DIRMINTRESHOLD && d1p > 0 && Math
+						.abs(d1p - d1) < DIRMAXTRESHOLD) || d1 == 0)
 					d1 = d1p;
-
-				if (Math.abs(x2p - x2) > TRESHOLD && x2p > 0)
+				else if (Math.abs(d1p - d1) > DIRMAXTRESHOLD && bd1 == false)
+					bd1 = true;
+				else if (bd1) {
+					bd1 = false;
+					d1 = d1p;
+				}
+				if ((Math.abs(x2p - x2) > DISTMINTRESHOLD && x2p > 0 && Math
+						.abs(x2p - x2) < DISTMAXTRESHOLD) || x2 == 0)
 					x2 = x2p;
-				if (Math.abs(y2p - y2) > TRESHOLD && y2p > 0)
-					y2 = y2p;
-				if (Math.abs(d2p - d2) > DTRESHOLD && d2p > 0)
-					d2 = d2p;
+				else if (Math.abs(x2p - x2) > DISTMAXTRESHOLD && bx2 == false)
+					bx2 = true;
+				else if (bx2) {
+					bx2 = false;
+					x2 = x2p;
+				}
 
-				if (Math.abs(x3p - x3) > TRESHOLD && x3p > 0)
+				if ((Math.abs(y2p - y2) > DISTMINTRESHOLD && y2p > 0 && Math
+						.abs(y2p - y2) < DISTMAXTRESHOLD) || y2 == 0)
+					y2 = y2p;
+				else if (Math.abs(y2p - y2) > DISTMAXTRESHOLD && by2 == false)
+					by2 = true;
+				else if (by2) {
+					by2 = false;
+					y2 = y2p;
+				}
+
+				if ((Math.abs(d2p - d2) > DIRMINTRESHOLD && d2p > 0 && Math
+						.abs(d2p - d2) < DIRMAXTRESHOLD) || d2 == 0)
+					d2 = d2p;
+				else if (Math.abs(d2p - d2) > DIRMAXTRESHOLD && bd2 == false)
+					bd2 = true;
+				else if (bd2) {
+					bd2 = false;
+					d2 = d2p;
+				}
+
+				if (Math.abs(x3p - x3) > DISTMINTRESHOLD && x3p > 0)
 					x3 = x3p;
-				if (Math.abs(y3p - y3) > TRESHOLD && y3p > 0)
+				if (Math.abs(y3p - y3) > DISTMINTRESHOLD && y3p > 0)
 					y3 = y3p;
 				//System.out.println("Updating (entity): " + line);
 				System.out.println("1st team (" + x1 + "," + y1 + "," + d1
