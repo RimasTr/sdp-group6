@@ -3,38 +3,44 @@ package balle.strategy;
 import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
-import balle.strategy.executor.dribbling.DribbleStraight;
-import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.planner.AbstractPlanner;
+import balle.strategy.planner.GoToBallSafeProportional;
 import balle.world.Coord;
 import balle.world.Snapshot;
+import balle.world.objects.Ball;
+import balle.world.objects.Robot;
 
 public class M2dribble extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(M2dribble.class);
 
-	DribbleStraight dribble_executor;
-	GoToObjectPFN goto_executor;
+	MilestoneDribble dribble_executor;
+	GoToBallSafeProportional goto_executor;
 	Coord startingCoordinate = null;
 	Coord currentCoordinate = null;
 	Boolean finished = false;
 	private static final double DISTANCE_TO_TRAVEL = 0.3; // in metres
 
 	public M2dribble() {
-		dribble_executor = new DribbleStraight();
-		goto_executor = new GoToObjectPFN(0);
+		dribble_executor = new MilestoneDribble();
+		goto_executor = new GoToBallSafeProportional();
 	}
-
 
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
 
+		Robot ourRobot = snapshot.getBalle();
+		Ball ball = snapshot.getBall();
+
 		if (finished) {
+			controller.stop();
 			return;
 		}
 
-		if(dribble_executor.isPossible(snapshot)){
+
+		if (ourRobot.possessesBall(ball)) {
+
 			if(startingCoordinate == null){
 				startingCoordinate = snapshot.getBalle().getPosition();
 			}
@@ -44,29 +50,22 @@ public class M2dribble extends AbstractPlanner {
 			if (currentCoordinate.dist(startingCoordinate) < DISTANCE_TO_TRAVEL) {
 				LOG.info("Beginning dribbling...");
 				dribble_executor.step(controller, snapshot);
+				return;
 			} else {
 				finished = true;
 				LOG.info("Finished.");
 				controller.stop();
+				return;
 			}
 
 		}
 
 		else {
 
-			LOG.info("Ball is too far away, moving closer");
-			goto_executor.updateTarget(snapshot.getBall());
-			if(goto_executor.isPossible(snapshot)){
-				goto_executor.step(controller, snapshot);
-			}
-
-			else {
-				LOG.info("Fail");
-				return;
-			}
-
+			goto_executor.step(controller, snapshot);
+			return;
 		}
-		return;
+
 
 	}
 
