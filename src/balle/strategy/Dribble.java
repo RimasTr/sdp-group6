@@ -37,22 +37,32 @@ public class Dribble extends AbstractPlanner {
                                                                              // 0.02;
 
     private boolean triggerHappy;
+	private boolean kicked = false;
 
     public boolean isTriggerHappy() {
         return triggerHappy;
     }
 
+	public boolean hasKicked() {
+		return kicked;
+	}
+
     public void setTriggerHappy(boolean triggerHappy) {
         this.triggerHappy = triggerHappy;
     }
 
+	public void setKicked(boolean kicked) {
+		this.kicked = kicked;
+	}
+
     public Dribble() {
-        this(false);
+		this(false, false);
 	}
 	
-    public Dribble(boolean triggerHappy) {
+	public Dribble(boolean triggerHappy, boolean kicked) {
         super();
         setTriggerHappy(triggerHappy);
+		setKicked(kicked);
     }
 
     @FactoryMethod(designator = "Dribble", parameterNames = {})
@@ -105,6 +115,7 @@ public class Dribble extends AbstractPlanner {
                     && shouldStopDribblingDueToDribbleLength()
                     && !facingOwnGoalSide)
                 controller.kick();
+			setKicked(true);
             currentSpeed = INITIAL_CURRENT_SPEED;
             turnSpeed = INITIAL_TURN_SPEED;
             firstDribbled = currentTime;
@@ -258,6 +269,7 @@ public class Dribble extends AbstractPlanner {
         if (facingGoal || (isTriggerHappy() && nearWall && !facingOwnGoalSide)
                 || (isTriggerHappy() && aboutToLoseBall && !facingOwnGoalSide)) {
             controller.kick();
+			setKicked(true);
         }
 
 	}

@@ -157,21 +157,17 @@ public class Roboto {
                 try {
                     // Check for sensors when idle
                     if (touchLeft.isPressed() || touchRight.isPressed()) {
-                        controller.setWheelSpeeds(
-                                -controller.getMaximumWheelSpeed(),
-                                -controller.getMaximumWheelSpeed());
-                        drawMessage("Obstacle detected. Backing up");
-                        Thread.sleep(200);
+						controller.backward(controller.getMaximumWheelSpeed());
+						drawMessage("Obstacle in front!");
+						Thread.sleep(500);
                         controller.stop();
                     }
 
                     // Check for back sensors as well
                     if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
-                        controller.setWheelSpeeds(
-                                controller.getMaximumWheelSpeed(),
-                                controller.getMaximumWheelSpeed());
-                        drawMessage("Obstacle detected (back). Backing up");
-                        Thread.sleep(200);
+						controller.forward(controller.getMaximumWheelSpeed());
+						drawMessage("Obstacle behind!");
+						Thread.sleep(500);
                         controller.stop();
                     }
 
