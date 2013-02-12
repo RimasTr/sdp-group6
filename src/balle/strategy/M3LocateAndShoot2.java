@@ -43,15 +43,21 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 
 		if (ourRobot.possessesBall(snapshot.getBall())
 				&& !(ourRobot.getPosition() == null)) {
+			goto_executor.stop(controller);
 
-			if (ourRobot.getPosition().dist(oppGoal.getPosition()) <= 0.5) {
-				LOG.info("Kicking");
-				kicking = true;
-				controller.kick();
-				LOG.info("Kicking finished");
+			if (dribble_executor.hasKicked()) {
+				dribble_executor.stop(controller);
 				controller.stop();
-				return;
 			}
+
+			// if (ourRobot.getPosition().dist(oppGoal.getPosition()) <= 0.5) {
+			// LOG.info("Kicking");
+			// kicking = true;
+			// controller.kick();
+			// LOG.info("Kicking finished");
+			// controller.stop();
+			// return;
+			// }
 
 			else {
 				dribble_executor.step(controller, snapshot);
