@@ -90,13 +90,14 @@ public class Game extends AbstractPlanner {
         return g;
     }
 
-    @FactoryMethod(designator = "GameInitTest", parameterNames = { "angle (deg)" })
-    public static Game gameInitTest(double angle) {
-        Game g = new Game(true);
-        g.setTriggerHappy(true);
-        g.setInitialStrategy(new InitialBezierStrategy(angle));
-        return g;
-    }
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "GameInitTest", parameterNames = {
+	 * "angle (deg)" }) public static Game gameInitTest(double angle) { Game g =
+	 * new Game(true); g.setTriggerHappy(true); g.setInitialStrategy(new
+	 * InitialBezierStrategy(angle)); return g; }
+	 */
 
     public void setTriggerHappy(boolean triggerHappy) {
         kickingStrategy.setTriggerHappy(triggerHappy);

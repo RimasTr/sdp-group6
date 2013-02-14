@@ -49,9 +49,11 @@ public class M3Avoid extends AbstractPlanner {
 
 	}
 
-	@FactoryMethod(designator = "Avoid", parameterNames = {})
-	public static final M3Avoid factory() {
-		return new M3Avoid();
-	}
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "Avoid", parameterNames = {}) public static
+	 * final M3Avoid factory() { return new M3Avoid(); }
+	 */
 
 }

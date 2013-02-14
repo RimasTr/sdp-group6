@@ -12,7 +12,6 @@ import org.neuroph.nnet.learning.BackPropagation;
 
 import balle.controller.Controller;
 import balle.misc.Globals;
-import balle.strategy.FactoryMethod;
 import balle.strategy.UserInputStrategy;
 import balle.world.Snapshot;
 import balle.world.objects.Robot;
@@ -31,11 +30,13 @@ public class CalibrateNeural extends UserInputStrategy {
 
 	protected Robot lastRobot = null, currentRobot = null;
 
-	@FactoryMethod(designator = "CalibrateNeural", parameterNames = {})
-	public static CalibrateNeural calibrateNeuralFactory() {
-		return new CalibrateNeural();
-	}
-
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "CalibrateNeural", parameterNames = {})
+	 * public static CalibrateNeural calibrateNeuralFactory() { return new
+	 * CalibrateNeural(); }
+	 */
 
 	public CalibrateNeural() {
 		ts = new TrainingSet<SupervisedTrainingElement>();

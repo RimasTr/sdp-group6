@@ -9,11 +9,8 @@ import balle.controller.Controller;
 import balle.main.drawable.Circle;
 import balle.main.drawable.Dot;
 import balle.misc.Globals;
-import balle.strategy.bezierNav.BezierNav;
-import balle.strategy.curve.CustomCHI;
 import balle.strategy.executor.movement.MovementExecutor;
 import balle.strategy.executor.movement.OrientedMovementExecutor;
-import balle.strategy.pathFinding.SimplePathFinder;
 import balle.strategy.planner.AbstractPlanner;
 import balle.world.Coord;
 import balle.world.Line;
@@ -121,12 +118,14 @@ public class InterceptionCanCatchBall extends AbstractPlanner {
         }
     }
 
-    @FactoryMethod(designator = "AAAAAA Slow Intercepts BZR", parameterNames = {})
-    public static final InterceptionCanCatchBall factoryNCPBZR() {
-		return new InterceptionCanCatchBall(true, null, new BezierNav(
-                new SimplePathFinder(
-                new CustomCHI())));
-    }
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "AAAAAA Slow Intercepts BZR", parameterNames
+	 * = {}) public static final InterceptionCanCatchBall factoryNCPBZR() {
+	 * return new InterceptionCanCatchBall(true, null, new BezierNav( new
+	 * SimplePathFinder( new CustomCHI()))); }
+	 */
 
     /**
      * Checks when ball has moved since last reading

@@ -16,17 +16,12 @@ import balle.misc.Globals;
 import balle.simulator.SnapshotPredictor;
 import balle.simulator.WorldSimulator;
 import balle.strategy.ConfusedException;
-import balle.strategy.FactoryMethod;
 import balle.strategy.curve.Curve;
-import balle.strategy.curve.CustomCHI;
 import balle.strategy.executor.movement.MovementExecutor;
 import balle.strategy.executor.movement.OrientedMovementExecutor;
-import balle.strategy.pathFinding.ForwardAndReversePathFinder;
 import balle.strategy.pathFinding.PathFinder;
-import balle.strategy.pathFinding.SimplePathFinder;
 import balle.strategy.pathFinding.ValidPathNotFoundException;
 import balle.strategy.pathFinding.path.Path;
-import balle.strategy.planner.SimpleGoToBallFaceGoal;
 import balle.world.BasicWorld;
 import balle.world.Coord;
 import balle.world.Orientation;
@@ -99,19 +94,19 @@ public class BezierNav implements OrientedMovementExecutor, MovementExecutor {
 																	// end
 	private boolean endInfront;
 
-    @FactoryMethod(designator = "BezierNav", parameterNames = {})
-	public static SimpleGoToBallFaceGoal bezierNavFactory() {
-		return new SimpleGoToBallFaceGoal(new BezierNav(
-				new SimplePathFinder(
-				new CustomCHI()), true));
-	}
-
-	@FactoryMethod(designator = "BezierNav (Forwards and backwards)", parameterNames = {})
-	public static SimpleGoToBallFaceGoal bezierNavFactoryFAB() {
-		return new SimpleGoToBallFaceGoal(new BezierNav(
-				new ForwardAndReversePathFinder(
-				new CustomCHI()), true));
-	}
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "BezierNav", parameterNames = {}) public
+	 * static SimpleGoToBallFaceGoal bezierNavFactory() { return new
+	 * SimpleGoToBallFaceGoal(new BezierNav( new SimplePathFinder( new
+	 * CustomCHI()), true)); }
+	 * 
+	 * @FactoryMethod(designator = "BezierNav (Forwards and backwards)",
+	 * parameterNames = {}) public static SimpleGoToBallFaceGoal
+	 * bezierNavFactoryFAB() { return new SimpleGoToBallFaceGoal(new BezierNav(
+	 * new ForwardAndReversePathFinder( new CustomCHI()), true)); }
+	 */
 
 	public BezierNav(PathFinder pathfinder) {
 		this(pathfinder, false);

@@ -33,10 +33,12 @@ public class Calibrate extends AbstractPlanner {
 	
 	private boolean done = false;
 
-	@FactoryMethod(designator = "Calibrate", parameterNames = {})
-	public static Calibrate calibrateFactory() {
-		return new Calibrate();
-    }
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "Calibrate", parameterNames = {}) public
+	 * static Calibrate calibrateFactory() { return new Calibrate(); }
+	 */
 
 	private Coord startPos;
 	private long startT;

@@ -56,10 +56,12 @@ public class MilestoneDribble extends AbstractPlanner {
 
 	}
 
-	@FactoryMethod(designator = "Dribble", parameterNames = {})
-	public static MilestoneDribble factoryMethod() {
-		return new MilestoneDribble();
-	}
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "Dribble", parameterNames = {}) public static
+	 * MilestoneDribble factoryMethod() { return new MilestoneDribble(); }
+	 */
 
 	public boolean shouldStopDribblingDueToDribbleLength() {
 		double deltaStart = (System.currentTimeMillis() - firstDribbled);

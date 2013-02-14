@@ -65,11 +65,12 @@ public class Dribble extends AbstractPlanner {
 		setKicked(kicked);
     }
 
-    @FactoryMethod(designator = "Dribble", parameterNames = {})
-	public static Dribble factoryMethod()
-	{
-		return new Dribble();
-	}
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "Dribble", parameterNames = {}) public static
+	 * Dribble factoryMethod() { return new Dribble(); }
+	 */
 
     public boolean shouldStopDribblingDueToDribbleLength() {
         double deltaStart = (System.currentTimeMillis() - firstDribbled);

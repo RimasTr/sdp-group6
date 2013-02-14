@@ -10,10 +10,7 @@ import org.apache.log4j.Logger;
 import balle.controller.Controller;
 import balle.main.drawable.Dot;
 import balle.strategy.ConfusedException;
-import balle.strategy.FactoryMethod;
-import balle.strategy.curve.CustomCHI;
 import balle.strategy.executor.movement.OrientedMovementExecutor;
-import balle.strategy.pathFinding.SimplePathFinder;
 import balle.strategy.planner.AbstractPlanner;
 import balle.world.Orientation;
 import balle.world.Snapshot;
@@ -30,11 +27,13 @@ public class GameBezier extends AbstractPlanner {
 
 	OrientedMovementExecutor executorStrategy;
 
-    @FactoryMethod(designator = "GameBezier", parameterNames = {})
-	public static GameBezier gameBezierFactory() {
-		return new GameBezier(new BezierNav(new SimplePathFinder(
-				new CustomCHI())));
-	}
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "GameBezier", parameterNames = {}) public
+	 * static GameBezier gameBezierFactory() { return new GameBezier(new
+	 * BezierNav(new SimplePathFinder( new CustomCHI()))); }
+	 */
 
 	public GameBezier(
 			OrientedMovementExecutor OrientedMovementExecutor) {
