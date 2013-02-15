@@ -12,13 +12,13 @@ import balle.world.Coord;
 import balle.world.Orientation;
 import balle.world.Snapshot;
 
-public class MilestoneDribble extends AbstractPlanner {
+public class Milestone2Dribble extends AbstractPlanner {
 
 	private static final int INITIAL_TURN_SPEED = 100;
 
 	private static final int INITIAL_CURRENT_SPEED = 150;
 
-	private static Logger LOG = Logger.getLogger(MilestoneDribble.class);
+	private static Logger LOG = Logger.getLogger(Milestone2Dribble.class);
 
 	private int currentSpeed = INITIAL_CURRENT_SPEED;
 	private int turnSpeed = INITIAL_TURN_SPEED;
@@ -46,22 +46,20 @@ public class MilestoneDribble extends AbstractPlanner {
 		this.triggerHappy = triggerHappy;
 	}
 
-	public MilestoneDribble() {
+	public Milestone2Dribble() {
 		this(false);
 	}
 
-	public MilestoneDribble(boolean triggerHappy) {
+	public Milestone2Dribble(boolean triggerHappy) {
 		super();
 		setTriggerHappy(triggerHappy);
 
 	}
 
-	/*
-	 * Commenting out strategy in simulator
-	 * 
-	 * @FactoryMethod(designator = "Dribble", parameterNames = {}) public static
-	 * MilestoneDribble factoryMethod() { return new MilestoneDribble(); }
-	 */
+	@FactoryMethod(designator = "Dribble", parameterNames = {})
+	public static Milestone2Dribble factoryMethod() {
+		return new Milestone2Dribble();
+	}
 
 	public boolean shouldStopDribblingDueToDribbleLength() {
 		double deltaStart = (System.currentTimeMillis() - firstDribbled);

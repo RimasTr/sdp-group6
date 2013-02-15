@@ -14,7 +14,7 @@ public class M2dribble extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(M2dribble.class);
 
-	MilestoneDribble dribble_executor;
+	Milestone2Dribble dribble_executor;
 	GoToBallSafeProportional goto_executor;
 	Coord startingCoordinate = null;
 	Coord currentCoordinate = null;
@@ -22,7 +22,7 @@ public class M2dribble extends AbstractPlanner {
 	private static final double DISTANCE_TO_TRAVEL = 0.3; // in metres
 
 	public M2dribble() {
-		dribble_executor = new MilestoneDribble();
+		dribble_executor = new Milestone2Dribble();
 		goto_executor = new GoToBallSafeProportional();
 	}
 

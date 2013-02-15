@@ -156,7 +156,7 @@ public class Roboto {
                 }
                 try {
                     // Check for sensors when idle
-                    if (touchLeft.isPressed() || touchRight.isPressed()) {
+					if (touchLeft.isPressed() || touchRight.isPressed()) {
 						controller.backward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle in front!");
 						Thread.sleep(500);
