@@ -197,7 +197,7 @@ public class Runner {
 		Controller controllerA;
 
 		// Initialise world
-        world = new SimulatedWorld(balleIsBlue, goalIsLeft, Globals.getPitch());
+		world = new SimulatedWorld(balleIsBlue, goalIsLeft, Globals.getPitch());
 
 		world.addFilter(new TimeFilter(Globals.SIMULATED_VISON_DELAY));
 		if (isMainPitch) {
@@ -239,7 +239,7 @@ public class Runner {
 			StrategyLogPane strategyLog) {
 		Simulator simulator = Simulator.createSimulator();
 
-		SimulatedWorld worldA = new SimulatedWorld(balleIsBlue, goalIsLeft,
+		SimulatedWorld worldA = new SimulatedWorld(balleIsBlue, !goalIsLeft,
 				Globals.getPitch());
 		((BasicWorld) worldA).updatePitchSize(Globals.PITCH_WIDTH,
 				Globals.PITCH_HEIGHT);
