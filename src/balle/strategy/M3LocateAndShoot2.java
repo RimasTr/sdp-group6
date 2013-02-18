@@ -46,13 +46,16 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 			currentCoordinate = snapshot.getBalle().getPosition();
 			LOG.info(currentCoordinate.dist(snapshot.getOpponentsGoal()
 					.getPosition()));
+			boolean facingGoal = snapshot.getBalle().getFacingLine()
+					.intersects(snapshot.getOpponentsGoal().getGoalLine());
 
 			if (currentCoordinate.dist(snapshot.getOpponentsGoal()
-					.getPosition()) <= MIN_DIST_TO_GOAL) {
+					.getPosition()) <= MIN_DIST_TO_GOAL && facingGoal) {
 				controller.kick();
-				LOG.info("Kicked!");
+				LOG.info("Kick!");
 				dribble_executor.stop(controller);
 				controller.stop();
+				LOG.info("Stop!");
 				finished = true;
 				return;
 			}
