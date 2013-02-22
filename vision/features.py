@@ -190,9 +190,10 @@ class Entity:
                     difference += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
                     difference += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
                 # print difference
-                if difference < -10: # Probably facing the wrong direction
+                if difference < -50: # Probably facing the wrong direction
                     # Maybe "diff < -50" or something like that would work better.
                     # TODO: Requires some testing at various conditions.
+                    # TODO: Different values for different pitchs
                     self._angle += math.pi
                 
         return self._angle
