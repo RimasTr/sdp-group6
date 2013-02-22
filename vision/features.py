@@ -69,7 +69,7 @@ class Features:
             return Entity()
         
         notBall = which != 'ball'
-        entity = Entity.fromFeature(entityblob, notBall, notBall, orig.getBitmap())
+        entity = Entity.fromFeature(entityblob, notBall, notBall, orig.getBitmap(), self.threshold._diff)
 
         return entity
 
@@ -87,7 +87,7 @@ class Features:
 
 class Entity:
     @classmethod
-    def fromFeature(cls, feature, hasAngle, useBoundingBox = True, image = None):
+    def fromFeature(cls, feature, hasAngle, useBoundingBox = True, image = None, diff = -50):
         entity = Entity(hasAngle)
         if useBoundingBox:
             entity._coordinates = feature.coordinates()
@@ -95,7 +95,8 @@ class Entity:
             entity._coordinates = feature.centroid()
         
         entity._feature = feature
-        
+        entity._defaultDiff = diff
+
         if hasAngle:
             entity._angle = entity.angle(image)
 
@@ -111,6 +112,7 @@ class Entity:
         self._hasAngle = hasAngle
         self._angle = None
         self._feature = None
+        self._defaultDiff = -50
     
     def coordinates(self):
         return self._coordinates
@@ -189,11 +191,10 @@ class Entity:
                 for i in range(0,2): # Compare only hue and saturation
                     difference += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
                     difference += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
-                # print difference
-                if difference < -50: # Probably facing the wrong direction
+                print difference
+                if difference < self._defaultDiff: # Probably facing the wrong direction
                     # Maybe "diff < -50" or something like that would work better.
                     # TODO: Requires some testing at various conditions.
-                    # TODO: Different values for different pitchs
                     self._angle += math.pi
                 
         return self._angle

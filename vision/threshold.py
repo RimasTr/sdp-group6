@@ -38,6 +38,8 @@ class Threshold:
         
         if (self._blur is None) or (self._resetThresholds):
             self._blur = defaultBlur[self._pitch]
+
+        self._diff = defaultDiff[self._pitch]
         
             
     def __saveDefaults(self):
@@ -146,6 +148,10 @@ defaults =[
         }]
 
 
-# defaultBlur[0] for the main pitch and default [1] for the other one
-
+# defaultBlur[0] for the main pitch and defaultBlur[1] for the other one
 defaultBlur = [3, 3]
+
+# defaultDiff[0] for the main pitch and defaultDiff[1] for the other one
+# Used in features.py
+defaultDiff = [-20, -50]
+
