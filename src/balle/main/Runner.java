@@ -248,7 +248,8 @@ public class Runner {
 
 		// worldA.addFilter(new SmoothingFilter());
 
-        worldA.addFilter(new BallNearWallFilter());
+		// Stopped ball from going into goal so commented out
+		// worldA.addFilter(new BallNearWallFilter());
 
 		SoftBot botA, botB;
 		if (!balleIsBlue) {
