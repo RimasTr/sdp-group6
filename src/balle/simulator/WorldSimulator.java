@@ -118,12 +118,12 @@ public class WorldSimulator {
 
 		// Create edge of field
 		// Main Pitch
-		addEdge(0f * SCALE, 0f * SCALE, 2.44f * SCALE, 0f * SCALE);
-		addEdge(0f * SCALE, 1.22f * SCALE, 2.44f * SCALE, 1.22f * SCALE);
-		addEdge(0f * SCALE, 0f * SCALE, 0f * SCALE, 0.31f * SCALE);
-		addEdge(2.44f * SCALE, 0f * SCALE, 2.44f * SCALE, 0.31f * SCALE);
-		addEdge(0f * SCALE, 1.22f * SCALE, 0f * SCALE, 0.91f * SCALE);
-		addEdge(2.44f * SCALE, 1.22f * SCALE, 2.44f * SCALE, 0.91f * SCALE);
+		addEdge(0f * SCALE, 0f * SCALE, 2.44f * SCALE, 0f * SCALE); // bottom
+		addEdge(0f * SCALE, 1.22f * SCALE, 2.44f * SCALE, 1.22f * SCALE); // top
+		addEdge(0f * SCALE, 0f * SCALE, 0f * SCALE, 0.31f * SCALE);		  // bottom left
+		addEdge(2.44f * SCALE, 0f * SCALE, 2.44f * SCALE, 0.31f * SCALE); // bottom right
+		addEdge(0f * SCALE, 1.22f * SCALE, 0f * SCALE, 0.91f * SCALE);	  // top left
+		addEdge(2.44f * SCALE, 1.22f * SCALE, 2.44f * SCALE, 0.91f * SCALE); //top right
 		// Left-hand goal area
 		addEdge(0f * SCALE, 0.31f * SCALE, -0.1f * SCALE, 0.31f * SCALE);
 		addEdge(-0.1f * SCALE, 0.31f * SCALE, -0.1f * SCALE, 0.91f * SCALE);
@@ -183,6 +183,7 @@ public class WorldSimulator {
 
     protected void setBallPosition(Coord pos, Velocity vel) {
         setBallPosition(pos);
+
         Vec2 vel2 = vel.vec2(SCALE);
 		ball.setLinearVelocity(vel2.mul(Globals.ARBITRARY_BALL_VEL_SCALING));
 
@@ -252,7 +253,7 @@ public class WorldSimulator {
 		// TODO correct friction
 		FrictionJointDef ballFriction = new FrictionJointDef();
 		ballFriction.initialize(ball, ground, ball.getWorldCenter());
-		ballFriction.maxForce = 0.1f;
+		ballFriction.maxForce = 1f;
 		ballFriction.maxTorque = 0.001f;
 		world.createJoint(ballFriction);
 	}
@@ -455,7 +456,7 @@ public class WorldSimulator {
 				* WorldSimulator.SCALE / 2;
 		private Vec2 kickPos = new Vec2((robotLength + kickerLength), 0);
 		private final PolygonShape kickerShape;
-		private static final float kickForce = 9f;
+		private static final float kickForce = 80f;
 
 		private float lastRPower;
 		private float lastLPower;

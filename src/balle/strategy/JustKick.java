@@ -11,11 +11,9 @@ public class JustKick extends AbstractPlanner {
         controller.kick();
     }
 
-	/*
-	 * Commenting out strategy in simulator
-	 * 
-	 * @FactoryMethod(designator = "Just kick", parameterNames = {}) public
-	 * static final JustKick factory() { return new JustKick(); }
-	 */
+	@FactoryMethod(designator = "Just kick", parameterNames = {})
+	public static final JustKick factory() {
+		return new JustKick();
+	}
 
 }

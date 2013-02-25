@@ -24,6 +24,8 @@ import balle.strategy.StrategyFactory;
 import balle.strategy.StrategyRunner;
 import balle.strategy.UnknownDesignatorException;
 import balle.world.AbstractWorld;
+import balle.world.objects.Ball;
+import balle.world.objects.Goal;
 
 @SuppressWarnings("serial")
 public class StratTab extends JPanel implements ActionListener {
@@ -62,6 +64,15 @@ public class StratTab extends JPanel implements ActionListener {
 	private final static String GREEN_LABEL_TEXT = "Select Green strategy";
 	private final static String RED_LABEL_TEXT = "Select Red strategy";
 
+	private boolean isInGoal(Goal goal, Ball ball) {
+		if (goal.isLeftGoal()) {
+			return goal.getMaxX() - ball.getPosition().getX() > 0;
+		} else if (goal.isRightGoal()) {
+			return goal.getMinX() - ball.getPosition().getX() < 0;
+		}
+		return false;
+	}
+
 	public StratTab(Config config, Controller controllerA,
 			Controller controllerB,
 			AbstractWorld worldA, AbstractWorld worldB,
@@ -76,6 +87,7 @@ public class StratTab extends JPanel implements ActionListener {
 		// Initialise strategy runner
 		this.strategyRunner = strategyRunner;
         this.strategyFactory = strategyFactory;
+
 
 		// Declare layout of buttons etc
 		// Layout composed of 3 by 6 grid (0 indexed)

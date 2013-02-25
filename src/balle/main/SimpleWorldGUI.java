@@ -68,7 +68,6 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		super(world);
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-
 		try {
 			UIManager
 					.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -201,6 +200,15 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
             return newColor;
         }
 
+		private boolean isInGoal(Goal goal, Ball ball) {
+			if (goal.isLeftGoal()) {
+				return goal.getMaxX() - ball.getPosition().getX() > 0;
+			} else if (goal.isRightGoal()) {
+				return goal.getMinX() - ball.getPosition().getX() < 0;
+			}
+			return false;
+		}
+
         private void drawBall(Graphics g, Color c, Snapshot snapshot) {
 			// TODO: Use ball.getRadius() instead of constants here
 
@@ -231,12 +239,29 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
                     .getPosition().getY() - ball.getRadius() * 3), Color.RED);
             ballSpeedLabel.draw(g, scaler);
 
-            if (ball.isNearWall(snapshot.getPitch())) {
-                Label nearWallLabel = new Label("NW", new Coord(ball
-                        .getPosition().getX(), ball.getPosition().getY()
-                        + ball.getRadius() * 3), Color.MAGENTA);
-                nearWallLabel.draw(g, scaler);
-            }
+			// if (ball.isNearWall(snapshot.getPitch())) {
+			// Label nearWallLabel = new Label("NW", new Coord(ball
+			// .getPosition().getX(), ball.getPosition().getY()
+			// + ball.getRadius() * 3), Color.MAGENTA);
+			// nearWallLabel.draw(g, scaler);
+			// }
+
+			if (isInGoal(snapshot.getOwnGoal(), ball)) {
+				Label nearWallLabel = new Label("Get it together guys",
+						new Coord(
+						ball.getPosition().getX(), ball.getPosition().getY()
+								+ ball.getRadius() * 3), Color.ORANGE);
+				nearWallLabel.draw(g, scaler);
+			}
+
+			if (isInGoal(snapshot.getOpponentsGoal(), ball)) {
+				Label nearWallLabel = new Label("GOOOOAAAAALLLLLL",
+						new Coord(ball.getPosition().getX(), ball.getPosition()
+								.getY() + ball.getRadius() * 3), Color.PINK);
+				nearWallLabel.draw(g, scaler);
+				
+
+			}
 
 			// BallEstimator predictor = snapshot.getBallEstimator();
 			// Coord estimatedPos = predictor.estimatePosition(5); // 5 Frames =
@@ -407,15 +432,31 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 		private void drawGoal(Graphics g, Color c, Goal goal) {
 			g.setColor(c);
+			boolean isLeft = goal.isLeftGoal();
+			// boolean isRight = goal.isRightGoal();
+			if (!isLeft) { // right hand goal
+				int xMin, width, yMax, height;
+				xMin = scaler.m2PX(goal.getMinX()) - 2;
+				width = (scaler.m2PX(goal.getMaxX()) - scaler.m2PX(goal
+						.getMinX())) / 2;
+				yMax = scaler.m2PY(goal.getMaxY()) - 2;
+				height = scaler.m2PY(goal.getMinY())
+						- scaler.m2PY(goal.getMaxY());
 
+				g.drawRect(xMin, yMax, width, height);
+			} else { // left hand goal
+				int xMin, width, yMax, height;
+				width = (scaler.m2PX(goal.getMaxX()) - scaler.m2PX(goal
+						.getMinX())) / 2;
+				xMin = scaler.m2PX(goal.getMinX()) + width;
+				yMax = scaler.m2PY(goal.getMaxY()) - 2;
+				height = scaler.m2PY(goal.getMinY())
+						- scaler.m2PY(goal.getMaxY());
+
+				g.drawRect(xMin, yMax, width, height);
+			}
 			// Daniel: Does hardcoding the positions matter?
-			int xMin, width, yMax, height;
-			xMin = scaler.m2PX(goal.getMinX()) - 2;
-			width = scaler.m2PX(goal.getMaxX()) - scaler.m2PX(goal.getMinX());
-			yMax = scaler.m2PY(goal.getMaxY()) - 2;
-			height = scaler.m2PY(goal.getMinY()) - scaler.m2PY(goal.getMaxY());
 
-			g.drawRect(xMin, yMax, width, height);
 		}
 
 		/**
