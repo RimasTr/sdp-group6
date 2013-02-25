@@ -47,7 +47,6 @@ public class WorldSimulator {
 	private boolean noisy;
 
 	private long visionDelay = Globals.SIMULATED_VISON_DELAY;
-	private long simulatorTimestamp;
 
     private static final Logger LOG = Logger.getLogger(WorldSimulator.class);
 
