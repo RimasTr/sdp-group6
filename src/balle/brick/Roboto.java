@@ -163,8 +163,9 @@ public class Roboto {
 						interrupt = true;
 						controller.backward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle in front!");
-						Thread.sleep(500);
-                        controller.stop();
+						// Removed controller.stop() and Thread.sleep()
+						// They are unnecessary as once the sensors are no
+						// longer pressed the strategy will take over.
                     }
 
                     // Check for back sensors as well
@@ -172,8 +173,6 @@ public class Roboto {
 						interrupt = true;
 						controller.forward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle behind!");
-						Thread.sleep(500);
-                        controller.stop();
                     }
 
                     if (!listener.available())
