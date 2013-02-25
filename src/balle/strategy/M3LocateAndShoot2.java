@@ -2,6 +2,7 @@ package balle.strategy;
 
 import org.apache.log4j.Logger;
 
+import balle.brick.Roboto;
 import balle.controller.Controller;
 import balle.strategy.planner.AbstractPlanner;
 import balle.strategy.planner.GoToBallSafeProportional;
@@ -11,8 +12,13 @@ import balle.world.objects.Robot;
 
 public class M3LocateAndShoot2 extends AbstractPlanner {
 
-	private static final Logger LOG = Logger.getLogger(M3LocateAndShoot2.class);
+	// TODO does this dribble towards the goal? it seems to just dribble in a
+	// straight line once the initial direction has been set.
+	// Do any other dribble executors do a better job?
 
+	private static final Logger LOG = Logger.getLogger(M3LocateAndShoot2.class);
+	public static boolean interrupt = Roboto.interrupt;
+	
 	Milestone2Dribble dribble_executor;
 	// DribbleStraight at_ball;
 	GoToBallSafeProportional goto_executor;
@@ -32,6 +38,11 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
 
+		if (interrupt) {
+			LOG.info("Wall!");
+			return;
+		}
+
 		Robot ourRobot = snapshot.getBalle();
 
 		if (finished) {
@@ -46,8 +57,10 @@ public class M3LocateAndShoot2 extends AbstractPlanner {
 			currentCoordinate = snapshot.getBalle().getPosition();
 			LOG.info(currentCoordinate.dist(snapshot.getOpponentsGoal()
 					.getPosition()));
+			LOG.info(snapshot.getOpponentsGoal().getGoalLine().toString() + " "
+					+ snapshot.getOpponentsGoal().getAccurateGoalLine().toString());
 			boolean facingGoal = snapshot.getBalle().getFacingLine()
-					.intersects(snapshot.getOpponentsGoal().getGoalLine());
+					.intersects(snapshot.getOpponentsGoal().getAccurateGoalLine());
 
 			if (currentCoordinate.dist(snapshot.getOpponentsGoal()
 					.getPosition()) <= MIN_DIST_TO_GOAL && facingGoal) {

@@ -71,6 +71,8 @@ class ListenerThread extends Thread {
  */
 public class Roboto {
 
+	public static boolean interrupt = false;
+
     /**
      * Processes the decoded message and issues correct commands to controller
      * 
@@ -146,6 +148,7 @@ public class Roboto {
 
             while (true) {
                 // Enter button click will halt the program
+				interrupt = false;
 				if (Button.ENTER.isDown()) {
                     controller.stop();
                     listener.cancel();
@@ -157,6 +160,7 @@ public class Roboto {
                 try {
                     // Check for sensors when idle
 					if (touchLeft.isPressed() || touchRight.isPressed()) {
+						interrupt = true;
 						controller.backward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle in front!");
 						Thread.sleep(500);
@@ -165,6 +169,7 @@ public class Roboto {
 
                     // Check for back sensors as well
                     if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
+						interrupt = true;
 						controller.forward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle behind!");
 						Thread.sleep(500);

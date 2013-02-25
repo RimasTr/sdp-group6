@@ -32,7 +32,7 @@ import balle.world.filter.HeightFilter;
 import balle.world.filter.TimeFilter;
 
 /**
- * This is where the main executable code for 4s lies. It is responsible of
+ * This is where the main executable code for robot lies. It is responsible of
  * initialising various subsystems of the code and make sure they interact.
  * 
  * 

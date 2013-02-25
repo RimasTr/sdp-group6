@@ -92,6 +92,23 @@ public class Goal extends StaticFieldObject {
         return new Line(getLeftPostCoord(), getRightPostCoord());
     }
 
+	public Line getAccurateGoalLine() {
+		Coord left = getLeftPostCoord();
+		Coord right = getRightPostCoord();
+
+		double lx = left.getX();
+		double ly = left.getY();
+		double rx = right.getX();
+		double ry = right.getY();
+
+		double dist = left.dist(right);
+
+		Coord new_left = new Coord(lx, ly + (dist / 4.0));
+		Coord new_right = new Coord(rx, ry - (dist / 4.0));
+
+		return new Line(new_left, new_right);
+	}
+
     @Override
 	public boolean intersects(Line line) {
 		if (containsCoord(line.getA()) || containsCoord(line.getB())) return true;
