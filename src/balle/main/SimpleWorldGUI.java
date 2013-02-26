@@ -433,10 +433,9 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		private void drawGoal(Graphics g, Color c, Goal goal) {
 			g.setColor(c);
 			boolean isLeft = goal.isLeftGoal();
-			// boolean isRight = goal.isRightGoal();
 			if (!isLeft) { // right hand goal
 				int xMin, width, yMax, height;
-				xMin = scaler.m2PX(goal.getMinX()) - 2;
+				xMin = scaler.m2PX(goal.getMinX()) - 3;
 				width = (scaler.m2PX(goal.getMaxX()) - scaler.m2PX(goal
 						.getMinX())) / 2;
 				yMax = scaler.m2PY(goal.getMaxY()) - 2;
@@ -455,7 +454,6 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 				g.drawRect(xMin, yMax, width, height);
 			}
-			// Daniel: Does hardcoding the positions matter?
 
 		}
 
