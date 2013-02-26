@@ -9,8 +9,8 @@ class Features:
     # Format: (area_min, area_expected, area_max)
 
     Sizes = { 'ball'     : (20, 131, 300),
-          'yellow'         : (300, 450, 1000),
-          'blue'         : (100, 580, 800),
+          'yellow'         : (200, 510, 1000),
+          'blue'         : (100, 400, 800),
         }
 
     def __init__(self, display, threshold):
@@ -77,7 +77,9 @@ class Features:
         expected = self.Sizes[which]
 
         area = feature.area()
-            
+        
+        #print which, area
+
         if (expected[0] < area < expected[2]):
             # Absolute difference from expected size:
             return abs(area-expected[1])
@@ -192,7 +194,7 @@ class Entity:
                     difference += -abs(p_centr[i]-p_right1[i])+abs(p_centr[i]-p_wrong1[i])
                     difference += -abs(p_centr[i]-p_right2[i])+abs(p_centr[i]-p_wrong2[i])
 
-                #print difference
+                # print difference
 
                 if difference < self._defaultDiff: # Probably facing the wrong direction
                     # Maybe "diff < -50" or something like that would work better.
