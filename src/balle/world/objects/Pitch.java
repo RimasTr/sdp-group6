@@ -51,11 +51,21 @@ public class Pitch extends StaticFieldObject {
 	public Line getLeftWall() {
 		return new Line(new Coord(minX, maxY), new Coord(minX, minY));
 	}
+
+	public Line getRightWall() {
+		return new Line(new Coord(maxX, maxY), new Coord(maxX, minY));
+	}
+
+	public Line getTopWall() {
+		return new Line(new Coord(minX, minY), new Coord(maxX, minY));
+	}
+
+	public Line getBottomWall() {
+		return new Line(new Coord(maxX, maxY), new Coord(minX, maxY));
+	}
 	public Line[] getWalls() {
 		return new Line[] {
-				new Line(new Coord(minX, minY), new Coord(maxX, minY)),
-				new Line(new Coord(maxX, minY), new Coord(maxX, maxY)),
-				new Line(new Coord(maxX, maxY), new Coord(minX, maxY)),
+ getTopWall(), getRightWall(), getBottomWall(),
 				getLeftWall(), };
 	}
 

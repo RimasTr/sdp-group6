@@ -156,8 +156,7 @@ public class Line {
 	}
 
 	/**
-	 * Returns a point that the closest point on the line segment to the given
-	 * point.
+	 * Returns the closest point on the line segment to the given point.
 	 * 
 	 * @param p
 	 *            the point provided
@@ -182,6 +181,15 @@ public class Line {
          else
          return getB();
          }
+	}
+
+	public double pointToLineDistance(Coord P) {
+		double normalLength = Math.hypot(getB().getX() - getA().getX(), getB()
+				.getY() - getA().getY());
+		return Math.abs((P.getX() - getA().getX())
+				* (getB().getY() - getA().getY()) - (P.getY() - getA().getY())
+				* (getB().getX() - getA().getX()))
+				/ normalLength;
 	}
 
     public double length() {

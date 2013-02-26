@@ -169,11 +169,18 @@ public class Game extends AbstractPlanner {
             throws ConfusedException {
 
         Robot ourRobot = snapshot.getBalle();
+		Robot oppRobot = snapshot.getOpponent();
         Ball ball = snapshot.getBall();
 
-        if ((ourRobot.getPosition() == null) || (ball.getPosition() == null))
+		if ((ourRobot.getPosition() == null) || (ball.getPosition() == null)
+				|| (oppRobot.getPosition() == null))
             return;
         
+		if (proximityAlert(snapshot, ourRobot, oppRobot)) {
+			backingOffStrategy.step(controller, snapshot);
+			return;
+		}
+
 		if (backingOffStrategy.shouldStealStep(snapshot)) {
 			backingOffStrategy.step(controller, snapshot);
 			return;
@@ -301,4 +308,32 @@ public class Game extends AbstractPlanner {
 		return goToBallPFN;
 
 	}
+
+	public boolean proximityAlert(Snapshot snapshot, Robot ourRobot,
+			Robot oppRobot) {
+		Pitch pitch = snapshot.getPitch();
+
+		Line topWall = pitch.getTopWall();
+		Line bottomWall = pitch.getBottomWall();
+		Line leftWall = pitch.getLeftWall();
+		Line rightWall = pitch.getRightWall();
+
+		Coord ourPosition = ourRobot.getPosition();
+		Coord oppPosition = oppRobot.getPosition();
+
+		double dist = 0.1;
+
+		boolean top = (topWall.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		boolean bottom = (bottomWall.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		boolean left = (leftWall.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		boolean right = (rightWall.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		boolean opp = (ourPosition.dist(oppPosition) < dist) ? true : false;
+
+		return (top || bottom || left || right || opp);
+	}
+
 }

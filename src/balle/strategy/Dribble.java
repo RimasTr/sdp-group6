@@ -14,7 +14,7 @@ import balle.world.Snapshot;
 
 public class Dribble extends AbstractPlanner {
 
-    private static final int INITIAL_TURN_SPEED = 100;
+	private static final int INITIAL_TURN_SPEED = 150;
 
     private static final int INITIAL_CURRENT_SPEED = 150;
 
@@ -79,9 +79,9 @@ public class Dribble extends AbstractPlanner {
 
     public boolean isInactiveForAWhile() {
         double deltaPause = (System.currentTimeMillis() - lastDribbled);
-
         return deltaPause > MAX_DRIBBLE_PAUSE;
     }
+
     public boolean isDribbling() {
         return !isInactiveForAWhile()
                 && (!shouldStopDribblingDueToDribbleLength());

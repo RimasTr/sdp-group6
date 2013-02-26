@@ -44,8 +44,8 @@ public class BrickController implements Controller {
 		pilot = new DifferentialPilot(WHEEL_DIAMETER, TRACK_WIDTH, LEFT_WHEEL,
 				RIGHT_WHEEL, INVERSE_WHEELS);
         pilot.setTravelSpeed(maxPilotSpeed);
-        pilot.setRotateSpeed(45); // 45 has been working fine.
-		pilot.setAcceleration(250);
+		pilot.setRotateSpeed(45);
+		// pilot.setAcceleration(250);
 
     }
 
@@ -87,8 +87,8 @@ public class BrickController implements Controller {
 		KICKER.setSpeed(900);
 
 		// Move kicker back
-		KICKER.rotateTo(-5);
-		KICKER.waitComplete();
+		// KICKER.rotateTo(-5);
+		// KICKER.waitComplete();
 
 		// Kick
 		KICKER.rotateTo(45);
