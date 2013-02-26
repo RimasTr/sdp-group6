@@ -269,7 +269,7 @@ public class Game extends AbstractPlanner {
         if ((corridor.containsCoord(opponent.getPosition()))
                 && !(opponent.possessesBall(ball) && (opponent
                         .isFacingGoalHalf(ownGoal)))) {
-			return goToBallPFN;
+			return goToBallBezier;
 		}
 		
         Line ballMovementLine = new Line(ball.getPosition(), snapshot
@@ -305,7 +305,7 @@ public class Game extends AbstractPlanner {
             return goToBallPrecision;
         }
 
-		return goToBallPFN;
+		return goToBallBezier;
 
 	}
 
@@ -317,6 +317,8 @@ public class Game extends AbstractPlanner {
 		Line bottomWall = pitch.getBottomWall();
 		Line leftWall = pitch.getLeftWall();
 		Line rightWall = pitch.getRightWall();
+		Line ourGoal = snapshot.getOwnGoal().getGoalLine();
+		Line oppGoal = snapshot.getOpponentsGoal().getGoalLine();
 
 		Coord ourPosition = ourRobot.getPosition();
 		Coord oppPosition = oppRobot.getPosition();
@@ -332,6 +334,16 @@ public class Game extends AbstractPlanner {
 		boolean right = (rightWall.pointToLineDistance(ourPosition) < dist) ? true
 				: false;
 		boolean opp = (ourPosition.dist(oppPosition) < dist) ? true : false;
+
+		boolean ours = (ourGoal.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		boolean theirs = (oppGoal.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		
+		// ensure we can still attack goals and get close
+		if (ours || theirs) {
+			return false;
+		}
 
 		return (top || bottom || left || right || opp);
 	}

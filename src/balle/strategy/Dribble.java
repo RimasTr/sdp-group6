@@ -127,7 +127,7 @@ public class Dribble extends AbstractPlanner {
 
 		// TODO: change getGoalLine to getAccurateGoalLine?
 		boolean facingGoal = snapshot.getBalle().getFacingLine()
-				.intersects(snapshot.getOpponentsGoal().getAccurateGoalLine());
+				.intersects(snapshot.getOpponentsGoal().getGoalLine());
 
         if (snapshot.getBall().getPosition() != null)
             facingGoal = facingGoal
