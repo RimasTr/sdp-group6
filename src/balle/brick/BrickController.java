@@ -18,7 +18,7 @@ import balle.controller.ControllerListener;
  */
 public class BrickController implements Controller {
 	DifferentialPilot pilot;
-    public int maxPilotSpeed = 600; // 20
+	public int maxPilotSpeed = 200; // 20
                                     // for
                                     // friendlies
 
@@ -28,7 +28,7 @@ public class BrickController implements Controller {
 			MotorPort.C);
 	public final NXTRegulatedMotor KICKER = new NXTRegulatedMotor(MotorPort.A);
 
-	public final boolean INVERSE_WHEELS = true;
+	public final boolean INVERSE_WHEELS = false;
 
 	public final float WHEEL_DIAMETER = 81.6f; // mm
 	public final float TRACK_WIDTH = 128f; // mm

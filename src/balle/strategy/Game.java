@@ -262,7 +262,7 @@ public class Game extends AbstractPlanner {
         if ((corridor.containsCoord(opponent.getPosition()))
                 && !(opponent.possessesBall(ball) && (opponent
                         .isFacingGoalHalf(ownGoal)))) {
-			return goToBallBezier;
+			return goToBallPFN;
 		}
 		
         Line ballMovementLine = new Line(ball.getPosition(), snapshot
@@ -298,7 +298,7 @@ public class Game extends AbstractPlanner {
             return goToBallPrecision;
         }
 
-		return goToBallBezier;
+		return goToBallPFN;
 
 	}
 }

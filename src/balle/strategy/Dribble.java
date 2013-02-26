@@ -115,7 +115,7 @@ public class Dribble extends AbstractPlanner {
             if (isTriggerHappy() && !isInactiveForAWhile()
                     && shouldStopDribblingDueToDribbleLength()
                     && !facingOwnGoalSide)
-                controller.kick();
+				controller.kick();
 			LOG.info("kick check 1");
 			setKicked(true);
             currentSpeed = INITIAL_CURRENT_SPEED;
@@ -125,7 +125,9 @@ public class Dribble extends AbstractPlanner {
 
         lastDribbled = currentTime;
 
-        boolean facingGoal = snapshot.getBalle().getFacingLine().intersects(snapshot.getOpponentsGoal().getGoalLine());
+		// TODO: change getGoalLine to getAccurateGoalLine?
+		boolean facingGoal = snapshot.getBalle().getFacingLine()
+				.intersects(snapshot.getOpponentsGoal().getAccurateGoalLine());
 
         if (snapshot.getBall().getPosition() != null)
             facingGoal = facingGoal
@@ -136,13 +138,13 @@ public class Dribble extends AbstractPlanner {
                                     snapshot.getOpponentsGoal().getGoalLine());
 
 
-		if (currentSpeed <= 560) {
-			currentSpeed += 20;
-		}
-
-		if (turnSpeed <= 150) {
-			turnSpeed += 5;
-		}
+		// if (currentSpeed <= 560) {
+		// currentSpeed += 20;
+		// }
+		//
+		// if (turnSpeed <= 150) {
+		// turnSpeed += 5;
+		// }
 
         double distanceToBall = snapshot.getBalle().getFrontSide().midpoint()
                 .dist(snapshot.getBall().getPosition());
