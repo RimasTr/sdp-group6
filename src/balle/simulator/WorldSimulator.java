@@ -176,7 +176,7 @@ public class WorldSimulator {
 			bd.bullet = true;
 			ball = world.createBody(bd);
 			ball.createFixture(f);
-			ball.setLinearDamping(0);
+			ball.setLinearDamping(2);
 		}
 	}
 
