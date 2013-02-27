@@ -116,7 +116,7 @@ public class Dribble extends AbstractPlanner {
                     && shouldStopDribblingDueToDribbleLength()
                     && !facingOwnGoalSide)
 				controller.kick();
-			LOG.info("kick check 1");
+			LOG.info("Dribble: KICK 1");
 			setKicked(true);
             currentSpeed = INITIAL_CURRENT_SPEED;
             turnSpeed = INITIAL_TURN_SPEED;
@@ -273,7 +273,7 @@ public class Dribble extends AbstractPlanner {
         if (facingGoal || (isTriggerHappy() && nearWall && !facingOwnGoalSide)
                 || (isTriggerHappy() && aboutToLoseBall && !facingOwnGoalSide)) {
             controller.kick();
-			LOG.info("kick check 1");
+			LOG.info("Dribble: KICK 2");
 			setKicked(true);
         }
 

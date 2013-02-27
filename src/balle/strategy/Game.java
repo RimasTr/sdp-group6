@@ -174,7 +174,18 @@ public class Game extends AbstractPlanner {
 
 		if ((ourRobot.getPosition() == null) || (ball.getPosition() == null)
 				|| (oppRobot.getPosition() == null))
-            return;
+			return;
+
+		if (scored(snapshot, ball)) {
+			LOG.info("End of match.");
+			stop(controller);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
         
 		if (proximityAlert(snapshot, ourRobot, oppRobot)) {
 			backingOffStrategy.step(controller, snapshot);
@@ -309,16 +320,18 @@ public class Game extends AbstractPlanner {
 
 	}
 
-	public boolean proximityAlert(Snapshot snapshot, Robot ourRobot,
+	private boolean proximityAlert(Snapshot snapshot, Robot ourRobot,
 			Robot oppRobot) {
 		Pitch pitch = snapshot.getPitch();
+		Goal ourGoal = snapshot.getOwnGoal();
 
 		Line topWall = pitch.getTopWall();
 		Line bottomWall = pitch.getBottomWall();
-		Line leftWall = pitch.getLeftWall();
-		Line rightWall = pitch.getRightWall();
-		Line ourGoal = snapshot.getOwnGoal().getGoalLine();
-		Line oppGoal = snapshot.getOpponentsGoal().getGoalLine();
+
+		Line leftUpperWall = pitch.getLeftUpperWall(ourGoal);
+		Line leftLowerWall = pitch.getLeftLowerWall(ourGoal);
+		Line rightUpperWall = pitch.getRightUpperWall(ourGoal);
+		Line rightLowerWall = pitch.getRightLowerWall(ourGoal);
 
 		Coord ourPosition = ourRobot.getPosition();
 		Coord oppPosition = oppRobot.getPosition();
@@ -329,23 +342,45 @@ public class Game extends AbstractPlanner {
 				: false;
 		boolean bottom = (bottomWall.pointToLineDistance(ourPosition) < dist) ? true
 				: false;
-		boolean left = (leftWall.pointToLineDistance(ourPosition) < dist) ? true
+
+		boolean leftUpper = (leftUpperWall.pointToLineDistance(ourPosition) < dist) ? true
 				: false;
-		boolean right = (rightWall.pointToLineDistance(ourPosition) < dist) ? true
+		boolean leftLower = (leftLowerWall.pointToLineDistance(ourPosition) < dist) ? true
 				: false;
+		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < dist) ? true
+				: false;
+
 		boolean opp = (ourPosition.dist(oppPosition) < dist) ? true : false;
 
-		boolean ours = (ourGoal.pointToLineDistance(ourPosition) < dist) ? true
-				: false;
-		boolean theirs = (oppGoal.pointToLineDistance(ourPosition) < dist) ? true
-				: false;
-		
-		// ensure we can still attack goals and get close
-		if (ours || theirs) {
-			return false;
+		LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
+				+ leftLower + " "
+				+ rightUpper + " " + rightLower + " " + opp);
+
+		return (top || bottom || leftUpper || leftLower || rightUpper
+				|| rightLower || opp);
+	}
+
+	private boolean scored(Snapshot snapshot, Ball ball) {
+		Goal opp = snapshot.getOpponentsGoal();
+		Goal own = snapshot.getOwnGoal();
+
+		if (opp.isLeftGoal()) {
+			return opp.getMaxX() - ball.getPosition().getX() > 0;
+		} else if (opp.isRightGoal()) {
+			return opp.getMinX() - ball.getPosition().getX() < 0;
 		}
 
-		return (top || bottom || left || right || opp);
+		if (own.isLeftGoal()) {
+			return own.getMaxX() - ball.getPosition().getX() > 0;
+		} else if (own.isRightGoal()) {
+			return own.getMinX() - ball.getPosition().getX() < 0;
+		}
+
+		return false;
+
 	}
+
 
 }
