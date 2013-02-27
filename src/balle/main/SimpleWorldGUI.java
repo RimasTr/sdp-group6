@@ -187,8 +187,8 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		private void drawFieldObjects(Graphics g) {
 			Snapshot s = getSnapshot();
 			if (s != null) {
-				drawRobot(g, Color.GREEN, s.getBalle(), s.getOpponentsGoal());
-				drawRobot(g, Color.RED, s.getOpponent(), s.getOwnGoal());
+				drawRobot(g, Color.BLUE, s.getBalle(), s.getOpponentsGoal());
+				drawRobot(g, Color.YELLOW, s.getOpponent(), s.getOwnGoal());
 				drawBall(g, Color.RED, s);
 				drawGoals(g);
 			}
@@ -239,15 +239,19 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
                     .getPosition().getY() - ball.getRadius() * 3), Color.RED);
             ballSpeedLabel.draw(g, scaler);
 
-			// if (ball.isNearWall(snapshot.getPitch())) {
-			// Label nearWallLabel = new Label("NW", new Coord(ball
-			// .getPosition().getX(), ball.getPosition().getY()
-			// + ball.getRadius() * 3), Color.MAGENTA);
-			// nearWallLabel.draw(g, scaler);
-			// }
+			boolean isBlue = snapshot.getWorld().isBlue();
+			String loss = "Get it together guys!";
+			String win = "Gooooaaallll";
+			String print;
 
 			if (isInGoal(snapshot.getOwnGoal(), ball)) {
-				Label nearWallLabel = new Label("Get it together guys",
+				if (isBlue) {
+					print = loss;
+				} else {
+					print = win;
+				}
+
+				Label nearWallLabel = new Label(print,
 						new Coord(
 						ball.getPosition().getX(), ball.getPosition().getY()
 								+ ball.getRadius() * 3), Color.ORANGE);
@@ -255,70 +259,23 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			}
 
 			if (isInGoal(snapshot.getOpponentsGoal(), ball)) {
-				Label nearWallLabel = new Label("GOOOOAAAAALLLLLL",
+				if (isBlue) {
+					print = win;
+				} else {
+					print = loss;
+				}
+				Label nearWallLabel = new Label(print,
 						new Coord(ball.getPosition().getX(), ball.getPosition()
 								.getY() + ball.getRadius() * 3), Color.PINK);
 				nearWallLabel.draw(g, scaler);
 				
-
 			}
-
-			// BallEstimator predictor = snapshot.getBallEstimator();
-			// Coord estimatedPos = predictor.estimatePosition(5); // 5 Frames =
-			// // ~250ms
-			// new Circle(estimatedPos.x, estimatedPos.y, 0.05,
-			// Color.BLUE).draw(
-			// g, scaler);
 
 			Velocity vel = ball.getVelocity().mult(1000);
 			DrawableVector vec = new DrawableVector(ball.getPosition(), vel,
 					Color.CYAN);
 			vec.draw(g, scaler);
 
-            // Velocity vel = ball.getVelocity();
-            // DrawableVector velocityVec = new
-            // DrawableVector(ball.getPosition(),
-            // vel.mult(4000), Color.CYAN);
-            // velocityVec.draw(g, scaler);
-            //
-            // SnapshotPredictor sp = snapshot.getSnapshotPredictor();
-            // Coord lastPos = pos;
-            // Color lineColor = Color.WHITE;
-            // Color ballColor = changeAlpha(c, 0.8);
-            //
-            //
-            // for (int lastEstimateAfter = 0; lastEstimateAfter <
-            // Globals.BALL_POSITION_ESTIMATE_MAX_STEP; lastEstimateAfter +=
-            // Globals.BALL_POSITION_ESTIMATE_DRAW_STEP) {
-            // Snapshot laterSnapshot = sp
-            // .getSnapshotAfterTime(Globals.BALL_POSITION_ESTIMATE_DRAW_STEP);
-            // Coord newBallPos = laterSnapshot.getBall().getPosition();
-            // if (newBallPos == null)
-            // break;
-            //
-            // DrawableLine directionLine = new DrawableLine(new Line(lastPos,
-            // newBallPos), lineColor);
-            // directionLine.draw(g, scaler);
-            // lastPos = newBallPos;
-            //
-            // Dot ballDot = new Dot(newBallPos, ballColor);
-            // ballDot.draw(g, scaler);
-            //
-            // // Fade the colours
-            // lineColor = changeAlpha(lineColor, 0.7);
-            // ballColor = changeAlpha(ballColor, 0.8);
-            //
-            // if (lastEstimateAfter == 0) {
-            // Label nextBallSpeedLabel = new Label(String.format(
-            // "%.5fE-3", laterSnapshot.getBall().getVelocity()
-            // .abs() * 1000),
-            // new Coord(ball.getPosition().getX(), ball
-            // .getPosition().getY()
-            // - ball.getRadius()
-            // * 6), changeAlpha(Color.pink, 0.8));
-            // nextBallSpeedLabel.draw(g, scaler);
-            // }
-            // }
 		}
 
         private void drawRobot(Graphics g, Color c, Robot robot, Goal targetGoal) {
@@ -426,15 +383,50 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		}
 
 		private void drawGoals(Graphics g) {
-			drawGoal(g, Color.green, getSnapshot().getOwnGoal());
-			drawGoal(g, Color.red, getSnapshot().getOpponentsGoal());
+			drawGoal(g, Color.BLUE, getSnapshot().getOwnGoal());
+			drawGoal(g, Color.YELLOW, getSnapshot().getOpponentsGoal());
+
 		}
+
+		private void drawGoalText(Graphics g, Goal goal){
+			boolean isLeft = goal.isLeftGoal();
+			boolean theirGoal = goal.equals(getSnapshot().getOpponentsGoal());
+			boolean isBlue = getSnapshot().getWorld().isBlue();
+
+			int x, y;
+
+			if (isLeft) { // Goal is on the Left
+				x = scaler.m2PX(goal.getLeftPostCoord().x) - 30;
+				y = scaler.m2PY(goal.getLeftPostCoord().y) - 50;
+			} else {	
+				x = scaler.m2PX(goal.getRightPostCoord().x) - 20;
+				y = scaler.m2PY(goal.getRightPostCoord().y) - 50;
+			}
+			
+			if (isBlue) {
+				if (theirGoal) {
+					// it's their goal and we're blue
+					g.drawString("Attacking", x, y);
+				} else {
+					g.drawString("Defending", x, y);
+				}
+			} else {
+				if (theirGoal) {
+					// it's their goal and they're blue
+					g.drawString("Defending", x, y);
+				} else {
+					g.drawString("Attacking", x, y);
+				}
+			}
+
+		} 
 
 		private void drawGoal(Graphics g, Color c, Goal goal) {
 			g.setColor(c);
 			boolean isLeft = goal.isLeftGoal();
+			int xMin, width, yMax, height;
+
 			if (!isLeft) { // right hand goal
-				int xMin, width, yMax, height;
 				xMin = scaler.m2PX(goal.getMinX()) - 3;
 				width = (scaler.m2PX(goal.getMaxX()) - scaler.m2PX(goal
 						.getMinX())) / 2;
@@ -444,7 +436,6 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 				g.drawRect(xMin, yMax, width, height);
 			} else { // left hand goal
-				int xMin, width, yMax, height;
 				width = (scaler.m2PX(goal.getMaxX()) - scaler.m2PX(goal
 						.getMinX())) / 2;
 				xMin = scaler.m2PX(goal.getMinX()) + width;
@@ -454,7 +445,7 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 				g.drawRect(xMin, yMax, width, height);
 			}
-
+			drawGoalText(g, goal);
 		}
 
 		/**

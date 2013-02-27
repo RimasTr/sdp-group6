@@ -61,8 +61,8 @@ public class StratTab extends JPanel implements ActionListener {
 	private Simulator simulator;
     private StrategyFactory     strategyFactory;
 
-	private final static String GREEN_LABEL_TEXT = "Select Green strategy";
-	private final static String RED_LABEL_TEXT = "Select Red strategy";
+	private final static String GREEN_LABEL_TEXT = "Select Blue strategy";
+	private final static String RED_LABEL_TEXT = "Select Yellow strategy";
 
 	private boolean isInGoal(Goal goal, Ball ball) {
 		if (goal.isLeftGoal()) {
