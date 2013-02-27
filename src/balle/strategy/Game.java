@@ -243,6 +243,8 @@ public class Game extends AbstractPlanner {
 		Goal opponentsGoal = snapshot.getOpponentsGoal();
 		Pitch pitch = snapshot.getPitch();
 
+		// Adding drawables
+
         addDrawable(new Circle(ourRobot.getFrontSide().midpoint(), 0.4,
                 Color.BLUE));
 
@@ -257,6 +259,12 @@ public class Game extends AbstractPlanner {
         addDrawable(new DrawableLine(newsnap.getBalle().getFrontSide(),
                 Color.red));
 
+		/*
+		 * Choosing Strategy:
+		 */
+
+
+		// 1.
         if ((kickingStrategy.isDribbling() && ball.getPosition().isEstimated() && ball
                 .getPosition().dist(ourRobot.getPosition()) < Globals.ROBOT_LENGTH * 2)
                 || (dribbleBox.containsCoord(ball.getPosition()) && !ourRobot
@@ -266,6 +274,7 @@ public class Game extends AbstractPlanner {
             return kickingStrategy;
 		}
 
+		// 2.
         if ((opponent.getPosition() != null)
                 && (opponent.possessesBall(ball) && (opponent
                         .isFacingGoal(ownGoal)))
@@ -274,47 +283,59 @@ public class Game extends AbstractPlanner {
         }
 
 		// Could the opponent be in the way? use bezier if so
+		// 3.
+		// Drawing line between ourselves and ball
 		RectangularObject corridor = new Line(ourRobot.getPosition(),
 				ball.getPosition()).widen(0.5);
         addDrawable(new DrawableRectangularObject(corridor, Color.BLACK));
+
         if ((corridor.containsCoord(opponent.getPosition()))
                 && !(opponent.possessesBall(ball) && (opponent
                         .isFacingGoalHalf(ownGoal)))) {
 			return goToBallBezier;
 		}
 		
+		// 4.
+		// Draw line to ball and it's estimated position in 40 frames.
         Line ballMovementLine = new Line(ball.getPosition(), snapshot
                 .getBallEstimator().estimatePosition(40));
-		
         addDrawable(new DrawableLine(ballMovementLine, Color.MAGENTA));
+
         if (ballMovementLine.intersects(snapshot.getOwnGoal().getGoalLine()
                 .extendBothDirections(0.5))) {
             return defensiveStrategy;
         }
 		    
-
+		// 5.
 		if (!ourRobot.isApproachingTargetFromCorrectSide(ball, opponentsGoal,
 				25)) {
 			return goToBallPFN;
 		}
 
+		// 6.
 		if (ourRobot.getPosition().dist(ball.getPosition()) > 1) {
 			return goToBallPFN;
 		}
 
 		// Bezier can have trouble next to walls
+		// 7.
 		if (ourRobot.isNearWall(pitch)
 				&& (!ball.isNearWall(pitch) || ourRobot.getPosition().dist(
 						ball.getPosition()) > 0.5)) {
 			return goToBallPFN;
 		}
 
-
+		// 8.
         if ((!ourRobot.isNearWall(snapshot.getPitch()))
                 && (!ball.isNearWall(snapshot.getPitch()))
                 && (ourRobot.getFrontSide().midpoint().dist(ball.getPosition()) < 0.2)) {
             return goToBallPrecision;
         }
+
+		// 9.
+		if (ourRobot.isNearWall(snapshot.getPitch()) && ball.isNearWall(snapshot.getPitch())) {
+			return pickBallFromWallStrategy;
+		}
 
 		return goToBallBezier;
 
