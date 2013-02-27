@@ -336,6 +336,13 @@ public class Game extends AbstractPlanner {
 		Coord ourPosition = ourRobot.getPosition();
 		Coord oppPosition = oppRobot.getPosition();
 
+		// If we are in line with goals, return false as we want to be able to
+		// move into goals to score.
+
+		if ((ourPosition.getY() < rightUpperWall.minY()) && (ourPosition.getY() > rightLowerWall.maxY())) {
+			return false;
+		}
+
 		double dist = 0.1;
 
 		boolean top = (topWall.pointToLineDistance(ourPosition) < dist) ? true
@@ -343,16 +350,16 @@ public class Game extends AbstractPlanner {
 		boolean bottom = (bottomWall.pointToLineDistance(ourPosition) < dist) ? true
 				: false;
 
-		boolean leftUpper = (leftUpperWall.pointToLineDistance(ourPosition) < dist) ? true
+		boolean leftUpper = (leftUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
 				: false;
-		boolean leftLower = (leftLowerWall.pointToLineDistance(ourPosition) < dist) ? true
+		boolean leftLower = (leftLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
 				: false;
-		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < dist) ? true
+		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
 				: false;
-		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < dist) ? true
+		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
 				: false;
 
-		boolean opp = (ourPosition.dist(oppPosition) < dist) ? true : false;
+		boolean opp = (ourPosition.dist(oppPosition) < Globals.ROBOT_LENGTH) ? true : false;
 
 		LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
 				+ leftLower + " "

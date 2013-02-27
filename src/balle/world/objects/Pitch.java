@@ -68,20 +68,20 @@ public class Pitch extends StaticFieldObject {
 
 	public Line getRightLowerWall(Goal goal) {
 		double newY = goal.getMinY();
-		return new Line(new Coord(maxX, minY), new Coord(minX, newY));
+		return new Line(new Coord(maxX, minY), new Coord(maxX, newY));
 	}
 
 	public Line getRightUpperWall(Goal goal) {
 		double newY = goal.getMaxY();
-		return new Line(new Coord(maxX, maxY), new Coord(minX, newY));
+		return new Line(new Coord(maxX, maxY), new Coord(maxX, newY));
 	}
 
 	public Line getTopWall() {
-		return new Line(new Coord(minX, minY), new Coord(maxX, minY));
+		return new Line(new Coord(minX, maxY), new Coord(maxX, maxY));
 	}
 
 	public Line getBottomWall() {
-		return new Line(new Coord(maxX, maxY), new Coord(minX, maxY));
+		return new Line(new Coord(minX, minY), new Coord(maxX, minY));
 	}
 	public Line[] getWalls() {
 		return new Line[] {
