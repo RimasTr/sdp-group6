@@ -14,9 +14,9 @@ import balle.world.Snapshot;
 
 public class Dribble extends AbstractPlanner {
 
-	private static final int INITIAL_TURN_SPEED = 150;
+	private static final int INITIAL_TURN_SPEED = 300;
 
-    private static final int INITIAL_CURRENT_SPEED = 150;
+	private static final int INITIAL_CURRENT_SPEED = 300;
 
     private static Logger LOG = Logger.getLogger(Dribble.class);
 
