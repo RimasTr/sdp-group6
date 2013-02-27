@@ -197,7 +197,7 @@ public class WorldSimulator {
             destroyRobot(blue, blueSoft);
         }
 
-        if (c != null) {
+		if (c != null && o != null) {
             blue = new Robot(new Vec2((float) c.getX(), (float) c.getY()),
                     (float) o.degrees());
             blueSoft.setBody(blue.getBody());
@@ -209,7 +209,7 @@ public class WorldSimulator {
             destroyRobot(yellow, yellowSoft);
         }
 
-        if (c != null) {
+		if (c != null && o != null) {
             yellow = new Robot(new Vec2((float) c.getX(), (float) c.getY()),
                     (float) o.degrees());
             yellowSoft.setBody(yellow.getBody());
