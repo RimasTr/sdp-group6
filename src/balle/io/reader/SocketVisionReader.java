@@ -155,9 +155,11 @@ public class SocketVisionReader extends Reader {
 					d2 = d2p;
 				}
 
-				if (Math.abs(x3p - x3) > DISTMINTRESHOLD && x3p > 0)
+				if ((Math.abs(x3p - x3) > DISTMINTRESHOLD && x3p > 0)
+						|| x3 == 0)
 					x3 = x3p;
-				if (Math.abs(y3p - y3) > DISTMINTRESHOLD && y3p > 0)
+				if ((Math.abs(y3p - y3) > DISTMINTRESHOLD && y3p > 0)
+						|| y3 == 0)
 					y3 = y3p;
 				//System.out.println("Updating (entity): " + line);
 				System.out.println("1st team (" + x1 + "," + y1 + "," + d1
