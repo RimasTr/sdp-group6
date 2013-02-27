@@ -227,7 +227,8 @@ public class Game extends AbstractPlanner {
             strategy.step(controller, snapshot);
         } catch (ConfusedException e) {
             // If a strategy does not know what to do
-			LOG.error("Game catch block.", e);
+			LOG.error("Game catch block. " + getCurrentStrategy(), e);
+			System.out.println("Error in: " + getCurrentStrategy());
             // Default to goToBallPFN
             goToBallPFN.step(controller, snapshot);
         }
@@ -366,21 +367,15 @@ public class Game extends AbstractPlanner {
 
 		double dist = 0.1;
 
-		boolean top = (topWall.pointToLineDistance(ourPosition) < dist) ? true
-				: false;
-		boolean bottom = (bottomWall.pointToLineDistance(ourPosition) < dist) ? true
-				: false;
+		boolean top = (topWall.pointToLineDistance(ourPosition) < dist);
+		boolean bottom = (bottomWall.pointToLineDistance(ourPosition) < dist);
 
-		boolean leftUpper = (leftUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
-				: false;
-		boolean leftLower = (leftLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
-				: false;
-		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
-				: false;
-		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0)) ? true
-				: false;
+		boolean leftUpper = (leftUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0));
+		boolean leftLower = (leftLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0));
+		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0));
+		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0));
 
-		boolean opp = (ourPosition.dist(oppPosition) < Globals.ROBOT_LENGTH) ? true : false;
+		boolean opp = (ourPosition.dist(oppPosition) < Globals.ROBOT_LENGTH);
 
 		LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
 				+ leftLower + " "
