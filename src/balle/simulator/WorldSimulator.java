@@ -176,7 +176,7 @@ public class WorldSimulator {
 			bd.bullet = true;
 			ball = world.createBody(bd);
 			ball.createFixture(f);
-			ball.setLinearDamping(2);
+			ball.setLinearDamping(1);
 		}
 	}
 
@@ -247,12 +247,12 @@ public class WorldSimulator {
 		bd.bullet = true;
 		ball = world.createBody(bd);
 		ball.createFixture(f);
-		ball.setLinearDamping(2);
+		ball.setLinearDamping(1);
 
 		// TODO correct friction
 		FrictionJointDef ballFriction = new FrictionJointDef();
 		ballFriction.initialize(ball, ground, ball.getWorldCenter());
-		ballFriction.maxForce = 1f;
+		ballFriction.maxForce = 0.4f;
 		ballFriction.maxTorque = 0.001f;
 		world.createJoint(ballFriction);
 	}
@@ -277,7 +277,7 @@ public class WorldSimulator {
 		bd.bullet = true;
 		ball = world.createBody(bd);
 		ball.createFixture(f);
-		ball.setLinearDamping(2);
+		ball.setLinearDamping(1);
 
 		// TODO correct friction
 		FrictionJointDef ballFriction = new FrictionJointDef();

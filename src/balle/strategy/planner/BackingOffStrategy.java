@@ -146,7 +146,7 @@ public class BackingOffStrategy extends GoToBall {
 
         if (us.possessesBall(ball) && opponent.possessesBall(ball)) {
             controller.stop();
-            LOG.warn("Stopping");
+			LOG.warn("Both in possession, stopping");
             return;
         }
 
