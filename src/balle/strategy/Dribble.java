@@ -11,6 +11,8 @@ import balle.strategy.planner.AbstractPlanner;
 import balle.world.Coord;
 import balle.world.Orientation;
 import balle.world.Snapshot;
+import balle.world.objects.Ball;
+import balle.world.objects.Robot;
 
 public class Dribble extends AbstractPlanner {
 
@@ -72,6 +74,11 @@ public class Dribble extends AbstractPlanner {
 	 * Dribble factoryMethod() { return new Dribble(); }
 	 */
 
+	@FactoryMethod(designator = "Dribble", parameterNames = {})
+	public static Dribble factoryMethod() {
+		return new Dribble();
+	}
+
     public boolean shouldStopDribblingDueToDribbleLength() {
         double deltaStart = (System.currentTimeMillis() - firstDribbled);
         return deltaStart > MAX_DRIBBLE_LENGTH;
@@ -101,21 +108,27 @@ public class Dribble extends AbstractPlanner {
 
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
+		Robot ourBot = snapshot.getBalle();
+		Coord robotPos = ourBot.getPosition();
+		Ball ball = snapshot.getBall();
 
-        if (snapshot.getBalle().getPosition() == null)
+		if (robotPos == null) {
             return;
+		}
 
         // Make sure to reset the speeds if we haven't been dribbling for a
         // while
+
         long currentTime = System.currentTimeMillis();
-        boolean facingOwnGoalSide = snapshot.getBalle().isFacingGoalHalf(snapshot.getOwnGoal());
+        boolean facingOwnGoalSide = ourBot.isFacingGoalHalf(snapshot.getOwnGoal());
       
         if (!isDribbling()) {
             // Kick the ball if we're triggerhappy and should stop dribbling
             if (isTriggerHappy() && !isInactiveForAWhile()
                     && shouldStopDribblingDueToDribbleLength()
-                    && !facingOwnGoalSide)
+					&& !facingOwnGoalSide) {
 				controller.kick();
+			}
 			LOG.info("Dribble: KICK 1");
 			setKicked(true);
             currentSpeed = INITIAL_CURRENT_SPEED;
@@ -126,17 +139,15 @@ public class Dribble extends AbstractPlanner {
         lastDribbled = currentTime;
 
 		// TODO: change getGoalLine to getAccurateGoalLine?
-		boolean facingGoal = snapshot.getBalle().getFacingLine()
+		boolean facingGoal = ourBot.getFacingLine()
 				.intersects(snapshot.getOpponentsGoal().getGoalLine());
 
-        if (snapshot.getBall().getPosition() != null)
+		if (robotPos != null) {
             facingGoal = facingGoal
-                    || snapshot
-                            .getBalle()
-                            .getBallKickLine(snapshot.getBall())
-                            .intersects(
-                                    snapshot.getOpponentsGoal().getGoalLine());
-
+					|| ourBot.getBallKickLine(ball)
+							.intersects(
+									snapshot.getOpponentsGoal().getGoalLine());
+		}
 
 		// if (currentSpeed <= 560) {
 		// currentSpeed += 20;
@@ -146,50 +157,52 @@ public class Dribble extends AbstractPlanner {
 		// turnSpeed += 5;
 		// }
 
-        double distanceToBall = snapshot.getBalle().getFrontSide().midpoint()
-                .dist(snapshot.getBall().getPosition());
+        double distanceToBall = ourBot.getFrontSide().midpoint()
+				.dist(ball.getPosition());
 
 
-        if (snapshot.getBall().getPosition().isEstimated())
+		if (robotPos.isEstimated()) {
             distanceToBall = 0;
+		}
 
         boolean aboutToLoseBall = distanceToBall >= ABOUT_TO_LOSE_BALL_THRESHOLD;
         Color c = Color.BLACK;
-        if (aboutToLoseBall)
-            c = Color.PINK;
 
-        Coord ourPos = snapshot.getBalle().getPosition();
-        addDrawable(new Label(String.format("%.5f", distanceToBall), new Coord(
-                ourPos.getX(), ourPos.getY()), c));
+		if (aboutToLoseBall) {
+            c = Color.PINK;
+		}
+
+		addDrawable(new Label(String.format("%.5f", distanceToBall), new Coord(
+				robotPos.getX(), robotPos.getY()), c));
                 
         int turnSpeedToUse = turnSpeed;
 
 		boolean isLeftGoal = snapshot.getOpponentsGoal().isLeftGoal();
 
-		double angle = snapshot.getBalle().getOrientation().radians();
+		double angle = ourBot.getOrientation().radians();
 
 		double threshold = Math.toRadians(5);
 		
         boolean nearWall = snapshot.getBall().isNearWall(snapshot.getPitch());
-        boolean wereNearWall = snapshot.getBalle().isNearWall(
-                snapshot.getPitch(), SPINNING_DISTANCE);
+		boolean wereNearWall = ourBot.isNearWall(
+				snapshot.getPitch(), SPINNING_DISTANCE);
 
         boolean closeToGoal = snapshot.getOpponentsGoal().getGoalLine()
-                .dist(snapshot.getBalle().getPosition()) < SPINNING_DISTANCE;
+				.dist(robotPos) < SPINNING_DISTANCE;
 
         // Actually it might be helpful to turn when we're in this situation
         // close to our own goal
-        closeToGoal = closeToGoal
-                || snapshot.getOwnGoal().getGoalLine()
-                        .dist(snapshot.getBalle().getPosition()) < SPINNING_DISTANCE;
+		closeToGoal = closeToGoal
+				|| snapshot.getOwnGoal().getGoalLine().dist(robotPos) < SPINNING_DISTANCE;
+
         // Turn twice as fast near walls
         if (nearWall)
             turnSpeedToUse *= 2;
         
         if ((!closeToGoal) && (nearWall) && wereNearWall)
         {
-            Coord goalVector = snapshot.getOwnGoal().getGoalLine()
-                    .midpoint().sub(ourPos);
+			Coord goalVector = snapshot.getOwnGoal().getGoalLine().midpoint()
+					.sub(robotPos);
             Orientation angleTowardsGoal = goalVector.orientation();
 
             // Always turn opposite from own goal
@@ -213,15 +226,15 @@ public class Dribble extends AbstractPlanner {
                     boolean facingLeftWall = (Math.abs(angle) <= FACING_WALL_THRESHOLD);
                     if (facingLeftWall) {
                         shouldTurnRight = snapshot.getOpponentsGoal()
-                                .getGoalLine()
-                                .midpoint().getY() > ourPos.getY();
-                         
+								.getGoalLine().midpoint().getY() > robotPos
+								.getY();
+
                         // Turn away from own goal
                         if (snapshot.getOwnGoal().isLeftGoal())
                             shouldTurnRight = !shouldTurnRight;
                     } else {
                         shouldTurnRight = snapshot.getOpponentsGoal()
-                                .getGoalLine().midpoint().getY() < ourPos
+								.getGoalLine().midpoint().getY() < robotPos
                                 .getY();
 
                         // Turn away from own goal
@@ -229,15 +242,13 @@ public class Dribble extends AbstractPlanner {
                             shouldTurnRight = !shouldTurnRight;
                     }
                 }
-                if (shouldTurnRight)
+				if (shouldTurnRight) {
                     spinRight(snapshot, controller, Globals.MAXIMUM_MOTOR_SPEED);
-                else
+				} else {
                     spinLeft(snapshot, controller, Globals.MAXIMUM_MOTOR_SPEED);
-
+				}
                 return;
-            }
-  
-                
+			}
         }
 
 		if (isLeftGoal) {
@@ -276,7 +287,5 @@ public class Dribble extends AbstractPlanner {
 			LOG.info("Dribble: KICK 2");
 			setKicked(true);
         }
-
 	}
-
 }

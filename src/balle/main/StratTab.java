@@ -48,6 +48,7 @@ public class StratTab extends JPanel implements ActionListener {
 	private JButton randomButton;
 	private JButton resetButton;
 	private JButton saveButton;
+	private JButton penaltyButton;
 	private boolean isBlue;
 	private ArrayList<String> stratTabs;
 	private String[] strings = new String[0];
@@ -182,6 +183,14 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 5;
 		controlPanel.add(resetButton, c);
+
+		penaltyButton = new JButton("Penalty");
+		penaltyButton.addActionListener(this);
+		penaltyButton.setEnabled(simulator != null);
+		penaltyButton.setActionCommand("penalty");
+		c.gridx = 1;
+		c.gridy = 5;
+		controlPanel.add(penaltyButton, c);
 
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
@@ -327,7 +336,22 @@ public class StratTab extends JPanel implements ActionListener {
 			switchRobot.setEnabled(true);
 			resetRobots(simulator);
 			resetBall(simulator);
-		} else if (event.getActionCommand().equals("noise")) {
+		} else if ((event.getActionCommand().equals("penalty"))) {
+			try {
+				strategyRunner.stopStrategy();
+			} catch (NullPointerException e) {
+				System.err
+						.println("No currently running Strategy. World reset "
+								+ "\": " + e);
+			}
+			startButton.setText("Start");
+			strategyRunner.stopStrategy();
+			switchGoals.setEnabled(true);
+			switchRobot.setEnabled(true);
+			setUpPenalty(simulator, worldA.isBlue(), worldA.getOpponentsGoal()
+					.isLeftGoal());
+		}
+		else if (event.getActionCommand().equals("noise")) {
 			if (noiseButton.getText().equals("Noise: Off")) {
 				noiseButton.setText("Noise: On");
 				simulator.setIsNoisy(true);
@@ -386,6 +410,10 @@ public class StratTab extends JPanel implements ActionListener {
 
 	public void resetBall(Simulator s) {
 		s.resetBallPosition();
+	}
+
+	public void setUpPenalty(Simulator s, boolean blue, boolean attackLeft) {
+		s.setUpPenalty(blue, attackLeft);
 	}
 
 	public void resetRobots(Simulator s) {

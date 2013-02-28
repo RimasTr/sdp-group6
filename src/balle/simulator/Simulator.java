@@ -150,6 +150,11 @@ public class Simulator extends TestbedTest implements AbstractVisionReader {
 		worldWrapper.randomiseRobotPositions();
 	}
 
+	public void setUpPenalty(boolean blue, boolean attackLeft) {
+			worldWrapper.setBallPenaltyPosition(attackLeft);
+			worldWrapper.penaltyRobotPositions(blue, attackLeft);
+	}
+
 	public void resetBallPosition() {
 		worldWrapper.resetBallPosition(0, 0);
 	}
