@@ -13,7 +13,7 @@ public class M3LocateandShoot extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(M3LocateandShoot.class);
 
-	Dribble dribble_executor;
+	Milestone3DribbleStrategy dribble_executor;
 	// DribbleStraight at_ball;
 	GoToBallSafeProportional goto_executor;
 	Coord startingCoordinate = null;
@@ -22,11 +22,8 @@ public class M3LocateandShoot extends AbstractPlanner {
 	Boolean finished = false;
 	Boolean arrived = true;
 
-	// private static final double DISTANCE_TO_TRAVEL = 0.3; // in metres
-
 	public M3LocateandShoot() {
-		dribble_executor = new Dribble();
-		// at_ball = new DribbleStraight();
+		dribble_executor = new Milestone3DribbleStrategy();
 		goto_executor = new GoToBallSafeProportional();
 	}
 
@@ -35,7 +32,6 @@ public class M3LocateandShoot extends AbstractPlanner {
 			throws ConfusedException {
 
 		Robot ourRobot = snapshot.getBalle();
-		// Goal oppGoal = snapshot.getOpponentsGoal();
 
 		if (finished) {
 			return;
