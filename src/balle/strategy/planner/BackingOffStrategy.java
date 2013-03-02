@@ -13,6 +13,7 @@ import balle.world.Line;
 import balle.world.Snapshot;
 import balle.world.objects.Ball;
 import balle.world.objects.FieldObject;
+import balle.world.objects.Goal;
 import balle.world.objects.Point;
 import balle.world.objects.Robot;
 
@@ -105,8 +106,8 @@ public class BackingOffStrategy extends GoToBall {
                     timeWhenMaybeStuck = timeNow;
                     return false;
                 }
-
-                if (timeNow - timeWhenMaybeStuck > TIME_THRESH) {
+				// A possible fix by toms, not tested yet.
+				if (timeNow - timeWhenMaybeStuck > TIME_THRESH * 0.5) {
                     startBackingOff(snapshot);
 
 
@@ -145,14 +146,34 @@ public class BackingOffStrategy extends GoToBall {
         Ball ball = snapshot.getBall();
 
         if (us.possessesBall(ball) && opponent.possessesBall(ball)) {
-            controller.stop();
-			LOG.warn("Both in possession, stopping");
-            return;
+			// we might wish to back off if we are closer to opponents goal just  to continue to play.
+			// not tested yet
+        	Goal ownGoal = snapshot.getOwnGoal();
+    		Goal opponentsGoal = snapshot.getOpponentsGoal();
+			if (ownGoal.getPosition().dist(us.getPosition()) < opponentsGoal
+					.getPosition().dist(us.getPosition())) {
+	    			 	controller.stop();
+	    				LOG.warn("Both in possession, stopping");
+	    	            return;
+			} else {
+				LOG.warn("Backing off!");
+				long timeNow = new Date().getTime();
+				// a possible fix by toms, not tested yet.
+				if (timeNow - timeStartedBackingOff > BACK_OFF_TIME * 0.5) {
+					timeStartedBackingOff = -1;
+					timeWhenMaybeStuck = -1;
+
+					LOG.info("Finished backing off");
+				}
+
+				super.onStep(controller, snapshot);
+			}
+
         }
 
         LOG.warn("Backing off!");
 		long timeNow = new Date().getTime();
-
+		// a possible fix by toms, not tested yet.
 		if (timeNow - timeStartedBackingOff > BACK_OFF_TIME) {
 			timeStartedBackingOff = -1;
 			timeWhenMaybeStuck = -1;

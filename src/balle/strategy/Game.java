@@ -124,15 +124,12 @@ public class Game extends AbstractPlanner {
 		// can this be trigered at all?
         // Check if we have ball
         Ball ball = snapshot.getBall();
-        if (ball.getPosition() == null)
-            return initial; // Return whatever is set to initial if we do not
-                            // see it
-        
+
         Coord centerOfPitch = new Coord(Globals.PITCH_WIDTH / 2,
                 Globals.PITCH_HEIGHT / 2);
         Robot ourRobot = snapshot.getBalle();
         // If we have the ball, turn off initial strategy
-        if ((ourRobot.getPosition() != null) && (ourRobot.possessesBall(ball)))
+		if (ourRobot.possessesBall(ball))
         {
             LOG.info("We possess the ball. Turning off initial strategy");
             setInitial(false);
@@ -160,6 +157,7 @@ public class Game extends AbstractPlanner {
     @Override
 	// shouldn't we stop all the strategies?
     public void stop(Controller controller) {
+		// fix made by Toms not tested
         defensiveStrategy.stop(controller);
         pickBallFromWallStrategy.stop(controller);
         backingOffStrategy.stop(controller);
@@ -180,10 +178,18 @@ public class Game extends AbstractPlanner {
         Robot ourRobot = snapshot.getBalle();
 		Robot oppRobot = snapshot.getOpponent();
         Ball ball = snapshot.getBall();
-		// this should never be triggered
-		if ((ourRobot.getPosition() == null) || (ball.getPosition() == null)
-				|| (oppRobot.getPosition() == null))
+
+		// fix made by Toms not tested
+		if (ourRobot.getPosition().dist(ball.getPosition()) < Math.min(
+				Globals.ROBOT_LENGTH / 2, Globals.ROBOT_HEIGHT / 2)) {
+			LOG.info("Ball uvisible/under our robot.");
 			return;
+		}
+		if (oppRobot.getPosition().dist(ball.getPosition()) < Math.min(
+				Globals.ROBOT_LENGTH / 2, Globals.ROBOT_HEIGHT / 2)) {
+			LOG.info("Ball uvisible/under opp robot.");
+			return;
+		}
 
 		if (scored(snapshot, ball)) {
 			LOG.info("End of match.");
@@ -251,6 +257,7 @@ public class Game extends AbstractPlanner {
 		Ball ball = snapshot.getBall();
 		Goal ownGoal = snapshot.getOwnGoal();
 		Goal opponentsGoal = snapshot.getOpponentsGoal();
+
 		Pitch pitch = snapshot.getPitch();
 
 		// Adding drawables
@@ -369,7 +376,7 @@ public class Game extends AbstractPlanner {
 
 		// If we are in line with goals, return false as we want to be able to
 		// move into goals to score.
-
+		// Might cause problems with running in the other robot
 		if ((ourPosition.getY() < rightUpperWall.minY()) && (ourPosition.getY() > rightLowerWall.maxY())) {
 			return false;
 		}
@@ -384,7 +391,8 @@ public class Game extends AbstractPlanner {
 		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0));
 		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0));
 
-		boolean opp = (ourPosition.dist(oppPosition) < Globals.ROBOT_LENGTH);
+		// not tested fix by toms
+		boolean opp = (ourPosition.dist(oppPosition) < Globals.COLLISION_DISTANCE);
 
 		LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
 				+ leftLower + " "

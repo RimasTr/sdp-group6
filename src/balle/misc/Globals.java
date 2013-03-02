@@ -24,9 +24,12 @@ public class Globals {
 
     public static final float BALL_RADIUS = 0.02135f;
 	public static final float ROBOT_WIDTH = 0.18f;
-	public static final float ROBOT_LENGTH = 0.19f;
+	public static final float ROBOT_LENGTH = 0.20f;
 	public static final float ROBOT_TRACK_WIDTH = 0.135f; // Meters
     public static final float ROBOT_WHEEL_DIAMETER = 0.0816f; // Meters
+
+	public static final float COLLISION_DISTANCE = (float) Math.sqrt(2 * Math
+			.pow((ROBOT_WIDTH / 2 + ROBOT_LENGTH / 2), 2));
 	
 	public static final Vec2 ROBOT_LEFT_WHEEL_POS = new Vec2(0,
 			-ROBOT_TRACK_WIDTH / 2);
