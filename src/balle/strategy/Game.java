@@ -121,7 +121,7 @@ public class Game extends AbstractPlanner {
     public boolean isInitial(Snapshot snapshot) {
         if (initial == false)
             return false;
-
+		// can this be trigered at all?
         // Check if we have ball
         Ball ball = snapshot.getBall();
         if (ball.getPosition() == null)
@@ -158,11 +158,20 @@ public class Game extends AbstractPlanner {
     }
 
     @Override
+	// shouldn't we stop all the strategies?
     public void stop(Controller controller) {
         defensiveStrategy.stop(controller);
         pickBallFromWallStrategy.stop(controller);
         backingOffStrategy.stop(controller);
-    }
+		defensiveStrategy.stop(controller);
+		opponentKickDefendStrategy.stop(controller);
+		turningExecutor.stop(controller);
+		kickingStrategy.stop(controller);
+		initialStrategy.stop(controller);
+		goToBallPFN.stop(controller);
+		goToBallBezier.stop(controller);
+		goToBallPrecision.stop(controller);
+	}
 
     @Override
     public void onStep(Controller controller, Snapshot snapshot)
@@ -171,7 +180,7 @@ public class Game extends AbstractPlanner {
         Robot ourRobot = snapshot.getBalle();
 		Robot oppRobot = snapshot.getOpponent();
         Ball ball = snapshot.getBall();
-
+		// this should never be triggered
 		if ((ourRobot.getPosition() == null) || (ball.getPosition() == null)
 				|| (oppRobot.getPosition() == null))
 			return;
@@ -191,7 +200,7 @@ public class Game extends AbstractPlanner {
 			backingOffStrategy.step(controller, snapshot);
 			return;
 		}
-
+		// what is this?
 		if (backingOffStrategy.shouldStealStep(snapshot)) {
 			backingOffStrategy.step(controller, snapshot);
 			return;

@@ -75,16 +75,16 @@ public class BackingOffStrategy extends GoToBall {
 		if (timeStartedBackingOff > 0) {
 			return true;
 		}
-
+		// if we are close to the opponent and getting slow
 		if (ourFront.dist(opponent.getPosition()) < DISTANCE_THRESH
 				&& us.getVelocity().abs() < VELOCITY_THRESH) {
-
+			// if this is the first such instance
 			long timeNow = new Date().getTime();
 			if (timeWhenMaybeStuck == -1) {
 				timeWhenMaybeStuck = timeNow;
 				return false;
 			}
-
+			// if we feel like being stuck for a while now
 			if (timeNow - timeWhenMaybeStuck > TIME_THRESH) {
                 startBackingOff(snapshot);
 				setTarget(snapshot);
