@@ -11,14 +11,19 @@ import balle.strategy.planner.AbstractPlanner;
 import balle.world.Coord;
 import balle.world.Orientation;
 import balle.world.Snapshot;
+import balle.world.objects.Ball;
+import balle.world.objects.Robot;
 
-public class Milestone2Dribble extends AbstractPlanner {
+public class Milestone3DribbleStrategy extends AbstractPlanner {
 
-	private static final int INITIAL_TURN_SPEED = 100;
+	private static final int INITIAL_TURN_SPEED = 300;
 
-	private static final int INITIAL_CURRENT_SPEED = 150;
+	private static final int INITIAL_CURRENT_SPEED = 300;
 
-	private static Logger LOG = Logger.getLogger(Milestone2Dribble.class);
+	private static final double MIN_DIST_TO_GOAL = 1.0;
+
+	private static Logger LOG = Logger
+			.getLogger(Milestone3DribbleStrategy.class);
 
 	private int currentSpeed = INITIAL_CURRENT_SPEED;
 	private int turnSpeed = INITIAL_TURN_SPEED;
@@ -37,28 +42,44 @@ public class Milestone2Dribble extends AbstractPlanner {
 																				// 0.02;
 
 	private boolean triggerHappy;
+	private boolean kicked = false;
 
 	public boolean isTriggerHappy() {
 		return triggerHappy;
+	}
+
+	public boolean hasKicked() {
+		return kicked;
 	}
 
 	public void setTriggerHappy(boolean triggerHappy) {
 		this.triggerHappy = triggerHappy;
 	}
 
-	public Milestone2Dribble() {
-		this(false);
+	public void setKicked(boolean kicked) {
+		this.kicked = kicked;
 	}
 
-	public Milestone2Dribble(boolean triggerHappy) {
+	public Milestone3DribbleStrategy() {
+		this(false, false);
+	}
+
+	public Milestone3DribbleStrategy(boolean triggerHappy, boolean kicked) {
 		super();
 		setTriggerHappy(triggerHappy);
-
+		setKicked(kicked);
 	}
 
+	/*
+	 * Commenting out strategy in simulator
+	 * 
+	 * @FactoryMethod(designator = "Dribble", parameterNames = {}) public static
+	 * Dribble factoryMethod() { return new Dribble(); }
+	 */
+
 	@FactoryMethod(designator = "Dribble", parameterNames = {})
-	public static Milestone2Dribble factoryMethod() {
-		return new Milestone2Dribble();
+	public static Milestone3DribbleStrategy factoryMethod() {
+		return new Milestone3DribbleStrategy();
 	}
 
 	public boolean shouldStopDribblingDueToDribbleLength() {
@@ -68,7 +89,6 @@ public class Milestone2Dribble extends AbstractPlanner {
 
 	public boolean isInactiveForAWhile() {
 		double deltaPause = (System.currentTimeMillis() - lastDribbled);
-
 		return deltaPause > MAX_DRIBBLE_PAUSE;
 	}
 
@@ -82,7 +102,7 @@ public class Milestone2Dribble extends AbstractPlanner {
 		addDrawable(new Label("<---", snapshot.getBalle().getPosition(),
 				Color.CYAN));
 	}
-	
+
 	public void spinRight(Snapshot snapshot, Controller controller, int speed) {
 		controller.setWheelSpeeds(speed, -speed);
 		addDrawable(new Label("--->", snapshot.getBalle().getPosition(),
@@ -92,79 +112,99 @@ public class Milestone2Dribble extends AbstractPlanner {
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
+		Robot ourBot = snapshot.getBalle();
+		Coord robotPos = ourBot.getPosition();
+		Ball ball = snapshot.getBall();
 
-		if (snapshot.getBalle().getPosition() == null)
+		if (robotPos == null) {
 			return;
+		}
 
 		// Make sure to reset the speeds if we haven't been dribbling for a
 		// while
+
 		long currentTime = System.currentTimeMillis();
-		boolean facingOwnGoalSide = snapshot.getBalle().isFacingGoalHalf(
-				snapshot.getOwnGoal());
+		boolean facingOwnGoalSide = ourBot.isFacingGoalHalf(snapshot
+				.getOwnGoal());
+
+		// if (!isDribbling()) {
+		// // Kick the ball if we're triggerhappy and should stop dribbling
+		// if (isTriggerHappy() && !isInactiveForAWhile()
+		// && shouldStopDribblingDueToDribbleLength()
+		// && !facingOwnGoalSide) {
+		// controller.kick();
+		// }
+		// LOG.info("Dribble: KICK 1");
+		// setKicked(true);
+		// currentSpeed = INITIAL_CURRENT_SPEED;
+		// turnSpeed = INITIAL_TURN_SPEED;
+		// firstDribbled = currentTime;
+		// }
 
 		lastDribbled = currentTime;
 
-		boolean facingGoal = snapshot.getBalle().getFacingLine()
-				.intersects(snapshot.getOpponentsGoal().getGoalLine());
+		// TODO: change getGoalLine to getAccurateGoalLine?
+		boolean facingGoal = ourBot.getFacingLine().intersects(
+				snapshot.getOpponentsGoal().getGoalLine());
 
-		if (snapshot.getBall().getPosition() != null)
+		if (robotPos != null) {
 			facingGoal = facingGoal
-					|| snapshot
-							.getBalle()
-							.getBallKickLine(snapshot.getBall())
-							.intersects(
-									snapshot.getOpponentsGoal().getGoalLine());
-
-		if (currentSpeed <= 560) {
-			currentSpeed += 20;
+					|| ourBot.getBallKickLine(ball).intersects(
+							snapshot.getOpponentsGoal().getGoalLine());
 		}
 
-		if (turnSpeed <= 150) {
-			turnSpeed += 5;
-		}
+		// if (currentSpeed <= 560) {
+		// currentSpeed += 20;
+		// }
+		//
+		// if (turnSpeed <= 150) {
+		// turnSpeed += 5;
+		// }
 
-		double distanceToBall = snapshot.getBalle().getFrontSide().midpoint()
-				.dist(snapshot.getBall().getPosition());
+		double distanceToBall = ourBot.getFrontSide().midpoint()
+				.dist(ball.getPosition());
 
-		if (snapshot.getBall().getPosition().isEstimated())
+		if (robotPos.isEstimated()) {
 			distanceToBall = 0;
+		}
 
 		boolean aboutToLoseBall = distanceToBall >= ABOUT_TO_LOSE_BALL_THRESHOLD;
 		Color c = Color.BLACK;
-		if (aboutToLoseBall)
-			c = Color.PINK;
 
-		Coord ourPos = snapshot.getBalle().getPosition();
+		if (aboutToLoseBall) {
+			c = Color.PINK;
+		}
+
 		addDrawable(new Label(String.format("%.5f", distanceToBall), new Coord(
-				ourPos.getX(), ourPos.getY()), c));
+				robotPos.getX(), robotPos.getY()), c));
 
 		int turnSpeedToUse = turnSpeed;
 
 		boolean isLeftGoal = snapshot.getOpponentsGoal().isLeftGoal();
 
-		double angle = snapshot.getBalle().getOrientation().radians();
+		double angle = ourBot.getOrientation().radians();
 
 		double threshold = Math.toRadians(5);
 
 		boolean nearWall = snapshot.getBall().isNearWall(snapshot.getPitch());
-		boolean wereNearWall = snapshot.getBalle().isNearWall(
-				snapshot.getPitch(), SPINNING_DISTANCE);
+		boolean wereNearWall = ourBot.isNearWall(snapshot.getPitch(),
+				SPINNING_DISTANCE);
 
 		boolean closeToGoal = snapshot.getOpponentsGoal().getGoalLine()
-				.dist(snapshot.getBalle().getPosition()) < SPINNING_DISTANCE;
+				.dist(robotPos) < SPINNING_DISTANCE;
 
 		// Actually it might be helpful to turn when we're in this situation
 		// close to our own goal
 		closeToGoal = closeToGoal
-				|| snapshot.getOwnGoal().getGoalLine()
-						.dist(snapshot.getBalle().getPosition()) < SPINNING_DISTANCE;
+				|| snapshot.getOwnGoal().getGoalLine().dist(robotPos) < SPINNING_DISTANCE;
+
 		// Turn twice as fast near walls
 		if (nearWall)
 			turnSpeedToUse *= 2;
 
 		if ((!closeToGoal) && (nearWall) && wereNearWall) {
 			Coord goalVector = snapshot.getOwnGoal().getGoalLine().midpoint()
-					.sub(ourPos);
+					.sub(robotPos);
 			Orientation angleTowardsGoal = goalVector.orientation();
 
 			// Always turn opposite from own goal
@@ -187,7 +227,7 @@ public class Milestone2Dribble extends AbstractPlanner {
 					boolean facingLeftWall = (Math.abs(angle) <= FACING_WALL_THRESHOLD);
 					if (facingLeftWall) {
 						shouldTurnRight = snapshot.getOpponentsGoal()
-								.getGoalLine().midpoint().getY() > ourPos
+								.getGoalLine().midpoint().getY() > robotPos
 								.getY();
 
 						// Turn away from own goal
@@ -195,7 +235,7 @@ public class Milestone2Dribble extends AbstractPlanner {
 							shouldTurnRight = !shouldTurnRight;
 					} else {
 						shouldTurnRight = snapshot.getOpponentsGoal()
-								.getGoalLine().midpoint().getY() < ourPos
+								.getGoalLine().midpoint().getY() < robotPos
 								.getY();
 
 						// Turn away from own goal
@@ -203,14 +243,13 @@ public class Milestone2Dribble extends AbstractPlanner {
 							shouldTurnRight = !shouldTurnRight;
 					}
 				}
-				if (shouldTurnRight)
+				if (shouldTurnRight) {
 					spinRight(snapshot, controller, Globals.MAXIMUM_MOTOR_SPEED);
-				else
+				} else {
 					spinLeft(snapshot, controller, Globals.MAXIMUM_MOTOR_SPEED);
-
+				}
 				return;
 			}
-
 		}
 
 		if (isLeftGoal) {
@@ -243,6 +282,13 @@ public class Milestone2Dribble extends AbstractPlanner {
 			}
 		}
 
+		if ((facingGoal && ((snapshot.getBalle().getPosition().dist(snapshot
+				.getOpponentsGoal().getPosition())) <= MIN_DIST_TO_GOAL))
+				|| (isTriggerHappy() && nearWall && !facingOwnGoalSide)
+				|| (isTriggerHappy() && aboutToLoseBall && !facingOwnGoalSide)) {
+			controller.kick();
+			LOG.info("Dribble: KICK 2");
+			setKicked(true);
+		}
 	}
-
 }

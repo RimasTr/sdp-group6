@@ -14,7 +14,8 @@ import balle.world.Snapshot;
 import balle.world.objects.Ball;
 import balle.world.objects.Robot;
 
-public class Dribble extends AbstractPlanner {
+
+public class DribbleRefactored extends AbstractPlanner {
 
 	private static final int INITIAL_TURN_SPEED = 300;
 
@@ -32,12 +33,7 @@ public class Dribble extends AbstractPlanner {
             / 2 + Globals.BALL_RADIUS - 0.02;
 
     private static final double FACING_WALL_THRESHOLD = Math.toRadians(25);
-    private static final double SPINNING_DISTANCE = Globals.DISTANCE_TO_WALL;// Globals.ROBOT_LENGTH
-                                                                             // /
-                                                                             // 2
-                                                                             // +
-                                                                             // 0.02;
-
+	private static final double SPINNING_DISTANCE = Globals.DISTANCE_TO_WALL;
     private boolean triggerHappy;
 	private boolean kicked = false;
 
@@ -57,38 +53,40 @@ public class Dribble extends AbstractPlanner {
 		this.kicked = kicked;
 	}
 
-    public Dribble() {
+	public DribbleRefactored() {
 		this(false, false);
 	}
 	
-	public Dribble(boolean triggerHappy, boolean kicked) {
+	public DribbleRefactored(boolean triggerHappy, boolean kicked) {
         super();
         setTriggerHappy(triggerHappy);
 		setKicked(kicked);
     }
 
-	/*
-	 * Commenting out strategy in simulator
-	 * 
-	 * @FactoryMethod(designator = "Dribble", parameterNames = {}) public static
-	 * Dribble factoryMethod() { return new Dribble(); }
-	 */
-
-	@FactoryMethod(designator = "Dribble", parameterNames = {})
-	public static Dribble factoryMethod() {
-		return new Dribble();
+	@FactoryMethod(designator = "DribbleRefactored", parameterNames = {})
+	public static DribbleRefactored factoryMethod() {
+		return new DribbleRefactored();
 	}
 
+	/**
+	 * Returns true if we have dribbled for too long
+	 */
     public boolean shouldStopDribblingDueToDribbleLength() {
         double deltaStart = (System.currentTimeMillis() - firstDribbled);
         return deltaStart > MAX_DRIBBLE_LENGTH;
     }
 
+	/**
+	 * Returns true if we have not dribbled for a while
+	 */
     public boolean isInactiveForAWhile() {
         double deltaPause = (System.currentTimeMillis() - lastDribbled);
         return deltaPause > MAX_DRIBBLE_PAUSE;
     }
 
+	/**
+	 * Returns true if we are currently dribbling
+	 */
     public boolean isDribbling() {
         return !isInactiveForAWhile()
                 && (!shouldStopDribblingDueToDribbleLength());
@@ -106,6 +104,58 @@ public class Dribble extends AbstractPlanner {
                 Color.CYAN));
     }
 
+	public boolean needToStraightenUp(Snapshot snapshot) {
+		Robot ourBot = snapshot.getBalle();
+		Ball ball = snapshot.getBall();
+		Coord ballPos = ball.getPosition();
+		double ballY = ballPos.getY();
+
+		Coord midpoint = ourBot.getFrontSide().midpoint();
+		double midpointY = midpoint.getY();
+		Coord robotedgeA = ourBot.getFrontSide().getA();
+		double edgeAY = robotedgeA.getY();
+		Coord robotedgeB = ourBot.getFrontSide().getB();
+		double edgeBY = robotedgeB.getY();
+		double topEdge;
+		double bottomEdge;
+
+		if (edgeAY > edgeBY) {
+			topEdge = edgeAY;
+			bottomEdge = edgeBY;
+		} else {
+			bottomEdge = edgeAY;
+			topEdge = edgeBY;
+		}
+
+		if (topEdge - ballY < ((topEdge - midpointY) / 2)) {
+			return true;
+		} else if (ballY - bottomEdge < ((midpointY - ballY) / 2)) {
+			return true;	
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns true if we are facing the opponents goal
+	 */
+	public boolean facingOppGoal(Snapshot snapshot) {
+		Robot ourBot = snapshot.getBalle();
+		Coord robotPos = ourBot.getPosition();
+		Ball ball = snapshot.getBall();
+
+		boolean facingGoal = ourBot.getFacingLine().intersects(
+				snapshot.getOpponentsGoal().getGoalLine());
+
+		if (robotPos != null) {
+			facingGoal = facingGoal
+					|| ourBot.getBallKickLine(ball).intersects(
+							snapshot.getOpponentsGoal().getGoalLine());
+		}
+		return facingGoal;
+
+	}
+
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
 		Robot ourBot = snapshot.getBalle();
@@ -116,8 +166,6 @@ public class Dribble extends AbstractPlanner {
             return;
 		}
 
-        // Make sure to reset the speeds if we haven't been dribbling for a
-        // while
 
         long currentTime = System.currentTimeMillis();
         boolean facingOwnGoalSide = ourBot.isFacingGoalHalf(snapshot.getOwnGoal());
@@ -128,39 +176,17 @@ public class Dribble extends AbstractPlanner {
                     && shouldStopDribblingDueToDribbleLength()
 					&& !facingOwnGoalSide) {
 				controller.kick();
+				LOG.info("Dribble: KICK 1");
+				setKicked(true);
 			}
-			LOG.info("Dribble: KICK 1");
-			setKicked(true);
-            currentSpeed = INITIAL_CURRENT_SPEED;
-            turnSpeed = INITIAL_TURN_SPEED;
-            firstDribbled = currentTime;
         }
+		firstDribbled = currentTime;
+		lastDribbled = currentTime;
 
-        lastDribbled = currentTime;
+		Coord midpoint = ourBot.getFrontSide().midpoint();
+		double distanceToBall = midpoint.dist(ball.getPosition());
 
-		// TODO: change getGoalLine to getAccurateGoalLine?
-		boolean facingGoal = ourBot.getFacingLine()
-				.intersects(snapshot.getOpponentsGoal().getGoalLine());
-
-		if (robotPos != null) {
-            facingGoal = facingGoal
-					|| ourBot.getBallKickLine(ball)
-							.intersects(
-									snapshot.getOpponentsGoal().getGoalLine());
-		}
-
-		// if (currentSpeed <= 560) {
-		// currentSpeed += 20;
-		// }
-		//
-		// if (turnSpeed <= 150) {
-		// turnSpeed += 5;
-		// }
-
-        double distanceToBall = ourBot.getFrontSide().midpoint()
-				.dist(ball.getPosition());
-
-
+		// if robot position is Estimated assume we are at the ball
 		if (robotPos.isEstimated()) {
             distanceToBall = 0;
 		}
@@ -176,17 +202,12 @@ public class Dribble extends AbstractPlanner {
 				robotPos.getX(), robotPos.getY()), c));
                 
         int turnSpeedToUse = turnSpeed;
-
 		boolean isLeftGoal = snapshot.getOpponentsGoal().isLeftGoal();
-
 		double angle = ourBot.getOrientation().radians();
-
 		double threshold = Math.toRadians(5);
-		
         boolean nearWall = snapshot.getBall().isNearWall(snapshot.getPitch());
 		boolean wereNearWall = ourBot.isNearWall(
 				snapshot.getPitch(), SPINNING_DISTANCE);
-
         boolean closeToGoal = snapshot.getOpponentsGoal().getGoalLine()
 				.dist(robotPos) < SPINNING_DISTANCE;
 
@@ -196,11 +217,11 @@ public class Dribble extends AbstractPlanner {
 				|| snapshot.getOwnGoal().getGoalLine().dist(robotPos) < SPINNING_DISTANCE;
 
         // Turn twice as fast near walls
-        if (nearWall)
+		if (nearWall) {
             turnSpeedToUse *= 2;
+		}
         
-        if ((!closeToGoal) && (nearWall) && wereNearWall)
-        {
+		if ((!closeToGoal) && (nearWall) && wereNearWall) {
 			Coord goalVector = snapshot.getOwnGoal().getGoalLine().midpoint()
 					.sub(robotPos);
             Orientation angleTowardsGoal = goalVector.orientation();
@@ -251,16 +272,33 @@ public class Dribble extends AbstractPlanner {
 			}
         }
 
+		boolean facingGoal = facingOppGoal(snapshot);
 		if (isLeftGoal) {
 			if (facingGoal) {
                 controller.setWheelSpeeds(Globals.MAXIMUM_MOTOR_SPEED,
                         Globals.MAXIMUM_MOTOR_SPEED);
-            } else if ((!facingGoal) && (angle < Math.PI - threshold)) {
-				controller.setWheelSpeeds(currentSpeed, currentSpeed
-                        + turnSpeedToUse);
+			} else if ((!facingGoal) && (angle < Math.PI - threshold)) {
+
+				if (needToStraightenUp(snapshot)) {
+					controller.setWheelSpeeds(
+							currentSpeed + turnSpeedToUse / 2, currentSpeed);
+					LOG.info("staightening");
+				} else {
+					controller.setWheelSpeeds(currentSpeed, currentSpeed
+							+ turnSpeedToUse);
+				}
+
 			} else if ((!facingGoal) && (angle > Math.PI + threshold)) {
-                controller.setWheelSpeeds(currentSpeed + turnSpeedToUse,
-						currentSpeed);
+
+				if (needToStraightenUp(snapshot)) {
+					controller.setWheelSpeeds(currentSpeed, currentSpeed
+							+ turnSpeedToUse / 2);
+					LOG.info("staightening");
+				} else {
+					controller.setWheelSpeeds(currentSpeed + turnSpeedToUse,
+							currentSpeed);
+				}
+
 			} else {
                 controller.setWheelSpeeds(currentSpeed, currentSpeed);
 			}
@@ -268,14 +306,27 @@ public class Dribble extends AbstractPlanner {
 			if (facingGoal) {
                 controller.setWheelSpeeds(Globals.MAXIMUM_MOTOR_SPEED,
                         Globals.MAXIMUM_MOTOR_SPEED);
-            } else if ((!facingGoal) && (angle > threshold)
+			} else if ((!facingGoal) && (angle > threshold)
 					&& (angle < Math.PI)) {
-                controller.setWheelSpeeds(currentSpeed + turnSpeedToUse,
-						currentSpeed);
+				if (needToStraightenUp(snapshot)) {
+					controller.setWheelSpeeds(currentSpeed, currentSpeed
+							+ turnSpeedToUse / 2);
+					LOG.info("staightening");
+				} else {
+					controller.setWheelSpeeds(currentSpeed + turnSpeedToUse,
+							currentSpeed);
+				}
+
 			} else if ((!facingGoal) && (angle < (2 * Math.PI) - threshold)
 					&& (angle > Math.PI)) {
-				controller.setWheelSpeeds(currentSpeed, currentSpeed
-                        + turnSpeedToUse);
+				if (needToStraightenUp(snapshot)) {
+					controller.setWheelSpeeds(
+							currentSpeed + turnSpeedToUse / 2, currentSpeed);
+					LOG.info("staightening");
+				} else {
+					controller.setWheelSpeeds(currentSpeed, currentSpeed
+							+ turnSpeedToUse);
+				}
 			} else {
                 controller.setWheelSpeeds(currentSpeed, currentSpeed);
 			}

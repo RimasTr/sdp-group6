@@ -176,7 +176,7 @@ public class WorldSimulator {
 			bd.bullet = true;
 			ball = world.createBody(bd);
 			ball.createFixture(f);
-			ball.setLinearDamping(2);
+			ball.setLinearDamping(1);
 		}
 	}
 
@@ -247,7 +247,37 @@ public class WorldSimulator {
 		bd.bullet = true;
 		ball = world.createBody(bd);
 		ball.createFixture(f);
-		ball.setLinearDamping(0);
+		ball.setLinearDamping(1);
+
+		// TODO correct friction
+		FrictionJointDef ballFriction = new FrictionJointDef();
+		ballFriction.initialize(ball, ground, ball.getWorldCenter());
+		ballFriction.maxForce = 0.4f;
+		ballFriction.maxTorque = 0.001f;
+		world.createJoint(ballFriction);
+	}
+
+	public void setBallPenaltyPosition(boolean attackLeft) {
+		if (ball != null) {
+			world.destroyBody(ball);
+		}
+
+		ballShape = new CircleShape();
+		ballShape.m_radius = Globals.BALL_RADIUS * SCALE;
+		FixtureDef f = new FixtureDef();
+		f.shape = ballShape;
+		f.density = (1f / 0.36f) / SCALE;
+		BodyDef bd = new BodyDef();
+		bd.type = BodyType.DYNAMIC;
+		if (attackLeft) {
+			bd.position.set(0.61f * SCALE, 0.61f * SCALE);
+		} else {
+			bd.position.set(1.83f * SCALE, 0.61f * SCALE);
+		}
+		bd.bullet = true;
+		ball = world.createBody(bd);
+		ball.createFixture(f);
+		ball.setLinearDamping(1);
 
 		// TODO correct friction
 		FrictionJointDef ballFriction = new FrictionJointDef();
@@ -255,6 +285,46 @@ public class WorldSimulator {
 		ballFriction.maxForce = 1f;
 		ballFriction.maxTorque = 0.001f;
 		world.createJoint(ballFriction);
+	}
+
+	public void penaltyRobotPositions(boolean isBlue, boolean attackLeft) {
+		// If called when simulator is first created, just makes robots
+		// else, destroys old robots and makes new ones
+
+		if (blue != null) {
+			world.destroyBody(blue.getBody());
+			world.destroyBody(blue.kicker);
+		}
+
+		if (yellow != null) {
+			world.destroyBody(yellow.getBody());
+			world.destroyBody(yellow.kicker);
+		}
+
+		if (isBlue && attackLeft) {
+			blue = new Robot(new Vec2((0.72f * SCALE), (float) (0.61 * SCALE)),
+					180f);
+			yellow = new Robot(new Vec2((float) (0.1 * SCALE),
+					(float) (0.61 * SCALE)), 0f);
+		} else if (!isBlue && attackLeft) {
+			yellow = new Robot(
+					new Vec2((0.72f * SCALE), (float) (0.61 * SCALE)), 180f);
+			blue = new Robot(new Vec2((float) (0.1 * SCALE),
+					(float) (0.61 * SCALE)), 0f);
+		} else if (isBlue && !attackLeft) {
+			blue = new Robot(new Vec2((1.72f * SCALE), (float) (0.61 * SCALE)),
+					0f);
+			yellow = new Robot(new Vec2((float) (2.34 * SCALE),
+					(float) (0.61 * SCALE)), 180f);
+		} else if (!isBlue && !attackLeft) {
+			yellow = new Robot(
+					new Vec2((1.72f * SCALE), (float) (0.61 * SCALE)), 0f);
+			blue = new Robot(new Vec2((float) (2.34 * SCALE),
+					(float) (0.61 * SCALE)), 180f);
+		}
+
+		blueSoft.setBody(blue.getBody());
+		yellowSoft.setBody(yellow.getBody());
 	}
 
 	public void resetRobotPositions() {
