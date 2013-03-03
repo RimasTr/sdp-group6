@@ -16,11 +16,13 @@ import balle.world.objects.Robot;
 
 public class Milestone3DribbleStrategy extends AbstractPlanner {
 
-	private static final int INITIAL_TURN_SPEED = 300;
+	private static final int INITIAL_TURN_SPEED = 150;
 
-	private static final int INITIAL_CURRENT_SPEED = 300;
+	private static final int INITIAL_CURRENT_SPEED = 150;
 
 	private static final double MIN_DIST_TO_GOAL = 1.0;
+
+	private static final int MAXIMUM_MILESTONE_SPEED = 300;
 
 	private static Logger LOG = Logger
 			.getLogger(Milestone3DribbleStrategy.class);
@@ -244,9 +246,9 @@ public class Milestone3DribbleStrategy extends AbstractPlanner {
 					}
 				}
 				if (shouldTurnRight) {
-					spinRight(snapshot, controller, Globals.MAXIMUM_MOTOR_SPEED);
+					spinRight(snapshot, controller, MAXIMUM_MILESTONE_SPEED);
 				} else {
-					spinLeft(snapshot, controller, Globals.MAXIMUM_MOTOR_SPEED);
+					spinLeft(snapshot, controller, MAXIMUM_MILESTONE_SPEED);
 				}
 				return;
 			}
@@ -254,8 +256,8 @@ public class Milestone3DribbleStrategy extends AbstractPlanner {
 
 		if (isLeftGoal) {
 			if (facingGoal) {
-				controller.setWheelSpeeds(Globals.MAXIMUM_MOTOR_SPEED,
-						Globals.MAXIMUM_MOTOR_SPEED);
+				controller.setWheelSpeeds(MAXIMUM_MILESTONE_SPEED,
+						MAXIMUM_MILESTONE_SPEED);
 			} else if ((!facingGoal) && (angle < Math.PI - threshold)) {
 				controller.setWheelSpeeds(currentSpeed, currentSpeed
 						+ turnSpeedToUse);
@@ -267,8 +269,8 @@ public class Milestone3DribbleStrategy extends AbstractPlanner {
 			}
 		} else {
 			if (facingGoal) {
-				controller.setWheelSpeeds(Globals.MAXIMUM_MOTOR_SPEED,
-						Globals.MAXIMUM_MOTOR_SPEED);
+				controller.setWheelSpeeds(MAXIMUM_MILESTONE_SPEED,
+						MAXIMUM_MILESTONE_SPEED);
 			} else if ((!facingGoal) && (angle > threshold)
 					&& (angle < Math.PI)) {
 				controller.setWheelSpeeds(currentSpeed + turnSpeedToUse,
