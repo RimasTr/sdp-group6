@@ -36,7 +36,7 @@ public class BackingOffStrategy extends GoToBall {
 	/**
 	 * Velocity threshold below which we could be stuck
 	 */
-	private static final double VELOCITY_THRESH = 3;// 3E-5;// NOTE: noise
+	private static final double VELOCITY_THRESH = 5;// 3E-5;// NOTE: noise
 													// renders the velocity
 													// really unreliable atm
 
@@ -49,7 +49,7 @@ public class BackingOffStrategy extends GoToBall {
 	/**
 	 * Time in milliseconds that must pass before we decide that we're stuck
 	 */
-	private static final long TIME_THRESH = 1 * 1000;
+	private static final long TIME_THRESH = (long) (0.5 * 1000);
 
 	private long timeWhenMaybeStuck = -1;
 	private long timeStartedBackingOff = -1;
@@ -156,7 +156,7 @@ public class BackingOffStrategy extends GoToBall {
 	    				LOG.warn("Both in possession, stopping");
 	    	            return;
 			} else {
-				LOG.warn("Backing off!");
+				LOG.warn("Might as well back off!");
 				long timeNow = new Date().getTime();
 				// a possible fix by toms, not tested yet.
 				if (timeNow - timeStartedBackingOff > BACK_OFF_TIME * 0.5) {
@@ -171,7 +171,7 @@ public class BackingOffStrategy extends GoToBall {
 
         }
 
-        LOG.warn("Backing off!");
+		LOG.warn("Backing off!");
 		long timeNow = new Date().getTime();
 		// a possible fix by toms, not tested yet.
 		if (timeNow - timeStartedBackingOff > BACK_OFF_TIME) {
