@@ -16,11 +16,11 @@ import balle.world.objects.Robot;
 
 public class Milestone3DribbleStrategy extends AbstractPlanner {
 
-	private static final int INITIAL_TURN_SPEED = 150;
+	private static final int INITIAL_TURN_SPEED = 100;
 
 	private static final int INITIAL_CURRENT_SPEED = 150;
 
-	private static final double MIN_DIST_TO_GOAL = 1.0;
+	private static final double MIN_DIST_TO_GOAL = 0.8;
 
 	private static final int MAXIMUM_MILESTONE_SPEED = 300;
 

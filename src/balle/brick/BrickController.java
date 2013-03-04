@@ -82,6 +82,8 @@ public class BrickController implements Controller {
             return;
         }
 
+		// KICKER.flt();
+
         isKicking = true;
 
 		KICKER.setSpeed(900);
@@ -98,8 +100,8 @@ public class BrickController implements Controller {
 		KICKER.rotateTo(-45);
 		KICKER.waitComplete();
 
-
-		KICKER.flt();
+		// TODO: this reduces power of the kick - only use for Milestones!
+		// KICKER.flt();
 
 		isKicking = false;
     }

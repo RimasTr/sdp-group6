@@ -162,11 +162,11 @@ public class SocketVisionReader extends Reader {
 						|| y3 == 0)
 					y3 = y3p;
 				//System.out.println("Updating (entity): " + line);
-				System.out.println("1st team (" + x1 + "," + y1 + "," + d1
-						+ ")");
-				System.out.println("2nd team (" + x2 + "," + y2 + "," + d2
-						+ ")");
-				System.out.println("Ball     (" + x3 + "," + y3 + ")");
+				// System.out.println("1st team (" + x1 + "," + y1 + "," + d1
+				// + ")");
+				// System.out.println("2nd team (" + x2 + "," + y2 + "," + d2
+				// + ")");
+				// System.out.println("Ball     (" + x3 + "," + y3 + ")");
 
 				propagate(x1, y1, d1, x2, y2, d2, x3, y3,
 						Long.parseLong(tokens[9]));

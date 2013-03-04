@@ -159,6 +159,7 @@ public class Roboto {
 					if (touchLeft.isPressed() || touchRight.isPressed()) {
 						controller.backward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle in front!");
+						Thread.sleep(250);
 						// Removed controller.stop() and Thread.sleep()
 						// They are unnecessary as once the sensors are no
 						// longer pressed the strategy will take over.
@@ -168,6 +169,7 @@ public class Roboto {
                     if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
 						controller.forward(controller.getMaximumWheelSpeed());
 						drawMessage("Obstacle behind!");
+						Thread.sleep(250);
                     }
 
                     if (!listener.available())
