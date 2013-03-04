@@ -112,6 +112,13 @@ public class GoToBallSafeProportional extends GoToBall {
         return new GoToBallSafeProportional();
     }
 
+	@FactoryMethod(designator = "GTBSP", parameterNames = { "avoidanceGap",
+			"overshootGap", "CorrectSide?" })
+	public static GoToBallSafeProportional gTBSP(double aG, double oG,
+			boolean CorrectSide) {
+		return new GoToBallSafeProportional(aG, oG, CorrectSide);
+	}
+
     @Override
     protected void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
         FieldObject ball = getOriginalTarget(snapshot);

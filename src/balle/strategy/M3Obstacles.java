@@ -25,7 +25,7 @@ public class M3Obstacles extends AbstractPlanner {
 	boolean goneForward = false;
 
 	public M3Obstacles() {
-		goto_executor = new GoToBallSafeProportional(1, 0.2, true);
+		goto_executor = new GoToBallSafeProportional(0.5, 0.2, true);
 	}
 
 	@Override
