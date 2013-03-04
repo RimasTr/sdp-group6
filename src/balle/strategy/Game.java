@@ -217,6 +217,8 @@ public class Game extends AbstractPlanner {
 		// is low and we're near opp or wall)
 		// if we've just become stuck, then backoff, if we're already stuck we
 		// should be backing off already so continue to.
+		// TODO: could we test this by removing it and solely using
+		// proximityAlert?
 		if (backingOffStrategy.shouldStealStep(snapshot)) {
 			backingOffStrategy.step(controller, snapshot);
 			return;
