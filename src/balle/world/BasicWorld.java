@@ -2,6 +2,7 @@ package balle.world;
 
 import org.apache.log4j.Logger;
 
+import balle.world.filter.Kalman;
 import balle.world.objects.Ball;
 import balle.world.objects.Pitch;
 import balle.world.objects.Robot;
@@ -144,8 +145,12 @@ public class BasicWorld extends AbstractWorld {
 		Snapshot nextSnapshot = new Snapshot(this, them, ours, ball, timestamp);
 		prevRaw = nextSnapshot;
 
-		nextSnapshot = filter(nextSnapshot);
-        updateSnapshot(nextSnapshot);
+		// ADDED THIS:
+		Kalman kf = new Kalman();
+		nextSnapshot = kf.filter(nextSnapshot);
+
+		// nextSnapshot = filter(nextSnapshot);
+		updateSnapshot(nextSnapshot);
     }
 
     protected synchronized void updateSnapshot(Snapshot nextSnapshot) {

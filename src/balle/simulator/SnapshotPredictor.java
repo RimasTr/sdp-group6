@@ -212,6 +212,7 @@ public class SnapshotPredictor extends WorldSimulator {
         
 		return new Snapshot(initSnapshot.getWorld(), opponent, ourRobot, ball,
 				getSimulatorTimestamp(), getControllerHistory());
+
     }
 
 	protected List<ControllerHistoryElement> getControllerHistory() {
