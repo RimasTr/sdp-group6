@@ -1,21 +1,82 @@
 package balle.world.filter;
 
+import java.util.Random;
+
 import Jama.Matrix;
+import balle.world.Coord;
 import balle.world.Snapshot;
+import balle.world.Velocity;
+import balle.world.objects.Robot;
 
 public class KalmanFilter implements Filter {
 
-	static Matrix X;
-	static Matrix Xk1;
-	static Matrix P;
-	static Matrix Pk1;
-	static Matrix Zk1;
-	static Matrix Vk;
-	static Matrix Gain;
-	static Matrix Sk1;
+	// the state of the robot; a vector [x y vx vy]
+	// vx and vy are the components of the velocity
+	public Matrix X;
 
-	static Matrix F, B, U, Q;
-	static Matrix H, R;
+	// the predicted vector state
+	static Matrix Xk1;
+
+	// initial uncertainty matrix, which we will then update => error
+	// covariance matrix
+	static Matrix P = new Matrix(new double[][] { { 5 * 5.0, 0, 0, 0 },
+			{ 0, 5 * 5.0, 0, 0 }, { 0, 0, 1.0, 0 }, { 0, 0, 0, 1.0 } });
+
+	// predicted estimated covariance matrix - it predicts how much error there
+	// is; it stores the newest estimate of the average error for each part of
+	// the state
+	static Matrix Pk1;
+
+	// stores the innovation (measurement residual)
+	static Matrix Vk;
+	// innovation covariance
+	static Matrix Sk1;
+	// optimal kalman gain
+	static Matrix Gain;
+
+	// time interval
+	double t = 0;
+
+	double phi = Math.toRadians(-180);
+	double w = Math.toRadians(20.0f);
+
+	/* TODO: set these values appropriately */
+	// time interval
+	static double deltaT = 0.1;
+
+	// previously set to 0.3 and 15.0
+	static double rangeSensorNoise = 0.3f;
+	static double bearingSensorNoise = Math.toRadians(15.0f);
+
+	// these values describe how much noise we believe there is in the model
+	// one value for coordinates, another one for velocity
+	// previously set to 0.03 and 0.20
+	static double transitionModelSTDxy = 0.0f;
+	static double transitionModelSTDvxy = 0.0f;
+
+	// the Jacobian of the *prediction model
+	static Matrix F = new Matrix(new double[][] { { 1, 0, deltaT, 0 },
+			{ 0, 1, 0, deltaT }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } });
+
+	// B is the input gain matrix and U is the control input vector
+	static Matrix B, U;
+
+	// process noise
+	static Matrix Q = new Matrix(new double[][] {
+			{ transitionModelSTDxy * transitionModelSTDxy, 0, 0, 0 },
+			{ 0, transitionModelSTDxy * transitionModelSTDxy, 0, 0 },
+			{ 0, 0, transitionModelSTDvxy * transitionModelSTDvxy, 0 },
+			{ 0, 0, 0, transitionModelSTDvxy * transitionModelSTDvxy } });
+
+	// the Jacobian of the *measurement model
+	static Matrix H;
+
+	// the measurement error matrix
+	static Matrix R = new Matrix(new double[][]{
+			 {rangeSensorNoise*rangeSensorNoise, 0},
+			 {0, bearingSensorNoise*bearingSensorNoise}});
+
+	Random sensorNoise = new Random();
 
 	public void predict() {
 		Xk1 = F.times(X).plus(B.times(U));
@@ -43,123 +104,75 @@ public class KalmanFilter implements Filter {
 		P = (I.minus(Gain.times(H))).times(Pk1);
 	}
 
-	// public Matrix getX() {
-	// return X;
-	// }
-	//
-	// public void setX(Matrix X) {
-	// X = X;
-	// }
-	//
-	// public Matrix getXk1() {
-	// return Xk1;
-	// }
-	//
-	// public void setX_hat_k_1(Matrix xHatK_1) {
-	// Xk1 = xHatK_1;
-	// }
-	//
-	// public Matrix getP() {
-	// return P;
-	// }
-	//
-	// public void setP(Matrix P) {
-	// P = P;
-	// }
-	//
-	// public Matrix getPk1() {
-	// return pk1;
-	// }
-	//
-	// public void setPk1(Matrix Pk1) {
-	// pk1 = Pk1;
-	// }
-	//
-	// public Matrix getZk1() {
-	// return zk1;
-	// }
-	//
-	// public void setZk1(Matrix Zk1) {
-	// zk1 = Zk1;
-	// }
-	//
-	// public Matrix getVk() {
-	// return vk;
-	// }
-	//
-	// public void setVk(Matrix Vk) {
-	// vk = Vk;
-	// }
-	//
-	// public Matrix getKalmanGain() {
-	// return gain;
-	// }
-	//
-	// public void setKalmanGain(Matrix kalmanGain) {
-	// gain = kalmanGain;
-	// }
-	//
-	// public Matrix getSk1() {
-	// return sk1;
-	// }
-	//
-	// public void setSk1(Matrix Sk1) {
-	// sk1 = Sk1;
-	// }
-	//
-	// public Matrix getF() {
-	// return f;
-	// }
-	//
-	// public void setF(Matrix F) {
-	// f = F;
-	// //System.out.println("f set in kf->"+F.getColumnDimension());
-	// }
-	//
-	// public Matrix getB() {
-	// return b;
-	// }
-	//
-	// public void setB(Matrix B) {
-	// b = B;
-	// }
-	//
-	// public Matrix getU() {
-	// return u;
-	// }
-	//
-	// public void setU(Matrix U) {
-	// u = U;
-	// }
-	//
-	// public Matrix getQ() {
-	// return q;
-	// }
-	//
-	// public void setQ(Matrix Q) {
-	// q = Q;
-	// }
-	//
-	// public Matrix getH() {
-	// return h;
-	// }
-	//
-	// public void setH(Matrix H) {
-	// h = H;
-	// }
-	//
-	// public Matrix getR() {
-	// return r;
-	// }
-	//
-	// public void setR(Matrix R) {
-	// r = R;
-	// }
 
 	public Snapshot filter(Snapshot s) {
-		double x = s.getBalle().getPosition().x;
-		double y = s.getBalle().getPosition().y;
-		return s;
+
+		Robot robot = s.getBalle();
+
+		// get state
+		double x = robot.getPosition().x;
+		double y = robot.getPosition().y;
+		
+		double vx = robot.getVelocity().x;
+		double vy = robot.getVelocity().y;
+		
+		X = new Matrix(new double[][] { { x }, { y }, { vx }, { vy } });
+		B = new Matrix(new double[][] { { vx, vy, 0, 0 } }).transpose();
+		U = new Matrix(new double[][] { { deltaT } });
+
+		double sqxy = (x * x + y * y);
+		double term00 = -y / sqxy;
+		double term01 = 1 / (x * (1 + (y / x * y / x)));
+		double term10 = x / Math.sqrt(sqxy);
+		double term11 = y / Math.sqrt(sqxy);
+
+		// the Jacobian of the *measurement model
+		H = new Matrix(new double[][] { { term00, term01, 0, 0 },
+				{ term10, term11, 0, 0 } });
+
+		for (int i = 0; i < 10; i++) {
+			predict();
+
+			// get observations
+			double realBearing = Math.atan2(y, x);
+			double obsBearing = realBearing + bearingSensorNoise
+				* sensorNoise.nextGaussian();
+
+			double realRange = Math.sqrt(sqxy);
+			double obsRange = Math.max(0.0, realRange + rangeSensorNoise
+				* sensorNoise.nextGaussian());
+
+			Matrix z = new Matrix(
+					new double[][] { { obsRange }, { obsBearing } });
+
+			observation(z);
+			update();
+
+			// update coordinates
+			x += vx + deltaT * (Math.cos(phi) - Math.sin(phi));
+			y += vy + deltaT * (Math.cos(phi) + Math.sin(phi));
+			phi += w * deltaT;
+
+			vx += 1.0 * deltaT * Math.cos(t);
+			vy += 1.0 * deltaT * Math.cos(t);
+			w -= 0.1 * deltaT * Math.sin(t);
+
+			t += deltaT;
+
+		}
+
+		// Robot updatedRobot = new Robot(new Coord(x, y), new Velocity(vx, vy,
+		// deltaT), robot.getAngularVelocity(), robot.getOrientation());
+		Robot updatedRobot = new Robot(new Coord(X.get(0, 0), X.get(1, 0)),
+				new Velocity(X.get(2, 0), X.get(3, 0), deltaT),
+				robot.getAngularVelocity(), robot.getOrientation());
+		Snapshot updatedSnapshot = new Snapshot(s.getWorld(), s.getOpponent(),
+				updatedRobot, s.getBall(), s.getTimestamp(),
+				s.getControllerHistory());
+		// System.out.println("this is X updated" + X.get(0, 0) + " "
+		// + "this is updated in robot" + updatedRobot.getPosition().x
+		// + "this is updated in x " + x);
+		return updatedSnapshot;
 	}
 
 }
