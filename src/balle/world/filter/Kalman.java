@@ -17,7 +17,8 @@ public class Kalman implements Filter {
 	// the predicted vector state
 	static Matrix Xk1;
 
-	// updated error covariance matrix
+	// initial uncertainty matrix, which we will then update => error
+	// covariance matrix
 	static Matrix P = new Matrix(new double[][] { { 5 * 5.0, 0, 0, 0 },
 			{ 0, 5 * 5.0, 0, 0 }, { 0, 0, 1.0, 0 }, { 0, 0, 0, 1.0 } });
 
@@ -40,29 +41,37 @@ public class Kalman implements Filter {
 	double w = Math.toRadians(20.0f);
 
 	/* TODO: set these values appropriately */
-	// time
-	static double deltaT = 0.04;
+	// time interval
+	static double deltaT = 0.1;
 
 	// previously set to 0.3 and 15.0
-	static double rangeSensorNoise = 1.0f;
-	static double bearingSensorNoise = Math.toRadians(2.0f);
+	static double rangeSensorNoise = 0.3f;
+	static double bearingSensorNoise = Math.toRadians(15.0f);
 
 	// these values describe how much noise we believe there is in the model
 	// one value for coordinates, another one for velocity
 	// previously set to 0.03 and 0.20
-	static double transitionModelSTDxy = 0.00f;
-	static double transitionModelSTDvxy = 0.00f;
+	static double transitionModelSTDxy = 0.0f;
+	static double transitionModelSTDvxy = 0.0f;
 
-	// the Jacobian of the prediction model
+	// the Jacobian of the *prediction model
 	static Matrix F = new Matrix(new double[][] { { 1, 0, deltaT, 0 },
 			{ 0, 1, 0, deltaT }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } });
+
+	// B is the input gain matrix and U is the control input vector
 	static Matrix B, U;
+
+	// process noise
 	static Matrix Q = new Matrix(new double[][] {
 			{ transitionModelSTDxy * transitionModelSTDxy, 0, 0, 0 },
 			{ 0, transitionModelSTDxy * transitionModelSTDxy, 0, 0 },
 			{ 0, 0, transitionModelSTDvxy * transitionModelSTDvxy, 0 },
 			{ 0, 0, 0, transitionModelSTDvxy * transitionModelSTDvxy } });
+
+	// the Jacobian of the *measurement model
 	static Matrix H;
+
+	// the measurement error matrix
 	static Matrix R = new Matrix(new double[][]{
 			 {rangeSensorNoise*rangeSensorNoise, 0},
 			 {0, bearingSensorNoise*bearingSensorNoise}});
@@ -100,6 +109,7 @@ public class Kalman implements Filter {
 
 		Robot robot = s.getBalle();
 
+		// get state
 		double x = robot.getPosition().x;
 		double y = robot.getPosition().y;
 		
@@ -116,42 +126,46 @@ public class Kalman implements Filter {
 		double term10 = x / Math.sqrt(sqxy);
 		double term11 = y / Math.sqrt(sqxy);
 
+		// the Jacobian of the *measurement model
 		H = new Matrix(new double[][] { { term00, term01, 0, 0 },
 				{ term10, term11, 0, 0 } });
 
 		for (int i = 0; i < 10; i++) {
-		predict();
+			predict();
 
-		double realBearing = Math.atan2(y, x);
-		double obsBearing = realBearing + bearingSensorNoise
+			// get observations
+			double realBearing = Math.atan2(y, x);
+			double obsBearing = realBearing + bearingSensorNoise
 				* sensorNoise.nextGaussian();
 
-		double realRange = Math.sqrt(sqxy);
-		double obsRange = Math.max(0.0, realRange + rangeSensorNoise
+			double realRange = Math.sqrt(sqxy);
+			double obsRange = Math.max(0.0, realRange + rangeSensorNoise
 				* sensorNoise.nextGaussian());
 
-		Matrix z = new Matrix(new double[][] { { obsRange }, { obsBearing } });
+			Matrix z = new Matrix(
+					new double[][] { { obsRange }, { obsBearing } });
 
-		observation(z);
-		update();
+			observation(z);
+			update();
 
-		x += vx + deltaT * (Math.cos(phi) - Math.sin(phi));
-		y += vy + deltaT * (Math.cos(phi) + Math.sin(phi));
-		phi += w * deltaT;
+			// update coordinates
+			x += vx + deltaT * (Math.cos(phi) - Math.sin(phi));
+			y += vy + deltaT * (Math.cos(phi) + Math.sin(phi));
+			phi += w * deltaT;
 
-		vx += 1.0 * deltaT * Math.cos(t);
-		vy += 1.0 * deltaT * Math.cos(t);
-		w -= 0.1 * deltaT * Math.sin(t);
+			vx += 1.0 * deltaT * Math.cos(t);
+			vy += 1.0 * deltaT * Math.cos(t);
+			w -= 0.1 * deltaT * Math.sin(t);
 
-		t += deltaT;
+			t += deltaT;
 
 		}
 
 		// Robot updatedRobot = new Robot(new Coord(x, y), new Velocity(vx, vy,
 		// deltaT), robot.getAngularVelocity(), robot.getOrientation());
 		Robot updatedRobot = new Robot(new Coord(X.get(0, 0), X.get(1, 0)),
-				new Velocity(X.get(2, 0), X.get(3, 0),
-				deltaT), robot.getAngularVelocity(), robot.getOrientation());
+				new Velocity(X.get(2, 0), X.get(3, 0), deltaT),
+				robot.getAngularVelocity(), robot.getOrientation());
 		Snapshot updatedSnapshot = new Snapshot(s.getWorld(), s.getOpponent(),
 				updatedRobot, s.getBall(), s.getTimestamp(),
 				s.getControllerHistory());
