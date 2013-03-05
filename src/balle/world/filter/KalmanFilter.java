@@ -51,7 +51,7 @@ public class KalmanFilter implements Filter {
 
 	// previously set to 0.3 and 15.0
 	static double rangeSensorNoise = 0.1f;
-	static double bearingSensorNoise = Math.toRadians(15.0f);
+	static double bearingSensorNoise = Math.toRadians(10.0f);
 
 	// these values describe how much noise we believe there is in the model
 	// one value for coordinates, another one for velocity
@@ -182,7 +182,7 @@ public class KalmanFilter implements Filter {
 		Ball updatedBall;
 
 		// Balle:
-		if (s.getBalle() == null || s.getBalle().getAngularVelocity() == null) {
+		if (s.getBalle() == null) {
 			updatedRobot = s.getBalle();
 		} else {
 			updatedRobot = new Robot(new Coord(X[0].get(0, 0), X[0].get(1, 0)),
@@ -192,8 +192,7 @@ public class KalmanFilter implements Filter {
 		}
 
 		// Opponent:
-		if (s.getOpponent() == null
-				|| s.getOpponent().getAngularVelocity() == null) {
+		if (s.getOpponent() == null) {
 			updatedOpponent = s.getOpponent();
 		} else {
 			updatedOpponent = new Robot(new Coord(X[1].get(0, 0),
