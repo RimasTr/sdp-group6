@@ -95,6 +95,8 @@ public class KalmanFilter implements Filter {
 
 			if (objects[object] == null)
 				continue;
+			if (objects[object].getPosition() == null)
+				continue;
 
 			// Get current state
 			double x = objects[object].getPosition().x;
@@ -175,19 +177,38 @@ public class KalmanFilter implements Filter {
 
 		// Robot updatedRobot = new Robot(new Coord(x, y), new Velocity(vx, vy,
 		// deltaT), robot.getAngularVelocity(), robot.getOrientation());
-		Robot updatedRobot = new Robot(
-				new Coord(X[0].get(0, 0), X[0].get(1, 0)), new Velocity(
-						X[0].get(2, 0), X[0].get(3, 0), deltaT), s.getBalle()
-						.getAngularVelocity(), s.getBalle().getOrientation());
-		Robot updatedOpponent = new Robot(new Coord(X[1].get(0, 0), X[1].get(1,
-				0)), new Velocity(X[1].get(2, 0), X[1].get(3, 0), deltaT), s
-				.getOpponent().getAngularVelocity(), s.getOpponent()
-				.getOrientation());
-		Ball updatedBall = new Ball(new Coord(X[2].get(0, 0), X[2].get(1, 0)),
+		Robot updatedRobot;
+		Robot updatedOpponent;
+		Ball updatedBall;
+
+		// Balle:
+		if (s.getBalle() == null || s.getBalle().getAngularVelocity() == null) {
+			updatedRobot = s.getBalle();
+		} else {
+			updatedRobot = new Robot(new Coord(X[0].get(0, 0), X[0].get(1, 0)),
+					new Velocity(X[0].get(2, 0), X[0].get(3, 0), deltaT), s
+							.getBalle().getAngularVelocity(), s.getBalle()
+							.getOrientation());
+		}
+
+		// Opponent:
+		if (s.getOpponent() == null
+				|| s.getOpponent().getAngularVelocity() == null) {
+			updatedOpponent = s.getOpponent();
+		} else {
+			updatedOpponent = new Robot(new Coord(X[1].get(0, 0),
+					X[1].get(1, 0)), new Velocity(X[1].get(2, 0),
+					X[1].get(3, 0), deltaT), s.getOpponent()
+					.getAngularVelocity(), s.getOpponent().getOrientation());
+		}
+
+		// Ball:
+		updatedBall = new Ball(new Coord(X[2].get(0, 0), X[2].get(1, 0)),
 				new Velocity(X[2].get(2, 0), X[2].get(3, 0), deltaT));
 		Snapshot updatedSnapshot = new Snapshot(s.getWorld(), updatedOpponent,
 				updatedRobot, updatedBall, s.getTimestamp(),
 				s.getControllerHistory());
+
 		// System.out.println("this is X updated" + X.get(0, 0) + " "
 		// + "this is updated in robot" + updatedRobot.getPosition().x
 		// + "this is updated in x " + x);
