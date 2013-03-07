@@ -167,7 +167,7 @@ class OptParser(OptionParser):
 if __name__ == "__main__":
 
     parser = OptParser()
-    parser.add_option('-p', '--pitch', dest='pitch', type='int', metavar='PITCH',
+    parser.add_option('-p', '--pitch', dest='pitch', type='int', metavar='PITCH', default='0',
                       help='PITCH should be 0 for main pitch, 1 for the other pitch')
 
     parser.add_option('-f', '--file', dest='file', metavar='FILE',
