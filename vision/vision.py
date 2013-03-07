@@ -41,7 +41,7 @@ class Vision:
         calibrationPath = os.path.join('calibration', 'pitch{0}'.format(pitchnum))
         self.cap.loadCalibration(os.path.join(sys.path[0], calibrationPath))
 
-        self.preprocessor = Preprocessor(resetPitchSize)
+        self.preprocessor = Preprocessor(pitchnum, resetPitchSize)
         if self.preprocessor.hasPitchSize:
             self.gui = Gui(self.preprocessor.pitch_size)
         else:

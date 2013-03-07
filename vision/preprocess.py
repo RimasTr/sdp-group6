@@ -5,12 +5,11 @@ from SimpleCV import Image
 from operator import sub
 
 class Preprocessor:
-    
-    _currentfilepath = os.path.join('data', 'pitch_size')
-    _defaultfilepath = os.path.join('calibration', 'default_pitch_size')
-    
-    def __init__(self, resetPitchSize):
+        
+    def __init__(self, pitchnum, resetPitchSize):
         self._cropRect = None
+        self._currentfilepath = os.path.join('data', 'pitch_size')
+        self._defaultfilepath = os.path.join('calibration', 'default_pitch_size_{0}'.format(pitchnum))
 
         if not resetPitchSize:
             self.__loadPitchSize()
