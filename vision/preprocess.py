@@ -6,7 +6,8 @@ from operator import sub
 
 class Preprocessor:
     
-    _filepath = os.path.join('data', 'pitch_size')
+    _currentfilepath = os.path.join('data', 'pitch_size')
+    _defaultfilepath = os.path.join('calibration', 'default_pitch_size')
     
     def __init__(self, resetPitchSize):
         self._cropRect = None
@@ -21,10 +22,10 @@ class Preprocessor:
             self.hasPitchSize = True
 
     def __savePitchSize(self):
-        util.dumpToFile(self._cropRect, self._filepath)
+        util.dumpToFile(self._cropRect, self._currentfilepath)
 
     def __loadPitchSize(self):
-        self._cropRect = util.loadFromFile(self._filepath)
+        self._cropRect = util.loadFromFile(self._defaultfilepath)
         print self._cropRect
 
     @property
