@@ -57,43 +57,44 @@ public class StrategyRunner extends AbstractWorldProcessor {
 
 		final Strategy strategyA = currentStrategyA;
 		final Strategy strategyB = currentStrategyB;
-        long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
 		if (strategyA != null && strategyB != null) {
 			Snapshot snapshot = getSnapshot();
 
 			Snapshot snapshot2 = new OpponentSnapshot(snapshot);
 
-            try {
+			try {
 				strategyA.step(controllerA, snapshot);
 				if (controllerB != null) {
 					strategyB.step(controllerB, snapshot2);
 				}
-            } catch (Exception e) {
-                LOG.error("Strategy raised exception" + e.toString());
+			} catch (Exception e) {
+				LOG.error("Strategy raised exception" + e.toString());
 
-                for (StackTraceElement se : e.getStackTrace())
+				for (StackTraceElement se : e.getStackTrace())
 					LOG.error(se.toString());
 
-                controllerA.stop();
-                if (controllerB != null) {
-                    controllerB.stop();
-                }
-            }
+				controllerA.stop();
+				if (controllerB != null) {
+					controllerB.stop();
+				}
+			}
 			ArrayList<Drawable> drawables = strategyA.getDrawables();
 			ArrayList<Drawable> opponentDrawables = strategyB
-                    .getDrawables();
-            for (Drawable d : opponentDrawables) {
-                d.reduceVisibility();
-                drawables.add(d);
-            }
-            gui.setDrawables(drawables);
-        }
-        long stop = System.currentTimeMillis();
-        long diff = stop - start;
-        if (diff == 0)
+.getDrawables();
+			for (Drawable d : opponentDrawables) {
+				d.reduceVisibility();
+				drawables.add(d);
+			}
+			gui.setDrawables(drawables);
+		}
+		long stop = System.currentTimeMillis();
+		long diff = stop - start;
+		if (diff == 0)
 			gui.setStrategyFps(Double.POSITIVE_INFINITY);
-        else
-            gui.setStrategyFps(1000.0 / diff);
+		else
+			gui.setStrategyFps(1000.0 / diff);
+
 	}
 
 	/**

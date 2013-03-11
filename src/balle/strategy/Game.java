@@ -194,16 +194,17 @@ public class Game extends AbstractPlanner {
 			return;
 		}
 
-		if (scored(snapshot, ball)) {
-			LOG.info("End of match.");
-			stop(controller);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return;
-		}
+		// Maybe remove so we don't get an error like in the milestone 3?
+		// if (scored(snapshot, ball)) {
+		// LOG.info("End of match.");
+		// stop(controller);
+		// try {
+		// Thread.sleep(500);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// return;
+		// }
         
 		if (proximityAlert(snapshot, ourRobot, oppRobot)) {
 			backingOffStrategy.step(controller, snapshot);
@@ -233,7 +234,7 @@ public class Game extends AbstractPlanner {
             return;
         }
 
-        SnapshotPredictor sp = snapshot.getSnapshotPredictor();
+		// SnapshotPredictor sp = snapshot.getSnapshotPredictor();
         // addDrawable(new Circle(ourRobot.getFrontSide().midpoint(), 0.07,
         // Color.GREEN));
         // addDrawable(new Circle(ourRobot.getFrontSide().midpoint(), 0.1,
@@ -277,9 +278,10 @@ public class Game extends AbstractPlanner {
         addDrawable(new Circle(ourRobot.getFrontSide().midpoint(), 0.4,
                 Color.BLUE));
 
-
+		// Get predicted snapshot
         SnapshotPredictor sp = snapshot.getSnapshotPredictor();
         Snapshot newsnap = sp.getSnapshotAfterTime(50);
+
         RectangularObject dribbleBox = ourRobot.getFrontSide()
                 .extendBothDirections(0.01).widen(0.25);
         addDrawable(new DrawableRectangularObject(dribbleBox, Color.CYAN));
