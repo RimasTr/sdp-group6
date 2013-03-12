@@ -47,7 +47,7 @@ public class KalmanFilter implements Filter {
 
 	/* TODO: set these values appropriately */
 	// time interval
-	static double deltaT = 0.1;
+	static double deltaT = 0.01;
 
 	// previously set to 0.3 and 15.0
 	static double rangeSensorNoise = 0.1f;
@@ -56,8 +56,8 @@ public class KalmanFilter implements Filter {
 	// these values describe how much noise we believe there is in the model
 	// one value for coordinates, another one for velocity
 	// previously set to 0.03 and 0.20
-	static double transitionModelSTDxy = 0.0f;
-	static double transitionModelSTDvxy = 0.0f;
+	static double transitionModelSTDxy[] = { 1.0e-5f, 1.0e-5, 1.0e-5f };
+	static double transitionModelSTDvxy[] = { 1.0e-5f, 1.0e-5f, 1.0e-5f };
 
 	// the Jacobian of the *prediction model
 	static Matrix f = new Matrix(new double[][] { { 1, 0, deltaT, 0 },
@@ -69,12 +69,7 @@ public class KalmanFilter implements Filter {
 	static Matrix U[] = new Matrix[3];
 
 	// process noise
-	static Matrix q = new Matrix(new double[][] {
-			{ transitionModelSTDxy * transitionModelSTDxy, 0, 0, 0 },
-			{ 0, transitionModelSTDxy * transitionModelSTDxy, 0, 0 },
-			{ 0, 0, transitionModelSTDvxy * transitionModelSTDvxy, 0 },
-			{ 0, 0, 0, transitionModelSTDvxy * transitionModelSTDvxy } });
-	static Matrix Q[] = { q, q, q };
+	static Matrix Q[] = new Matrix[3];
 
 	// the Jacobian of the *measurement model
 	static Matrix H[] = new Matrix[3];;
@@ -92,7 +87,25 @@ public class KalmanFilter implements Filter {
 		MovingPoint objects[] = { s.getBalle(), s.getOpponent(), s.getBall() };
 
 		for (int object = 0; object < 3; object++) {
-
+			Q[object] = new Matrix(new double[][] {
+					{
+							transitionModelSTDxy[object]
+									* transitionModelSTDxy[object], 0, 0, 0 },
+					{
+							0,
+							transitionModelSTDxy[object]
+									* transitionModelSTDxy[object], 0, 0 },
+					{
+							0,
+							0,
+							transitionModelSTDvxy[object]
+									* transitionModelSTDvxy[object], 0 },
+					{
+							0,
+							0,
+							0,
+							transitionModelSTDvxy[object]
+									* transitionModelSTDvxy[object] } });
 			if (objects[object] == null)
 				continue;
 			if (objects[object].getPosition() == null)
@@ -120,6 +133,7 @@ public class KalmanFilter implements Filter {
 			H[object] = new Matrix(new double[][] { { term00, term01, 0, 0 },
 					{ term10, term11, 0, 0 } });
 
+			// TODO: experiment with different i values
 			for (int i = 0; i < 10; i++) {
 				// predict
 				Xk1[object] = F[object].times(X[object]).plus(
@@ -192,7 +206,9 @@ public class KalmanFilter implements Filter {
 		}
 
 		// Opponent:
-		if (s.getOpponent() == null) {
+		if (s.getOpponent() == null
+				|| s.getOpponent().getAngularVelocity() == null
+				|| s.getOpponent().getOrientation() == null) {
 			updatedOpponent = s.getOpponent();
 		} else {
 			updatedOpponent = new Robot(new Coord(X[1].get(0, 0),
