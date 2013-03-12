@@ -7,9 +7,9 @@ import balle.world.objects.Ball;
 import balle.world.objects.Pitch;
 import balle.world.objects.Robot;
 
-public class BasicWorld extends AbstractWorld {
+public class BasicWorld2 extends AbstractWorld {
 
-    private static final Logger LOG = Logger.getLogger(BasicWorld.class);
+    private static final Logger LOG = Logger.getLogger(BasicWorld2.class);
 
 	protected Snapshot prev, prevRaw;
 
@@ -18,7 +18,7 @@ public class BasicWorld extends AbstractWorld {
 	private final Estimator theirRobotEstimator;
 	KalmanFilter kf = new KalmanFilter();
 
-	public BasicWorld(boolean balleIsBlue, boolean goalIsLeft, Pitch pitch) {
+	public BasicWorld2(boolean balleIsBlue, boolean goalIsLeft, Pitch pitch) {
 		super(balleIsBlue, goalIsLeft, pitch);
 
 		ballEstimator = Estimator.getBallEstimator();

@@ -1,5 +1,11 @@
 package balle.world.objects;
 
+import static com.googlecode.javacv.cpp.opencv_core.CV_32FC1;
+import static com.googlecode.javacv.cpp.opencv_core.cvScalarAll;
+import static com.googlecode.javacv.cpp.opencv_core.cvSetIdentity;
+import static com.googlecode.javacv.cpp.opencv_video.cvCreateKalman;
+import static com.googlecode.javacv.cpp.opencv_video.cvKalmanCorrect;
+import static com.googlecode.javacv.cpp.opencv_video.cvKalmanPredict;
 import balle.misc.Globals;
 import balle.world.AngularVelocity;
 import balle.world.Coord;
@@ -7,14 +13,182 @@ import balle.world.Line;
 import balle.world.Orientation;
 import balle.world.Velocity;
 
+import com.googlecode.javacv.cpp.opencv_core.CvMat;
+import com.googlecode.javacv.cpp.opencv_video.CvKalman;
+
 public class Robot extends RectangularObject {
+
+	private CvKalman kalman;
+	private CvMat measured;
+	private CvMat prediction;
+	private CvMat transitionMatrix;
+	private boolean useKalman = true;
 
 	public Robot(Coord position, Velocity velocity,
 			AngularVelocity angularVelocity, Orientation orientation) {
+		
 		super(position, velocity, angularVelocity, orientation,
-				Globals.ROBOT_WIDTH,
-                Globals.ROBOT_LENGTH);
-    }
+				Globals.ROBOT_WIDTH, Globals.ROBOT_LENGTH);
+
+		kalman = cvCreateKalman(6, 3, 0);
+		measured = CvMat.create(3, 1, CV_32FC1);
+		prediction = CvMat.create(6, 1, CV_32FC1);
+
+		setProcessNoise(1e-4);
+		setMeasurementNoise(1e-3);
+		setPostError(1e-1);
+
+		setupTransitionMatrix();
+
+	}
+
+	/**
+	 * Set the process noise covariance used by the Kalman filter.
+	 * 
+	 * @param newProcessNoise
+	 *            The new value for the process noise.
+	 */
+	public void setProcessNoise(double newProcessNoise) {
+		cvSetIdentity(kalman.process_noise_cov(), cvScalarAll(newProcessNoise));
+	}
+
+	/**
+	 * Set the measurement noise used by the Kalman filter.
+	 * 
+	 * @param newMeasurementNoise
+	 *            The new value for the measurement noise.
+	 */
+	public void setMeasurementNoise(double newMeasurementNoise) {
+		cvSetIdentity(kalman.measurement_noise_cov(),
+				cvScalarAll(newMeasurementNoise));
+	}
+
+	/**
+	 * Set the post error covariance used by the Kalman filter.
+	 * 
+	 * @param newPostError
+	 *            The new post error covariance value.
+	 */
+	public void setPostError(double newPostError) {
+		cvSetIdentity(kalman.error_cov_post(), cvScalarAll(newPostError));
+	}
+
+	private void setupTransitionMatrix() {
+
+		transitionMatrix = CvMat.create(6, 6, CV_32FC1);
+		transitionMatrix.put(0, 0, 1);
+		transitionMatrix.put(0, 1, 0);
+		transitionMatrix.put(0, 2, 0);
+		transitionMatrix.put(0, 3, 1);
+		transitionMatrix.put(0, 4, 0);
+		transitionMatrix.put(0, 5, 0);
+
+		transitionMatrix.put(1, 0, 0);
+		transitionMatrix.put(1, 1, 1);
+		transitionMatrix.put(1, 2, 0);
+		transitionMatrix.put(1, 3, 0);
+		transitionMatrix.put(1, 4, 1);
+		transitionMatrix.put(1, 5, 0);
+
+		transitionMatrix.put(2, 0, 0);
+		transitionMatrix.put(2, 1, 0);
+		transitionMatrix.put(2, 2, 1);
+		transitionMatrix.put(2, 3, 0);
+		transitionMatrix.put(2, 4, 0);
+		transitionMatrix.put(2, 5, 1);
+
+		transitionMatrix.put(3, 0, 0);
+		transitionMatrix.put(3, 1, 0);
+		transitionMatrix.put(3, 2, 0);
+		transitionMatrix.put(3, 3, 1);
+		transitionMatrix.put(3, 4, 0);
+		transitionMatrix.put(3, 5, 0);
+
+		transitionMatrix.put(4, 0, 0);
+		transitionMatrix.put(4, 1, 0);
+		transitionMatrix.put(4, 2, 0);
+		transitionMatrix.put(4, 3, 0);
+		transitionMatrix.put(4, 4, 1);
+		transitionMatrix.put(4, 5, 0);
+
+		transitionMatrix.put(5, 0, 0);
+		transitionMatrix.put(5, 1, 0);
+		transitionMatrix.put(5, 2, 0);
+		transitionMatrix.put(5, 3, 0);
+		transitionMatrix.put(5, 4, 0);
+		transitionMatrix.put(5, 5, 1);
+
+		kalman.transition_matrix(transitionMatrix);
+	}
+
+	public void reset(Coord newPosition, Orientation newOrientation) {
+		// angular = 0.0;
+		// velocity = Vector2.ZERO;
+		velocity = velocity.mult(0);
+		// angularVelocity = new AngularVelocity(0.0, false);
+
+		if (!newPosition.equals(null) && !newOrientation.equals(null)) {
+			kalman.state_pre().put(0, position.getX());
+			kalman.state_pre().put(1, position.getY());
+			kalman.state_pre().put(2, orientation.degrees());
+			kalman.state_pre().put(3, 0.0);
+			kalman.state_pre().put(4, 0.0);
+			kalman.state_pre().put(5, 0.0);
+
+			cvSetIdentity(kalman.measurement_matrix());
+		}
+	}
+
+	public void update(Coord newPosition, Orientation newOrientation,
+			double timeStep) {
+		assert !newPosition.equals(null);
+		assert !newOrientation.equals(null);
+		assert timeStep > 0.0;
+
+		if (position.equals(null) || orientation.equals(null)) {
+			reset(newPosition, newOrientation);
+		} else
+		if (useKalman) {
+
+			cvKalmanPredict(kalman, prediction);
+
+			// newRotation = orientation
+			// + MathUtils.angleDiff(MathUtils.capAngle(newRotation),
+			// MathUtils.capAngle(rotation));
+			// assert Math.abs(orientation - newRotation) <= Math.PI * 2.0 :
+			// "rotation = "
+			// + rotation + ", newRotation = " + newRotation;
+
+			measured.put(0, newPosition.x);
+			measured.put(1, newPosition.y);
+			measured.put(2, newOrientation.degrees());
+
+			CvMat estimated = cvKalmanCorrect(kalman, measured);
+			position = new Coord(estimated.get(0), estimated.get(1));
+			orientation = new Orientation(estimated.get(2));
+			velocity = new Velocity(prediction.get(3) / timeStep,
+					prediction.get(4) / timeStep, timeStep);
+			angularVelocity = new AngularVelocity(prediction.get(5) / timeStep,
+					timeStep, false);
+
+			if (angularVelocity.degrees() > Math.PI * 2.0)
+				angularVelocity = new AngularVelocity(0.0, timeStep, false);
+
+			if (velocity.getX() > 10.0 || velocity.getY() > 10.0
+					|| velocity.getX() < -10.0 || velocity.getY() < -10.0)
+				velocity = new Velocity(0.0, 0.0, timeStep);
+		} else {
+			position = newPosition;
+			orientation = newOrientation;
+
+			velocity = new Velocity(newPosition.sub(position).mult(
+					1.0 / timeStep), timeStep);
+			angularVelocity = new AngularVelocity(
+newOrientation.sub(
+					orientation).degrees()
+					/ timeStep, timeStep, false);
+		}
+	}
 
     /**
      * Returns true if the robot is in possession of the ball. That is if the
