@@ -107,6 +107,20 @@ public class Dribble extends AbstractPlanner {
 				Color.CYAN));
 	}
 
+	public boolean canStillScore(Snapshot snapshot) {
+
+		// Get predicted snapshot after 50 frames
+		SnapshotPredictor sp = snapshot.getSnapshotPredictor();
+		Snapshot predSnap = sp.getSnapshotAfterTime(50);
+
+		boolean gotBall = predSnap.getBalle().possessesBall(predSnap.getBall());
+		boolean intersectingGoalLine = predSnap.getBalle().getFacingLine()
+				.intersects(predSnap.getOpponentsGoal().getGoalLine());
+
+		return (gotBall && intersectingGoalLine);
+
+	}
+
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
 		Robot ourBot = snapshot.getBalle();
@@ -116,10 +130,6 @@ public class Dribble extends AbstractPlanner {
 		if (robotPos == null) {
 			return;
 		}
-
-		// Get predicted snapshot after 50 frames
-		SnapshotPredictor sp = snapshot.getSnapshotPredictor();
-		Snapshot predSnap = sp.getSnapshotAfterTime(50);
 
 		// Make sure to reset the speeds if we haven't been dribbling for a
 		// while
@@ -133,14 +143,8 @@ public class Dribble extends AbstractPlanner {
 			if (isTriggerHappy() && !isInactiveForAWhile()
 					&& shouldStopDribblingDueToDribbleLength()
 					&& !facingOwnGoalSide) {
-				LOG.info("Can kick but seeing if still can in 50 frames");
-				if (predSnap.getBalle().possessesBall(predSnap.getBall())
-						&& predSnap
-								.getBalle()
-								.getFacingLine()
-								.intersects(
-										predSnap.getOpponentsGoal()
-												.getGoalLine())) {
+				LOG.info("Can kick but seeing if we still can in 50 frames");
+				if (canStillScore(snapshot)) {
 					LOG.info("Passed predictions and shooting");
 					controller.kick();
 					LOG.info("Dribble: KICK 1");
@@ -298,9 +302,11 @@ public class Dribble extends AbstractPlanner {
 
 		if (facingGoal || (isTriggerHappy() && nearWall && !facingOwnGoalSide)
 				|| (isTriggerHappy() && aboutToLoseBall && !facingOwnGoalSide)) {
-			controller.kick();
-			LOG.info("Dribble: KICK 2");
-			setKicked(true);
+			if (canStillScore(snapshot)) {
+				controller.kick();
+				LOG.info("Dribble: KICK 2");
+				setKicked(true);
+			}
 		}
 	}
 }
