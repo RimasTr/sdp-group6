@@ -124,8 +124,8 @@ public class Robot extends RectangularObject {
 	public void reset(Coord newPosition, Orientation newOrientation) {
 		// angular = 0.0;
 		// velocity = Vector2.ZERO;
-		position = newPosition;
-		orientation = newOrientation;
+		velocity = velocity.mult(0);
+		// angularVelocity = new AngularVelocity(0.0, false);
 
 		if (!newPosition.equals(null) && !newOrientation.equals(null)) {
 			kalman.state_pre().put(0, position.getX());
@@ -141,13 +141,13 @@ public class Robot extends RectangularObject {
 
 	public void update(Coord newPosition, Orientation newOrientation,
 			double timeStep) {
-		// assert !newPosition.isNaN();
-		// assert !Double.isNaN(newRotation);
+		assert !newPosition.equals(null);
+		assert !newOrientation.equals(null);
 		assert timeStep > 0.0;
 
-		// if (position.isNaN() || Double.isNaN(rotation)) {
-		// reset(newPosition, newRotation);
-		// } else
+		if (position.equals(null) || orientation.equals(null)) {
+			reset(newPosition, newOrientation);
+		} else
 		if (useKalman) {
 
 			cvKalmanPredict(kalman, prediction);
