@@ -1,16 +1,54 @@
 package balle.world.objects;
 
+import jama.Matrix;
 import balle.misc.Globals;
 import balle.world.Coord;
 import balle.world.Velocity;
+import balle.world.filter.JKalman;
 
 public class Ball extends CircularObject implements FieldObject {
 
 	// private final BallPredictor predictor;
+	JKalman kalman;
+	Matrix s = new Matrix(4, 1);
+	Matrix c = new Matrix(4, 1);
+	Matrix m = new Matrix(2, 1);
+	double[][] tr;
 
 	public Ball(Coord position, Velocity velocity) {
 		super(position, velocity, Globals.BALL_RADIUS);
+		try {
+			kalman = new JKalman(4, 2);
 
+			double x = position.x;
+			double y = position.y;
+
+			m.set(0, 0, x);
+			m.set(1, 0, y);
+
+			double[][] tr = { { 1, 0, 1, 0 }, { 0, 1, 0, 1 }, { 0, 0, 1, 0 },
+					{ 0, 0, 0, 1 } };
+			//
+			// double[][] tr = { { 6, 0, 10, 0 }, { 0, 3, 0, 1 },
+			// { 0, 0, 1, 0 },
+			// { 0, 0, 0, 1 } };
+			//
+			// double[][] tr = { { 6, 0, 10, 0 }, { 0, 3, 0, 1 }, { 0, 0, 1, 0
+			// },
+			// { 0, 0, 0, 1 } };
+
+			// double[][] tr = { { 3, 0, 0, 0 }, { 3, 1, 0, 0 }, { 3, 2, 0, 0 },
+			// { 3, 3, 1, 0 } };
+
+			// cvSetIdentity(kalman.process_noise_cov(),
+			// cvScalarAll(newProcessNoise));
+
+			kalman.setTransition_matrix(new Matrix(tr).times(1));
+			kalman.setError_cov_post(kalman.getError_cov_post().identity());
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 		// this.predictor = predictor;
 	}
 
@@ -23,5 +61,37 @@ public class Ball extends CircularObject implements FieldObject {
 	// public Coord estimatePosition(double time) {
 	// return predictor.getPosition(time);
 	// }
+
+	public void update(Coord newPosition, double timeDelta) {
+
+		assert timeDelta > 0;
+
+		s = kalman.Predict();
+
+		// double dx = this.getVelocity().x;
+		// double dy = this.getVelocity().y;
+		// m.set(0, 0, (m.get(0, 0) + dx * timeDelta));
+		// m.set(1, 0, (m.get(1, 0) + dy * timeDelta));
+		// if (!newPosition.equals(null) && !newVelocity.equals(null)) {
+
+		if (!newPosition.equals(null)) {
+
+			m.set(0, 0, newPosition.getX());
+			m.set(1, 0, newPosition.getY());
+
+			c = kalman.Correct(m);
+
+			this.setPosition(new Coord(c.get(0, 0), c.get(1, 0)));
+			this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3, 0)
+					/ timeDelta, timeDelta));
+		}
+ else {
+			this.setPosition(new Coord(s.get(0, 0), s.get(1, 0)));
+			this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3, 0)
+					/ timeDelta, timeDelta));
+		}
+
+
+	}
 
 }

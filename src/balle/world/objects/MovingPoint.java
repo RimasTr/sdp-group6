@@ -8,8 +8,8 @@ import balle.world.Velocity;
  */
 public class MovingPoint {
 
-    private final Coord    position;
-	private Velocity velocity;
+	protected Coord position;
+	protected Velocity velocity;
 
     public MovingPoint(Coord position, Velocity velocity) {
         super();
@@ -22,9 +22,14 @@ public class MovingPoint {
         return position;
     }
 
+	public void setPosition(Coord position) {
+		this.position = position;
+	}
+
     public Velocity getVelocity() {
         return velocity;
     }
+
 
 	public void setVelocity(Velocity velocity) {
 		this.velocity = velocity;
