@@ -8,7 +8,7 @@ class Features:
     # Sizes of various features
     # Format: (area_min, area_expected, area_max)
 
-    Sizes = { 'ball'     : (20, 131, 300),
+    Sizes = { 'ball'     : (35, 131, 300),
           'yellow'         : (200, 510, 1000),
           'blue'         : (100, 400, 800),
         }

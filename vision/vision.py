@@ -11,6 +11,7 @@ from SimpleCV import Image, Camera, VirtualCamera
 from preprocess import Preprocessor
 from features import Features
 from threshold import Threshold
+from filter import Filter
 from display import Gui, ThresholdGui
 
 HOST = 'localhost' 
@@ -49,6 +50,7 @@ class Vision:
         self.threshold = Threshold(pitchnum, resetThresholds, displayBlur, normalizeAtStartup)
         self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.features = Features(self.gui, self.threshold)
+        self.filter = Filter()
         
         eventHandler = self.gui.getEventHandler()
         eventHandler.addListener('q', self.quit)
@@ -139,10 +141,18 @@ class Vision:
                 y = self.preprocessor.pitch_size[1] - y
 
             if name == 'ball':
-                self.send('{0} {1} '.format(x, y))
+                angle = -1
             else:
                 angle = 360 - (((entity.angle() * (180/math.pi)) - 360) % 360)
-                self.send('{0} {1} {2} '.format(x, y, angle))
+            self.filter.change(name, x, y, angle)
+
+        coords = self.filter.update()
+
+        for name in ['yellow', 'blue', 'ball']:
+            if name == 'ball':
+                self.send('{0} {1} '.format(coords[name][0], coords[name][1]))
+            else:
+                self.send('{0} {1} {2} '.format(coords[name][0], coords[name][1], coords[name][2]))
 
         self.send(str(int(time.time() * 1000)) + " \n")
         
