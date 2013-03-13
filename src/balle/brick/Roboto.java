@@ -71,6 +71,9 @@ class ListenerThread extends Thread {
  */
 public class Roboto {
 
+	private static boolean touchingFront = false;
+	private static boolean touchingRear = false;
+
     /**
      * Processes the decoded message and issues correct commands to controller
      * 
@@ -157,19 +160,26 @@ public class Roboto {
                 try {
                     // Check for sensors when idle
 					if (touchLeft.isPressed() || touchRight.isPressed()) {
-						controller.backward(controller.getMaximumWheelSpeed());
-						drawMessage("Obstacle in front!");
-						Thread.sleep(250);
-						// Removed controller.stop() and Thread.sleep()
-						// They are unnecessary as once the sensors are no
-						// longer pressed the strategy will take over.
+						if (!touchingFront) {
+							touchingFront = true;
+							controller.backward(controller.getMaximumWheelSpeed());
+							drawMessage("Obstacle in front!");
+							Thread.sleep(150);
+							touchingFront = false;
+						}
+						continue;
                     }
 
                     // Check for back sensors as well
                     if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
-						controller.forward(controller.getMaximumWheelSpeed());
-						drawMessage("Obstacle behind!");
-						Thread.sleep(250);
+						if (!touchingRear) {
+							touchingRear = true;
+							controller.forward(controller.getMaximumWheelSpeed());
+							drawMessage("Obstacle behind!");
+							Thread.sleep(150);
+							touchingRear = false;
+						}
+						continue;
                     }
 
                     if (!listener.available())
@@ -180,7 +190,7 @@ public class Roboto {
                             .decodeMessage(hashedMessage);
                     if (message == null) {
                         drawMessage("Could not decode: " + hashedMessage);
-                        break;
+						continue; // Changed from break.
                     }
                     String name = message.getName();
                     drawMessage(name);
@@ -189,7 +199,7 @@ public class Roboto {
                     if (!successful) {
                         drawMessage("Unknown message received: "
                                 + hashedMessage);
-                        break;
+						continue; // Changed from break.
                     }
 
                 } catch (Exception e1) {

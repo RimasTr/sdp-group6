@@ -23,6 +23,14 @@ public interface Controller {
      */
     public abstract void forward(int speed);
 
+	/**
+	 * Makes robot go forward with the specified speed
+	 * 
+	 * @param left
+	 *            wheel speed, right wheel speed
+	 */
+	public abstract void forward(int left, int right);
+
     /**
      * Floats the motors, allowing the robot to drift.
      */
@@ -71,7 +79,10 @@ public interface Controller {
      */
     public abstract void penaltyKick();
     
-    //public abstract void gentleKick(int speed, int angle);
+	/**
+	 * Penalty kick (Straight)
+	 */
+	public abstract void penaltyKickStraight();
 
 	public abstract void addListener(ControllerListener cl);
 }

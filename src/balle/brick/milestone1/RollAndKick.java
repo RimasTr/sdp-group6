@@ -53,7 +53,7 @@ public class RollAndKick {
 				if (distance >= 3) {
 					controller.forward(0);
                     drawMessage("Kick!");
-					controller.gentleKick(100, 30);
+					controller.kick();
                     break;             
 				} else {
                     drawMessage(Float.toString(distance));

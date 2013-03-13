@@ -11,8 +11,7 @@ import lejos.pc.comm.NXTInfo;
 
 public class Communicator2 {
 
-	private final static String NAME = "NXT";
-	private final static String NXTNAME = "group6";
+	private final static String NAME = "group6";
 	private final static String MAC = "00:16:53:08:A0:E6";
 
 	final NXTInfo nxtInfo = new NXTInfo(NXTCommFactory.BLUETOOTH, NAME, MAC);
@@ -110,8 +109,4 @@ public class Communicator2 {
         return connected;
     }
 
-//Shouldn't this bit be removed?
-	public static void main(String[] args) {
-		Communicator2 com = new Communicator2();
-	}
 }

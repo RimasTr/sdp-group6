@@ -3,6 +3,7 @@ package balle.controller;
 import java.util.ArrayList;
 
 import balle.bluetooth.Communicator;
+import balle.bluetooth.Communicator2;
 import balle.bluetooth.messages.InvalidArgumentException;
 import balle.bluetooth.messages.InvalidOpcodeException;
 import balle.bluetooth.messages.MessageKick;
@@ -14,6 +15,7 @@ import balle.strategy.bezierNav.ControllerHistoryElement;
 
 public class BluetoothController implements Controller {
     Communicator connection;
+	Communicator2 connection2;
 
 	protected ArrayList<ControllerListener> listeners = new ArrayList<ControllerListener>();
 
@@ -21,7 +23,11 @@ public class BluetoothController implements Controller {
         connection = communicator;
     }
 
-    @Override
+	public BluetoothController(Communicator2 communicator2) {
+		connection2 = communicator2;
+	}
+
+	@Override
     public void floatWheels() {
         try {
             connection.send(new MessageStop(1).hash());
@@ -87,15 +93,30 @@ public class BluetoothController implements Controller {
     @Override
     public void forward(int speed) {
         try {
-			int left = speed;
-			int right = (int) (speed * 1.01);
+			connection.send(new MessageMove(speed, speed).hash());
+			propogate(speed, speed);
+		} catch (InvalidOpcodeException e) {
+			System.err.println("Failed to send message FORWARD -- invalid opcode");
+		} catch (InvalidArgumentException e) {
+			System.err.println("Failed to send message FORWARD(" + speed + ")" + "-- invalid argument");
+		}
+	}
+
+	/**
+	 * Calls controller.setWheelSpeeds(speed, speed);
+	 * 
+	 * @see balle.controller.Controller#forward(int)
+	 */
+	@Override
+	public void forward(int left, int right) {
+		try {
 			connection.send(new MessageMove(left, right).hash());
 			propogate(left, right);
         } catch (InvalidOpcodeException e) {
             System.err
                     .println("Failed to send message FORWARD -- invalid opcode");
         } catch (InvalidArgumentException e) {
-            System.err.println("Failed to send message FORWARD(" + speed + ")"
+			System.err.println("Failed to send message FORWARD(" + left + ")"
                     + "-- invalid argument");
         }
     }
@@ -140,13 +161,22 @@ public class BluetoothController implements Controller {
         try {
             connection.send(new MessageKick(1).hash());
         } catch (InvalidOpcodeException e) {
-            System.err
-                    .println("Failed to send message PENALTY_KICK -- invalid argument");
+			System.err.println("Failed to send message PENALTY_KICK -- invalid argument");
         } catch (InvalidArgumentException e) {
-            System.err
-                    .println("Failed to send message PENALTY_KICK -- invalid argument");
+			System.err.println("Failed to send message PENALTY_KICK -- invalid argument");
         }
     }
+
+	@Override
+	public void penaltyKickStraight() {
+		try {
+			connection.send(new MessageKick(1).hash());
+		} catch (InvalidOpcodeException e) {
+			System.err.println("Failed to send message PENALTY_KICK -- invalid argument");
+		} catch (InvalidArgumentException e) {
+			System.err.println("Failed to send message PENALTY_KICK -- invalid argument");
+		}
+	}
 
     @Override
     public boolean isReady() {
@@ -165,10 +195,5 @@ public class BluetoothController implements Controller {
 			cl.commandSent(che);
 	}
 
-/*	@Override
-	public void gentleKick(int speed, int angle) {
-		// TODO Auto-generated method stub
-		
-	}*/
 
 }

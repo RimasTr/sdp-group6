@@ -30,6 +30,12 @@ public class DummyController implements Controller {
 
     }
 
+	@Override
+	public void forward(int left, int right) {
+		System.out.println("Forward " + left);
+
+	}
+
     /*
      * (non-Javadoc)
      * 
@@ -96,6 +102,12 @@ public class DummyController implements Controller {
 	public void penaltyKick() {
 		System.out.println("Penalty Kick!");
 		
+	}
+
+	@Override
+	public void penaltyKickStraight() {
+		System.out.println("Penalty Kick Straight!");
+
 	}
 
     @Override

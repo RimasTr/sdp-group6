@@ -18,9 +18,8 @@ import balle.controller.ControllerListener;
  */
 public class BrickController implements Controller {
 	DifferentialPilot pilot;
-	public int maxPilotSpeed = 100; // 20
-                                    // for
-                                    // friendlies
+
+	public int maxPilotSpeed = 100;
 
 	public final NXTRegulatedMotor LEFT_WHEEL = new NXTRegulatedMotor(
 			MotorPort.B);
@@ -67,10 +66,7 @@ public class BrickController implements Controller {
      */
     @Override
     public void stop() {
-		// TODO: does this mean we can pushed out the way?
         pilot.stop();
-		floatWheels();
-		KICKER.flt();
     }
 
     /*
@@ -107,14 +103,6 @@ public class BrickController implements Controller {
 		KICKER.flt();
 
 		isKicking = false;
-    }
-
-    public void gentleKick(int speed, int angle) {
-        KICKER.setSpeed(speed);
-        KICKER.resetTachoCount();
-		KICKER.rotateTo(-10);
-		KICKER.rotateTo(angle);
-		KICKER.rotateTo(0);
     }
 
     public float getTravelDistance() {
@@ -161,20 +149,22 @@ public class BrickController implements Controller {
 
     @Override
     public void backward(int speed) {
-        pilot.setTravelSpeed(speed);
+		// pilot.setTravelSpeed(speed);
+		setWheelSpeeds(speed, speed);
         pilot.backward();
     }
 
     @Override
     public void forward(int speed) {
-        pilot.setTravelSpeed(speed);
+		// pilot.setTravelSpeed(speed);
+		setWheelSpeeds(speed, speed);
         pilot.forward();
 
     }
 
+	@Override
 	public void forward(int left, int right) {
-		LEFT_WHEEL.setSpeed(left);
-		RIGHT_WHEEL.setSpeed(right);
+		setWheelSpeeds(left, right);
 		pilot.forward();
 	}
 
@@ -191,8 +181,12 @@ public class BrickController implements Controller {
             turnAmount *= -1;
         rotate(turnAmount, 180);
         kick();
-
     }
+
+	@Override
+	public void penaltyKickStraight() {
+		kick();
+	}
 
     @Override
     public boolean isReady() {

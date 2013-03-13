@@ -49,10 +49,15 @@ public class SoftBot implements Controller {
 	}
 
 	@Override
+	public void forward(int left, int right) {
+		rotating = false;
+		setWheelSpeeds(left, right);
+		propogate(left, right);
+	}
+
+	@Override
 	public void floatWheels() {
 		rotating = false;
-		// TODO Changes behaviour of the robot.
-		// Not exactly sure how will behave?
 	}
 
 	@Override
@@ -127,6 +132,13 @@ public class SoftBot implements Controller {
 
 	@Override
 	public void penaltyKick() {
+		rotating = false;
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void penaltyKickStraight() {
 		rotating = false;
 		// TODO Auto-generated method stub
 
