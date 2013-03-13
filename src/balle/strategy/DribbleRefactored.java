@@ -17,9 +17,9 @@ import balle.world.objects.Robot;
 
 public class DribbleRefactored extends AbstractPlanner {
 
-	private static final int INITIAL_TURN_SPEED = 300;
+	private static final int INITIAL_TURN_SPEED = 100;
 
-	private static final int INITIAL_CURRENT_SPEED = 300;
+	private static final int INITIAL_CURRENT_SPEED = 100;
 
     private static Logger LOG = Logger.getLogger(Dribble.class);
 

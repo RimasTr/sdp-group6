@@ -18,7 +18,7 @@ import balle.controller.ControllerListener;
  */
 public class BrickController implements Controller {
 	DifferentialPilot pilot;
-	public int maxPilotSpeed = 200; // 20
+	public int maxPilotSpeed = 100; // 20
                                     // for
                                     // friendlies
 
@@ -67,7 +67,10 @@ public class BrickController implements Controller {
      */
     @Override
     public void stop() {
+		// TODO: does this mean we can pushed out the way?
         pilot.stop();
+		floatWheels();
+		KICKER.flt();
     }
 
     /*
@@ -101,7 +104,7 @@ public class BrickController implements Controller {
 		KICKER.waitComplete();
 
 		// TODO: this reduces power of the kick - only use for Milestones!
-		// KICKER.flt();
+		KICKER.flt();
 
 		isKicking = false;
     }
