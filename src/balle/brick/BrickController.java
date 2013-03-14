@@ -19,7 +19,7 @@ import balle.controller.ControllerListener;
 public class BrickController implements Controller {
 	DifferentialPilot pilot;
 
-	public int maxPilotSpeed = 100;
+	public int maxPilotSpeed = 900;
 
 	public final NXTRegulatedMotor LEFT_WHEEL = new NXTRegulatedMotor(
 			MotorPort.B);
@@ -44,7 +44,7 @@ public class BrickController implements Controller {
 				RIGHT_WHEEL, INVERSE_WHEELS);
         pilot.setTravelSpeed(maxPilotSpeed);
 		pilot.setRotateSpeed(45);
-		// pilot.setAcceleration(250);
+		pilot.setAcceleration(7200);
 
     }
 
@@ -149,15 +149,15 @@ public class BrickController implements Controller {
 
     @Override
     public void backward(int speed) {
-		// pilot.setTravelSpeed(speed);
-		setWheelSpeeds(speed, speed);
+		pilot.setTravelSpeed(speed);
+		// setWheelSpeeds(speed, speed);
         pilot.backward();
     }
 
     @Override
     public void forward(int speed) {
-		// pilot.setTravelSpeed(speed);
-		setWheelSpeeds(speed, speed);
+		pilot.setTravelSpeed(speed);
+		// setWheelSpeeds(speed, speed);
         pilot.forward();
 
     }
@@ -195,7 +195,6 @@ public class BrickController implements Controller {
 
 	@Override
 	public void addListener(ControllerListener cl) {
-		// TODO make STUB
 	}
 
 }

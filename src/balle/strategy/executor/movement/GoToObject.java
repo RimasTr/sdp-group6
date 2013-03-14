@@ -19,7 +19,7 @@ public class GoToObject implements MovementExecutor {
 	private final static double EPSILON = 0.00001;
 	private final static double DISTANCE_DIFF_TO_TURN_FOR = 0.3;
 
-	public final static int DEFAULT_MOVEMENT_SPEED = 500;
+	public final static int DEFAULT_MOVEMENT_SPEED = 900;
 
     protected FieldObject       target                    = null;
 	private boolean isMoving = false;
@@ -66,6 +66,9 @@ public class GoToObject implements MovementExecutor {
 		if (snapshot == null)
 			return;
 
+		if (target == null) {
+			target = snapshot.getBall();
+		}
 		Coord targetCoord = target.getPosition();
 		Robot robot = snapshot.getBalle();
 

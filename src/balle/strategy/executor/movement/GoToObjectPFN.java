@@ -178,11 +178,12 @@ public class GoToObjectPFN implements MovementExecutor {
             Vector newRes = res.mult(4);
             res = new VelocityVec(newRes.getX(), newRes.getY());
         }
-        LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())
+		LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())
                 + " right speed: " + Math.toDegrees(res.getRight()));
         double left, right;
 
         res = res.scale();
+
 
         left = Math.toDegrees(res.getLeft());
         right = Math.toDegrees(res.getRight());
@@ -190,7 +191,7 @@ public class GoToObjectPFN implements MovementExecutor {
                 (int) right),
                 new Coord(1, Globals.PITCH_HEIGHT + 0.3), Color.BLACK));
 
-        controller.setWheelSpeeds((int) left, (int) right);
+		controller.setWheelSpeeds((int) left, (int) right);
     }
 
     @Override

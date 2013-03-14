@@ -13,6 +13,7 @@ import balle.main.drawable.DrawableRectangularObject;
 import balle.main.drawable.Label;
 import balle.misc.Globals;
 import balle.simulator.SnapshotPredictor;
+import balle.strategy.basic.Initial;
 import balle.strategy.bezierNav.BezierNav;
 import balle.strategy.curve.CustomCHI;
 import balle.strategy.executor.movement.GoToObjectPFN;
@@ -24,7 +25,6 @@ import balle.strategy.planner.BackingOffStrategy;
 import balle.strategy.planner.DefensiveStrategy;
 import balle.strategy.planner.GoToBall;
 import balle.strategy.planner.GoToBallSafeProportional;
-import balle.strategy.planner.InitialBezierStrategy;
 import balle.strategy.planner.KickFromWall;
 import balle.strategy.planner.SimpleGoToBallFaceGoal;
 import balle.world.Coord;
@@ -110,7 +110,7 @@ public class Game extends AbstractPlanner {
 		backingOffStrategy = new BackingOffStrategy();
         turningExecutor = new IncFaceAngle();
         kickingStrategy = new Dribble();
-        initialStrategy = new InitialBezierStrategy();
+		initialStrategy = new Initial();
 		goToBallPFN = new GoToBallSafeProportional();
 		goToBallBezier = new SimpleGoToBallFaceGoal(new BezierNav(
                 new SimplePathFinder(new CustomCHI())));
@@ -323,7 +323,8 @@ public class Game extends AbstractPlanner {
         if ((corridor.containsCoord(opponent.getPosition()))
                 && !(opponent.possessesBall(ball) && (opponent
                         .isFacingGoalHalf(ownGoal)))) {
-			return goToBallBezier;
+			// return goToBallBezier;
+			return goToBallPFN;
 		}
 		
 		// 4.
@@ -368,8 +369,8 @@ public class Game extends AbstractPlanner {
 			return pickBallFromWallStrategy;
 		}
 
-		return goToBallBezier;
-
+		// return goToBallBezier;
+		return goToBallPFN;
 	}
 
 	private boolean proximityAlert(Snapshot snapshot, Robot ourRobot,
@@ -391,9 +392,10 @@ public class Game extends AbstractPlanner {
 		// If we are in line with goals, return false as we want to be able to
 		// move into goals to score.
 		// Might cause problems with running in the other robot TODO: test!
-		if ((ourPosition.getY() < rightUpperWall.minY()) && (ourPosition.getY() > rightLowerWall.maxY())) {
-			return false;
-		}
+		// if ((ourPosition.getY() < rightUpperWall.minY()) &&
+		// (ourPosition.getY() > rightLowerWall.maxY())) {
+		// return false;
+		// }
 
 		double dist = 0.1;
 
@@ -408,9 +410,9 @@ public class Game extends AbstractPlanner {
 		// not tested fix by toms
 		boolean opp = (ourPosition.dist(oppPosition) < Globals.COLLISION_DISTANCE);
 
-		LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
-				+ leftLower + " "
-				+ rightUpper + " " + rightLower + " " + opp);
+		// LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
+		// + leftLower + " "
+		// + rightUpper + " " + rightLower + " " + opp);
 
 		return (top || bottom || leftUpper || leftLower || rightUpper
 				|| rightLower || opp);
