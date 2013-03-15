@@ -43,8 +43,8 @@ public class PointObject extends Vector implements PFObject {
             if (distance < infl_distance) {
                 LOG.trace("Within influence distance");
 
-                double p = power * (1 / distance - 1 / infl_distance) * 1 / (distance * distance)
-                        * 1 / distance;
+				double p = power * (1 / distance - 1 / infl_distance)
+						* Math.pow(distance, -3);
 
                 Vector out_point = new Vector(point);
                 return out_point.subtract(this).mult(p);
@@ -83,8 +83,8 @@ public class PointObject extends Vector implements PFObject {
                     double diffAngle = Math.abs(angle - point.getAngle());
                     double norm = Util.map2Pi(diffAngle);
                     LOG.trace("Angle: " + norm);
-                    double p = power * (1 / distance - 1 / infl_distance)
-                            * (1 / (distance * distance)) * (1 / distance);
+					double p = power * (1 / distance - 1 / infl_distance)
+							* Math.pow(distance, -3);
                     double orientationComponent = ((Math.PI - norm) / (Math.PI)) * alpha;
 
                     LOG.trace("p: " + p + " orientationComponent: " + orientationComponent);
