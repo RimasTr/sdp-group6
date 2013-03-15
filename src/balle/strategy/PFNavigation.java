@@ -16,9 +16,9 @@ public class PFNavigation extends AbstractPlanner {
     private static final Logger LOG   = Logger.getLogger(PFNavigation.class);
 
     // Track width
-    double                      b     = 0.013f;
+	double b = 0.013f * 2;
     // Wheel radius
-    double                      r     = 0.0816f / 2;
+	double r = 0.0816f / 2;
     RobotConf                   conf  = new RobotConf(b, r);
 
     // PFPlanning plann = new PFPlanning(conf, 100000,

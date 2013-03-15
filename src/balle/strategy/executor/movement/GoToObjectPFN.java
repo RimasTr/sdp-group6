@@ -164,12 +164,12 @@ public class GoToObjectPFN implements MovementExecutor {
                     .getX(), snapshot.getOpponent().getPosition().getY()),
                     snapshot.getOpponent().getOrientation().radians());
 
-        // Our pos
+		// Our position - (coord, direction)
         Pos initPos = new Pos(new Point(snapshot.getBalle().getPosition()
                 .getX(), snapshot.getBalle().getPosition().getY()), snapshot
                 .getBalle().getOrientation().radians());
 
-        // Target pos
+		// Target position - coord
         Point targetLoc = new Point(target.getPosition().getX(), target
                 .getPosition().getY());
 
