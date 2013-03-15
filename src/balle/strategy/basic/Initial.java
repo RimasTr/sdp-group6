@@ -49,7 +49,6 @@ public class Initial extends AbstractPlanner {
 			}
 
 			return;
-
 		} else {
 			goto_executor.step(controller, snapshot);
 			return;

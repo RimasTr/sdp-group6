@@ -10,8 +10,6 @@ import org.apache.log4j.Logger;
 import balle.controller.Controller;
 import balle.main.drawable.Dot;
 import balle.strategy.ConfusedException;
-import balle.strategy.FactoryMethod;
-import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.executor.movement.MovementExecutor;
 import balle.world.Coord;
 import balle.world.Snapshot;
@@ -45,13 +43,13 @@ public class GoToGoal extends AbstractPlanner {
     }
 
     /**
-     * Instantiates a new go to ball strategy.
-     * 
-     * @param movementExecutor
-     *            the movement executor
-     * @param approachTargetFromCorrectSide
-     *            whether to always approach target from correct side
-     */
+	 * Instantiates a new go to goal strategy.
+	 * 
+	 * @param movementExecutor
+	 *            the movement executor
+	 * @param approachTargetFromCorrectSide
+	 *            whether to always approach target from correct side
+	 */
     public GoToGoal(MovementExecutor movementExecutor,
             boolean approachTargetFromCorrectSide) {
         this(movementExecutor, DEFAULT_AVOIDANCE_GAP, DEFAULT_OVERSHOOT_GAP,
@@ -66,17 +64,18 @@ public class GoToGoal extends AbstractPlanner {
         OVERSHOOT_GAP = overshootGap;
     }
 
-    @FactoryMethod(designator = "GoToBall PFN Test", parameterNames = {
-            "ApproachFromCorrectSide", "opponentPower",
-            "opponentInfluenceDistance", "targetPower", "alpha" })
-    public static GoToGoal pfnTestFactory(boolean approachFromCorrectSide,
-            double opponentPower, double opponentInfluenceDistance,
-            double targetPower, double alpha) {
-        return new GoToGoal(new GoToObjectPFN(0, true, opponentPower,
-                opponentInfluenceDistance, targetPower, alpha),
-                DEFAULT_AVOIDANCE_GAP,
-                DEFAULT_OVERSHOOT_GAP, approachFromCorrectSide);
-    }
+	// @FactoryMethod(designator = "GoToBall PFN Test", parameterNames = {
+	// "ApproachFromCorrectSide", "opponentPower",
+	// "opponentInfluenceDistance", "targetPower", "alpha" })
+	// public static GoToGoal pfnTestFactory(boolean approachFromCorrectSide,
+	// double opponentPower, double opponentInfluenceDistance,
+	// double targetPower, double alpha) {
+	// return new GoToGoal(new GoToObjectPFN(0, true, opponentPower,
+	// opponentInfluenceDistance, targetPower, alpha),
+	// DEFAULT_AVOIDANCE_GAP,
+	// DEFAULT_OVERSHOOT_GAP, approachFromCorrectSide);
+	// }
+
     public void setStopDistance(double distance) {
         executorStrategy.setStopDistance(distance);
     }
