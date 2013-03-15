@@ -25,8 +25,8 @@ public class Globals {
     public static final float BALL_RADIUS = 0.02135f;
 	public static final float ROBOT_WIDTH = 0.18f;
 	public static final float ROBOT_LENGTH = 0.20f;
-	public static final float ROBOT_TRACK_WIDTH = 0.135f; // Meters
-    public static final float ROBOT_WHEEL_DIAMETER = 0.0816f; // Meters
+	public static final float ROBOT_TRACK_WIDTH = 0.026f;
+	public static final float ROBOT_WHEEL_DIAMETER = 0.0816f;
 
 	public static final float COLLISION_DISTANCE = (float) Math.sqrt(2 * Math
 			.pow((ROBOT_WIDTH / 2 + ROBOT_LENGTH / 2), 2));
@@ -37,25 +37,29 @@ public class Globals {
 	public static final Vec2 ROBOT_RIGHT_WHEEL_POS = new Vec2(0,
 			ROBOT_TRACK_WIDTH / 2);
 
-    public static final float ROBOT_MAX_KICK_DISTANCE = Globals.PITCH_WIDTH; // Meters
-    // TODO
-    // CHECK
-    // THIS
+	public static final float ROBOT_MAX_KICK_DISTANCE = Globals.PITCH_WIDTH;
 
     // For defining near corner, and near wall areas.
     public final static double DISTANCE_TO_WALL = 0.2;
     public final static double DISTANCE_TO_CORNER = 0.2;
 
-    public static final float PITCH_WIDTH = 2.4384f; // Metres
-    public static final float PITCH_HEIGHT = 1.2192f; // Metres
-    public static final float GOAL_POSITION = 0.31f; // Metres
+	public static final float PITCH_WIDTH = 2.4384f;
+	public static final float PITCH_HEIGHT = 1.2192f;
+	public static final float GOAL_POSITION = 0.31f;
+
+	public static final float PITCH_MAX_Y = 1.2192000150680542f;
+	public static final float PITCH_MIN_Y = 0.0f;
+	public static final float PITCH_MAX_X = 2.4384000301361084f;
+	public static final float PITCH_MIN_X = 0.0f;
+	public static final float PITCH_GOAL_MAX_Y = 0.9f;
+	public static final float PITCH_GOAL_MIN_Y = 0.3f;
 
     public static final float ROBOT_POSSESS_DISTANCE = 0.025f;
 
     public static final float METERS_PER_PIXEL = PITCH_WIDTH / 605f;
 
-	public static final float VISION_COORD_NOISE_SD = 0.29f * METERS_PER_PIXEL; // in
-                                                                                // meters
+	public static final float VISION_COORD_NOISE_SD = 0.29f * METERS_PER_PIXEL;
+
 	public static final float VISION_ANGLE_NOISE_SD = 0.53f; // in
                                                              // degrees
     public static final float SIMULATED_VISON_FRAMERATE = 25f;
@@ -64,10 +68,10 @@ public class Globals {
     public static final int MAXIMUM_MOTOR_SPEED = 900;
 
     // Camera Info
-	public static final float P1_CAMERA_HEIGHT = 2.285f; // 2.386f; // Meters
-	public static final float P0_CAMERA_HEIGHT = 2.37f; // 2.421f; // Meters
+	public static final float P1_CAMERA_HEIGHT = 2.285f;
+	public static final float P0_CAMERA_HEIGHT = 2.37f;
 
-    public static final float ROBOT_HEIGHT = 0.19f; // Meters
+	public static final float ROBOT_HEIGHT = 0.19f;
 
     // TODO: SAULIUS this is just a temp fix for M3, change back to 50 for
     public static final double OVERSHOOT_ANGLE_EPSILON = 0; // Degrees
@@ -75,16 +79,8 @@ public class Globals {
     public static final long BALL_POSITION_ESTIMATE_MAX_STEP = 1000; // ms
     public static final long BALL_POSITION_ESTIMATE_DRAW_STEP = 100; // ms
 
-	// static final
-	// Vec2
-	// ROBOT_LEFT_WHEEL_POS
-	// = new
-	// Vec2(-ROBOT_TRACK_WIDTH/2,
-	// 0);
+	public static final float MaxWheelAccel = 10f;// 0.019f - m/s^2 good value?
 
-	public static final float MaxWheelAccel = 10f;// 0.019f; // m/s^2 good value
-													// around
-	// 0.005 ish
 	public static final float SlipWheelAccel = MaxWheelAccel * 0.6f;
 	public static final float MAX_ROBOT_LINEAR_ACCEL = 40f; // m/s^2
 	public static final float MAX_ROBOT_ANG_ACCEL = 700f; // r/s^2

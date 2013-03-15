@@ -11,7 +11,6 @@ public class PFPlanning {
     Pos                         robot;
     PointObject                 opponent;
     PointObject                 ball;
-    double                      default_power = 5;
     RobotConf                   config;
     List<PFObject>                objects;
     /** power for opponent. */

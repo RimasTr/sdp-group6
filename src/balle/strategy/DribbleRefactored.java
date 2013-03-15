@@ -156,6 +156,17 @@ public class DribbleRefactored extends AbstractPlanner {
 
 	}
 
+	/**
+	 * Returns true if we are close enough to the opponents goal to shoot.
+	 */
+	public boolean closeEnoughToShoot(Snapshot snapshot) {
+		Robot ourBot = snapshot.getBalle();
+		Coord ourPos = ourBot.getPosition();
+		Coord oppGoal = snapshot.getOpponentsGoal().getPosition();
+		double distance = ourPos.dist(oppGoal);
+		return distance < (Globals.PITCH_WIDTH * 0.35);
+	}
+
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
 		Robot ourBot = snapshot.getBalle();
@@ -174,7 +185,7 @@ public class DribbleRefactored extends AbstractPlanner {
             // Kick the ball if we're triggerhappy and should stop dribbling
             if (isTriggerHappy() && !isInactiveForAWhile()
                     && shouldStopDribblingDueToDribbleLength()
-					&& !facingOwnGoalSide) {
+					&& !facingOwnGoalSide && closeEnoughToShoot(snapshot)) {
 				controller.kick();
 				LOG.info("Dribble: KICK 1");
 				setKicked(true);

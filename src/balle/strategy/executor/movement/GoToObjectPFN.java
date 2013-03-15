@@ -29,11 +29,11 @@ public class GoToObjectPFN implements MovementExecutor {
     private static final double WHEEL_RADIUS = Globals.ROBOT_WHEEL_DIAMETER * 100 / 2.0;
 
     private double OPPONENT_POWER;
-    private static final double DEFAULT_OPPONENT_POWER = 0;
+	private static final double DEFAULT_OPPONENT_POWER = 0;
     private double OPPONENT_INFLUENCE_DISTANCE;
-    private static final double DEFAULT_OPPONENT_INFLUENCE_DISTANCE = 0;
+	private static final double DEFAULT_OPPONENT_INFLUENCE_DISTANCE = 0;
     private double TARGET_POWER;
-    private static final double DEFAULT_TARGET_POWER = 10;
+	private static final double DEFAULT_TARGET_POWER = 10;
     private double ALPHA;
     private static final double DEFAULT_ALPHA = 0;
 
@@ -72,7 +72,7 @@ public class GoToObjectPFN implements MovementExecutor {
     public GoToObjectPFN(double stopDistance, boolean slowDownCloseToTarget,
             double opponentPower, double opponentInfluenceDistance,
             double targetPower, double alpha) {
-        this.stopDistance = 0;
+		this.stopDistance = stopDistance;
         setSlowDownCloseToTarget(slowDownCloseToTarget);
 
         OPPONENT_POWER = opponentPower;
@@ -82,30 +82,54 @@ public class GoToObjectPFN implements MovementExecutor {
 
         setSlowDownCloseToTarget(slowDownCloseToTarget);
         RobotConf conf = new RobotConf(ROBOT_TRACK_WIDTH, WHEEL_RADIUS);
-        // plann = new PFPlanning(conf, 0, 1, 12, 0.5); // No opponent avoidance
-        // Avoids opponent:
         plann = new PFPlanning(conf, OPPONENT_POWER,
                 OPPONENT_INFLUENCE_DISTANCE, TARGET_POWER, ALPHA);
 
         // Add walls
         double wallPower = 0.05;
         double wallInfDist = 0.3;
-        RectObject leftWall = new RectObject(
-                new Point(0, Globals.PITCH_HEIGHT), new Point(0, 0), wallPower,
-                wallInfDist);
-        RectObject rightWall = new RectObject(new Point(Globals.PITCH_WIDTH,
-                Globals.PITCH_HEIGHT), new Point(Globals.PITCH_WIDTH, 0),
-                wallPower, wallInfDist);
-        RectObject topWall = new RectObject(new Point(0, Globals.PITCH_HEIGHT),
-                new Point(Globals.PITCH_WIDTH, Globals.PITCH_HEIGHT),
-                wallPower, wallInfDist);
-        RectObject bottomWall = new RectObject(new Point(0, 0), new Point(
-                Globals.PITCH_WIDTH, 0), wallPower, wallInfDist);
 
-        plann.addObject(leftWall);
-        plann.addObject(rightWall);
-        plann.addObject(topWall);
-        plann.addObject(bottomWall);
+		RectObject leftUpperWall = new RectObject(new Point(0, Globals.PITCH_GOAL_MAX_Y), new Point(0,
+				Globals.PITCH_MAX_Y), wallPower, wallInfDist);
+		RectObject leftLowerWall = new RectObject(new Point(0, 0), new Point(0, Globals.PITCH_GOAL_MIN_Y),
+				wallPower,
+				wallInfDist);
+		RectObject rightUpperWall = new RectObject(new Point(Globals.PITCH_MAX_X, Globals.PITCH_GOAL_MAX_Y), new Point(
+				Globals.PITCH_MAX_X, Globals.PITCH_MAX_Y), wallPower, wallInfDist);
+		RectObject rightLowerWall = new RectObject(new Point(Globals.PITCH_MAX_X, 0), new Point(Globals.PITCH_MAX_X,
+				Globals.PITCH_GOAL_MIN_Y), wallPower,
+				wallInfDist);
+
+		RectObject topWall = new RectObject(new Point(0, Globals.PITCH_MAX_Y), new Point(Globals.PITCH_MAX_X,
+				Globals.PITCH_MAX_Y),
+                wallPower, wallInfDist);
+		RectObject bottomWall = new RectObject(new Point(0, 0), new Point(Globals.PITCH_MAX_X, 0), wallPower,
+				wallInfDist);
+
+		// RectObject leftWall = new RectObject(
+		// new Point(0, Globals.PITCH_HEIGHT), new Point(0, 0), wallPower,
+		// wallInfDist);
+		// RectObject rightWall = new RectObject(new Point(Globals.PITCH_WIDTH,
+		// Globals.PITCH_HEIGHT), new Point(Globals.PITCH_WIDTH, 0),
+		// wallPower, wallInfDist);
+		// RectObject topWall = new RectObject(new Point(0,
+		// Globals.PITCH_HEIGHT),
+		// new Point(Globals.PITCH_WIDTH, Globals.PITCH_HEIGHT),
+		// wallPower, wallInfDist);
+		// RectObject bottomWall = new RectObject(new Point(0, 0), new Point(
+		// Globals.PITCH_WIDTH, 0), wallPower, wallInfDist);
+
+		// plann.addObject(leftWall);
+		// plann.addObject(rightWall);
+		// plann.addObject(topWall);
+		// plann.addObject(bottomWall);
+
+		plann.addObject(topWall);
+		plann.addObject(bottomWall);
+		plann.addObject(rightLowerWall);
+		plann.addObject(rightUpperWall);
+		plann.addObject(leftLowerWall);
+		plann.addObject(leftUpperWall);
     }
 
     /**

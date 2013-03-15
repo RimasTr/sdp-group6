@@ -84,15 +84,24 @@ public class Pitch extends StaticFieldObject {
 		return new Line(new Coord(minX, minY), new Coord(maxX, minY));
 	}
 	public Line[] getWalls() {
-		return new Line[] {
- getTopWall(), getRightWall(), getBottomWall(),
-				getLeftWall(), };
+		return new Line[] { getTopWall(), getRightWall(), getBottomWall(), getLeftWall() };
+	}
+
+	public void printCoordinates(Goal goal) {
+		System.out.println("Top wall: " + getTopWall().getA() + " " + getTopWall().getB());
+		System.out.println("Bottom wall: " + getBottomWall().getA() + " " + getBottomWall().getB());
+
+		System.out.println("LeftUpper wall: " + getLeftUpperWall(goal).getA() + " " + getLeftUpperWall(goal).getB());
+		System.out.println("LeftLower wall: " + getLeftLowerWall(goal).getA() + " " + getLeftLowerWall(goal).getB());
+		System.out.println("RightUpper wall: " + getRightUpperWall(goal).getA() + " " + getRightUpperWall(goal).getB());
+		System.out.println("RightLower wall: " + getRightLowerWall(goal).getA() + " " + getRightLowerWall(goal).getB());
 	}
 
 	@Override
 	public boolean intersects(Line line) {
 		return containsCoord(line.getA()) != containsCoord(line.getB());
 	}
+
 
 	/**
 	 * Get half of the pitch this point is on.

@@ -25,6 +25,7 @@ import balle.strategy.planner.BackingOffStrategy;
 import balle.strategy.planner.DefensiveStrategy;
 import balle.strategy.planner.GoToBall;
 import balle.strategy.planner.GoToBallSafeProportional;
+import balle.strategy.planner.GoToGoalSafeProportional;
 import balle.strategy.planner.KickFromWall;
 import balle.strategy.planner.SimpleGoToBallFaceGoal;
 import balle.world.Coord;
@@ -36,6 +37,7 @@ import balle.world.objects.Pitch;
 import balle.world.objects.RectangularObject;
 import balle.world.objects.Robot;
 
+	
 public class Game extends AbstractPlanner {
 
     private static final Logger LOG = Logger.getLogger(Game.class);
@@ -45,7 +47,7 @@ public class Game extends AbstractPlanner {
 	protected final Strategy pickBallFromWallStrategy;
     protected final BackingOffStrategy backingOffStrategy;
 	protected final RotateToOrientationExecutor turningExecutor;
-    protected final Dribble kickingStrategy;
+	protected final GoToGoalSafeProportional kickingStrategy;
     protected Strategy initialStrategy;
 
     protected final Strategy goToBallPFN;
@@ -100,7 +102,7 @@ public class Game extends AbstractPlanner {
 	 */
 
     public void setTriggerHappy(boolean triggerHappy) {
-        kickingStrategy.setTriggerHappy(triggerHappy);
+		// kickingStrategy.setTriggerHappy(triggerHappy);
     }
 
     public Game() {
@@ -109,7 +111,8 @@ public class Game extends AbstractPlanner {
         pickBallFromWallStrategy = new KickFromWall(new GoToObjectPFN(0));
 		backingOffStrategy = new BackingOffStrategy();
         turningExecutor = new IncFaceAngle();
-        kickingStrategy = new Dribble();
+		// kickingStrategy = new Dribble();
+		kickingStrategy = new GoToGoalSafeProportional();
 		initialStrategy = new Initial();
 		goToBallPFN = new GoToBallSafeProportional();
 		goToBallBezier = new SimpleGoToBallFaceGoal(new BezierNav(
@@ -172,6 +175,7 @@ public class Game extends AbstractPlanner {
 		goToBallPFN.stop(controller);
 		goToBallBezier.stop(controller);
 		goToBallPrecision.stop(controller);
+
 	}
 
     @Override
@@ -181,6 +185,7 @@ public class Game extends AbstractPlanner {
         Robot ourRobot = snapshot.getBalle();
 		Robot oppRobot = snapshot.getOpponent();
         Ball ball = snapshot.getBall();
+
 
 		// fix made by Toms not tested
 		if (ourRobot.getPosition().dist(ball.getPosition()) < Math.min(Globals.ROBOT_LENGTH / 2,
@@ -206,10 +211,11 @@ public class Game extends AbstractPlanner {
 		// return;
 		// }
         
-		if (proximityAlert(snapshot, ourRobot, oppRobot)) {
-			backingOffStrategy.step(controller, snapshot);
-			return;
-		}
+		// if (proximityAlert(snapshot, ourRobot, oppRobot)) {
+		// backingOffStrategy.step(controller, snapshot);
+		// return;
+		// }
+
 		// q: what is this?
 		// a: after looking into the shouldStealStep() call, it looks as if this
 		// is doing a similar task to the above proximityAlert() function.
@@ -296,7 +302,7 @@ public class Game extends AbstractPlanner {
 
 
 		// 1.
-        if ((kickingStrategy.isDribbling() && ball.getPosition().isEstimated() && ball
+		if ((ball.getPosition().isEstimated() && ball
                 .getPosition().dist(ourRobot.getPosition()) < Globals.ROBOT_LENGTH * 2)
                 || (dribbleBox.containsCoord(ball.getPosition()) && !ourRobot
                         .isFacingGoalHalf(ownGoal))) {
