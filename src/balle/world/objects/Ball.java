@@ -74,7 +74,7 @@ public class Ball extends CircularObject implements FieldObject {
 		// m.set(1, 0, (m.get(1, 0) + dy * timeDelta));
 		// if (!newPosition.equals(null) && !newVelocity.equals(null)) {
 
-		if (!newPosition.equals(null)) {
+		if (newPosition != null) {
 
 			m.set(0, 0, newPosition.getX());
 			m.set(1, 0, newPosition.getY());
@@ -86,11 +86,29 @@ public class Ball extends CircularObject implements FieldObject {
 					/ timeDelta, timeDelta));
 		}
  else {
-			this.setPosition(new Coord(s.get(0, 0), s.get(1, 0)));
-			this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3, 0)
-					/ timeDelta, timeDelta));
+			// this.setPosition(new Coord(s.get(0, 0), s.get(1, 0)));
+			// this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3,
+			// 0)
+			// / timeDelta, timeDelta));
+			reset(newPosition, timeDelta);
 		}
 
+
+	}
+
+	public void reset(Coord newPosition, double timeDelta) {
+		velocity = new Velocity(0, 0, timeDelta);
+		position = newPosition;
+
+		if (newPosition != null) {
+			double array[][] = { { position.x }, { position.y }, { 0.0 },
+					{ 0.0 } };
+			Matrix state_pre = new Matrix(array);
+
+			kalman.setState_pre(state_pre);
+
+			kalman.setMeasurement_matrix(Matrix.identity(4, 4));
+		}
 
 	}
 

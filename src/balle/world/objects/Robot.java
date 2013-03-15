@@ -391,7 +391,7 @@ public class Robot extends RectangularObject {
 			m.set(0, 0, newPosition.x);
 			m.set(1, 0, newPosition.y);
 			m.set(2, 0, newOrientation.radians());
-			
+
 			c = kalman.Correct(m);
 
 			position = new Coord(c.get(0, 0), c.get(1, 0));
@@ -411,8 +411,26 @@ public class Robot extends RectangularObject {
 			if (velocity.getX() > 10.0 || velocity.getY() > 10.0
 					|| velocity.getX() < -10.0 || velocity.getY() < -10.0)
 				velocity = velocity.mult(0);
+		} else
+			reset(newPosition, newOrientation, timeDelta);
 
+	}
 
+	public void reset(Coord newPosition, Orientation newOrientation,
+			double timeDelta) {
+
+		velocity = new Velocity(0, 0, timeDelta);
+		position = newPosition;
+		orientation = newOrientation;
+
+		if (newPosition != null && newOrientation != null) {
+			double[][] array = { { position.x }, { position.y },
+					{ newOrientation.radians() }, { 0.0 }, { 0.0 }, { 0.0 } };
+			Matrix state_pre = new Matrix(array);
+
+			kalman.setState_pre(state_pre);
+
+			kalman.setMeasurement_matrix(Matrix.identity(6, 6));
 		}
 
 	}
