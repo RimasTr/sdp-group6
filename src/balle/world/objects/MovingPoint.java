@@ -8,7 +8,7 @@ import balle.world.Velocity;
  */
 public class MovingPoint {
 
-	protected Coord position;
+	public Coord position;
 	protected Velocity velocity;
 
     public MovingPoint(Coord position, Velocity velocity) {

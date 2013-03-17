@@ -28,23 +28,13 @@ public class Ball extends CircularObject implements FieldObject {
 
 			double[][] tr = { { 1, 0, 1, 0 }, { 0, 1, 0, 1 }, { 0, 0, 1, 0 },
 					{ 0, 0, 0, 1 } };
-			//
-			// double[][] tr = { { 6, 0, 10, 0 }, { 0, 3, 0, 1 },
-			// { 0, 0, 1, 0 },
-			// { 0, 0, 0, 1 } };
-			//
-			// double[][] tr = { { 6, 0, 10, 0 }, { 0, 3, 0, 1 }, { 0, 0, 1, 0
-			// },
-			// { 0, 0, 0, 1 } };
 
-			// double[][] tr = { { 3, 0, 0, 0 }, { 3, 1, 0, 0 }, { 3, 2, 0, 0 },
-			// { 3, 3, 1, 0 } };
+			kalman.setProcess_noise(1e-1);
+			kalman.setMeasurement_noise(1e-100);
 
-			// cvSetIdentity(kalman.process_noise_cov(),
-			// cvScalarAll(newProcessNoise));
-
-			kalman.setTransition_matrix(new Matrix(tr).times(1));
+			kalman.setTransition_matrix(new Matrix(tr));
 			kalman.setError_cov_post(kalman.getError_cov_post().identity());
+
 
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
@@ -70,27 +60,31 @@ public class Ball extends CircularObject implements FieldObject {
 
 		// double dx = this.getVelocity().x;
 		// double dy = this.getVelocity().y;
+
 		// m.set(0, 0, (m.get(0, 0) + dx * timeDelta));
 		// m.set(1, 0, (m.get(1, 0) + dy * timeDelta));
-		// if (!newPosition.equals(null) && !newVelocity.equals(null)) {
 
-		if (newPosition != null) {
+		if (position != null) {
+			if (newPosition != null) {
 
-			m.set(0, 0, newPosition.getX());
-			m.set(1, 0, newPosition.getY());
+				m.set(0, 0, newPosition.getX());
+				m.set(1, 0, newPosition.getY());
 
-			c = kalman.Correct(m);
+				c = kalman.Correct(m);
 
-			this.setPosition(new Coord(c.get(0, 0), c.get(1, 0)));
-			this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3, 0)
-					/ timeDelta, timeDelta));
+				this.setPosition(new Coord(c.get(0, 0), c.get(1, 0)));
+				this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3,
+						0) / timeDelta, timeDelta));
+			}
+			else {
+				reset(newPosition, timeDelta);
+			}
+			
 		}
  else {
-			// this.setPosition(new Coord(s.get(0, 0), s.get(1, 0)));
-			// this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3,
-			// 0)
-			// / timeDelta, timeDelta));
-			reset(newPosition, timeDelta);
+			this.setPosition(new Coord(s.get(0, 0), s.get(1, 0)));
+			this.setVelocity(new Velocity(s.get(2, 0) / timeDelta, s.get(3, 0)
+					/ timeDelta, timeDelta));
 		}
 
 

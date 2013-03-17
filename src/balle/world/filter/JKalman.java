@@ -67,9 +67,9 @@ public class JKalman {
     /** measurement matrix (H) */    
     Matrix measurement_matrix;
     /** process noise covariance matrix (Q) */
-    Matrix process_noise_cov;
+	public Matrix process_noise_cov;
     /** measurement noise covariance matrix (R) */
-    Matrix measurement_noise_cov;
+	public Matrix measurement_noise_cov;
     /** priori error estimate covariance matrix (P'(k)): P'(k)=A*P(k-1)*At + Q) */
     Matrix error_cov_pre;
     /** Kalman gain matrix (K(k)): K(k)=P'(k)*Ht*inv(H*P'(k)*Ht+R) */
@@ -120,10 +120,11 @@ public class JKalman {
                            {0, 0, 0, 1} };
         kalman.transition_matrix = new Matrix(tr);
 */      
-		process_noise_cov = Matrix.identity(dp, dp, 1e-5); // 1e-5 (1 in OpenCV)
+		process_noise_cov = Matrix.identity(dp, dp, 1e-8); // 1e-5 (1 in
+															// OpenCV)
 
         measurement_matrix = Matrix.identity(mp, dp); // 1 (0 in OpenCV)
-		measurement_noise_cov = Matrix.identity(mp, mp, 1e-12); // 1e-1 (1 in
+		measurement_noise_cov = Matrix.identity(mp, mp, 1e-100); // 1e-1 (1 in
 																// OpenCV)
 
         error_cov_pre = new Matrix(dp, dp); // initialized in Predict
@@ -403,4 +404,13 @@ public class JKalman {
     public Matrix getError_cov_post() {
         return error_cov_post;
     }
+
+	public void setProcess_noise(double noise) {
+		process_noise_cov = Matrix.identity(dp, dp, noise);
+	}
+
+	public void setMeasurement_noise(double noise) {
+		measurement_noise_cov = Matrix.identity(mp, mp, noise);
+	}
+
 }

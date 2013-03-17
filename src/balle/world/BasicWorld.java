@@ -139,9 +139,15 @@ public class BasicWorld extends AbstractWorld {
 		ours = new Robot(ourPosition, oursVel, oursAngVel, ourOrientation);
 		ball = new Ball(ballPosition, ballVel);
 
-		them.update(theirsPosition, theirsOrientation, deltaT);
-		ours.update(ourPosition, ourOrientation, deltaT);
+		// System.out.println(ourPosition.x + " " + ourPosition.y);
+
+		// them.update(theirsPosition, theirsOrientation, deltaT);
+		// ours.update(ourPosition, ourOrientation, deltaT);
+		// //
+		// System.out.println(Orientation.capAngle(ourOrientation.degrees()));
 		ball.update(ballPosition, deltaT);
+		System.out.println(ball.position.x + " " + ball.position.y);
+		// System.out.println(ball.position.dist(new Coord(1.22f, 0.61f)));
 
 
 		// Pack into a snapshot
@@ -149,7 +155,6 @@ public class BasicWorld extends AbstractWorld {
 		prevRaw = nextSnapshot;
 
 		// ADDED THIS:
-		// KalmanFilter kf = new KalmanFilter();
 		nextSnapshot = filter(nextSnapshot);
 
 		// nextSnapshot = filter(nextSnapshot);
