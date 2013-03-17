@@ -377,6 +377,11 @@ public class Robot extends RectangularObject {
 
 		assert timeDelta > 0;
 		
+		if (lastPosition == null && orientation == null && newPosition == null
+				&& newOrientation == null) {
+			System.out.println("the robot is not on the pitch");
+		}
+
 		if (position !=null && orientation != null){
 			
 		

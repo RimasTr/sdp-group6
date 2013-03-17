@@ -11,6 +11,8 @@ public class MovingPoint {
 	public Coord position;
 	protected Velocity velocity;
 
+	public Coord lastPosition;
+
     public MovingPoint(Coord position, Velocity velocity) {
         super();
 

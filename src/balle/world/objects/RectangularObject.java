@@ -18,7 +18,7 @@ public class RectangularObject extends MovingPoint implements FieldObject {
     private final double width;
     private final double height;
     
-	protected Orientation orientation;
+	public Orientation orientation;
 	protected AngularVelocity angularVelocity;
 
     public RectangularObject(Coord position, Velocity velocity,
