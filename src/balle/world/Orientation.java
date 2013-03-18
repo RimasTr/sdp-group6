@@ -133,4 +133,40 @@ public class Orientation {
 	public String toString() {
 		return degrees() + "deg";
 	}
+
+	public static double capAngle(double angle) {
+		// return angle - ( 2.0 * Math.PI ) * Math.floor( angle / (2.0 *
+		// Math.PI) );
+		while (angle >= 2 * Math.PI)
+			angle -= 2 * Math.PI;
+		while (angle < 0)
+			angle += 2 * Math.PI;
+		return angle;
+	}
+
+	/**
+	 * Computes the shortest angle difference (in the (-pi,pi] interval) between
+	 * two angles. Assumes abs( a - b ) <= 2*PI
+	 * 
+	 * @param a
+	 *            The first angle.
+	 * @param b
+	 *            The second angle.
+	 * @return The shortest difference between the two angles.
+	 */
+	public static double angleDiff(double a, double b) {
+		assert Math.abs(a - b) <= 2.0 * Math.PI;
+
+		double r = capAngle(a) - capAngle(b);
+
+		if (r < -Math.PI)
+			r += 2 * Math.PI;
+		else if (r > Math.PI)
+			r -= 2 * Math.PI;
+
+		assert r >= -Math.PI;
+		assert r <= Math.PI;
+
+		return r;
+	}
 }

@@ -139,13 +139,25 @@ public class BasicWorld extends AbstractWorld {
 		ours = new Robot(ourPosition, oursVel, oursAngVel, ourOrientation);
 		ball = new Ball(ballPosition, ballVel);
 
+		them.lastPosition = theirsPosition;
+		ours.lastPosition = ourPosition;
+		ball.lastPosition = ballPosition;
+
+		updateKalman(ours, them, ball, deltaT);
+
+		// System.out.println(ourPosition.x + " " + ourPosition.y);
+		// System.out.println(ball.position.x + " " + ball.position.y);
+		// System.out.println(ball.position.dist(new Coord(1.22f, 0.61f)));
 
 		// Pack into a snapshot
 		Snapshot nextSnapshot = new Snapshot(this, them, ours, ball, timestamp);
 		prevRaw = nextSnapshot;
 
+		// ADDED THIS:
 		nextSnapshot = filter(nextSnapshot);
-        updateSnapshot(nextSnapshot);
+
+		// nextSnapshot = filter(nextSnapshot);
+		updateSnapshot(nextSnapshot);
     }
 
     protected synchronized void updateSnapshot(Snapshot nextSnapshot) {
@@ -163,6 +175,14 @@ public class BasicWorld extends AbstractWorld {
 			prev = new EmptySnapshot(this);
 			prevRaw = new EmptySnapshot(this);
 		}
+	}
+
+	public void updateKalman(Robot ours, Robot theirs, Ball ball, double deltaT) {
+
+		theirs.update(theirs.position, theirs.orientation, deltaT);
+		ours.update(ours.position, ours.orientation, deltaT);
+		ball.update(ball.position, deltaT);
+
 	}
 
 }

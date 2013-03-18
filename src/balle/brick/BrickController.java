@@ -18,8 +18,9 @@ import balle.controller.ControllerListener;
  */
 public class BrickController implements Controller {
 	DifferentialPilot pilot;
-
-	public int maxPilotSpeed = 900;
+	public int maxPilotSpeed = 900; // 20
+                                    // for
+                                    // friendlies
 
 	public final NXTRegulatedMotor LEFT_WHEEL = new NXTRegulatedMotor(
 			MotorPort.B);

@@ -1,19 +1,53 @@
 package balle.world.objects;
 
+import jama.Matrix;
 import balle.misc.Globals;
 import balle.world.AngularVelocity;
 import balle.world.Coord;
 import balle.world.Line;
 import balle.world.Orientation;
 import balle.world.Velocity;
+import balle.world.filter.JKalman;
 
 public class Robot extends RectangularObject {
+
+	JKalman kalman;
+	Matrix s = new Matrix(6, 1);
+	Matrix c = new Matrix(6, 1);
+	Matrix m = new Matrix(3, 1);
+	double[][] tr = { { 1, 0, 0, 1, 0, 0 }, { 0, 1, 0, 0, 1, 0 },
+			{ 0, 0, 1, 0, 0, 1 }, { 0, 0, 0, 1, 0, 0 }, { 0, 0, 0, 0, 1, 0 },
+			{ 0, 0, 0, 0, 0, 1 } };
 
 	public Robot(Coord position, Velocity velocity,
 			AngularVelocity angularVelocity, Orientation orientation) {
 		super(position, velocity, angularVelocity, orientation,
 				Globals.ROBOT_WIDTH,
                 Globals.ROBOT_LENGTH);
+
+		try {
+			kalman = new JKalman(6, 3);
+
+			double x = position.x;
+			double y = position.y;
+			double d = orientation.degrees();
+
+			m.set(0, 0, x);
+			m.set(1, 0, y);
+			m.set(2, 0, d);
+
+			kalman.setProcess_noise(1e-5);
+			kalman.setMeasurement_noise(1e-10);
+
+			// System.out.println("matricea m: " + m.toString(6, 6));
+
+			kalman.setTransition_matrix(new Matrix(tr));
+			kalman.setError_cov_post(kalman.getError_cov_post().identity());
+
+
+		} catch (Exception ex) {
+			// System.out.println(ex.getMessage());
+		}
     }
 
     /**
@@ -336,5 +370,87 @@ public class Robot extends RectangularObject {
 
 	public double getRightWheelSpeed() {
 		return helperWheelSpeed(relR);
+	}
+
+	public void update(Coord newPosition, Orientation newOrientation,
+			double timeDelta) {
+
+		assert timeDelta > 0;
+		
+		if (lastPosition == null && orientation == null && newPosition == null
+				&& newOrientation == null) {
+			System.out.println("the robot is not on the pitch");
+		}
+
+		if (position !=null && orientation != null){
+			
+		
+			if (newPosition != null && newOrientation != null) {
+
+				s = kalman.Predict();
+
+				double degrees = this.getOrientation().radians();
+				double newDegrees = newOrientation.radians();
+				newOrientation = new Orientation(degrees
+					+ Orientation.angleDiff(newDegrees, degrees));
+
+				assert Math.abs(degrees - newDegrees) <= Math.PI * 2.0 : "rotation = "
+					+ degrees + ", newRotation = " + newDegrees;
+
+				m.set(0, 0, newPosition.x);
+				m.set(1, 0, newPosition.y);
+				m.set(2, 0, newOrientation.radians());
+
+				c = kalman.Correct(m);
+
+				position = new Coord(c.get(0, 0), c.get(1, 0));
+				orientation = new Orientation(c.get(2, 0));
+				velocity = new Velocity(s.get(3, 0) / timeDelta, s.get(4, 0)
+					/ timeDelta, timeDelta);
+
+				angularVelocity = new AngularVelocity(s.get(5, 0) / timeDelta,
+					timeDelta);
+
+
+				if (angularVelocity.radians() > Math.PI * 2.0)
+					angularVelocity = new AngularVelocity(0.0, timeDelta);
+
+				if (velocity.getX() > 10.0 || velocity.getY() > 10.0
+						|| velocity.getX() < -10.0 || velocity.getY() < -10.0)
+					velocity = velocity.mult(0);
+			}
+				else {
+					position = new Coord(s.get(0, 0), s.get(1, 0));
+					orientation = new Orientation(s.get(2, 0));
+					velocity = new Velocity(s.get(3, 0) / timeDelta, s.get(4, 0)
+							/ timeDelta, timeDelta);
+
+					angularVelocity = new AngularVelocity(s.get(5, 0) / timeDelta,
+							timeDelta);
+				}
+		}
+		else
+				reset(newPosition, newOrientation, timeDelta);
+
+	}
+
+
+	public void reset(Coord newPosition, Orientation newOrientation,
+			double timeDelta) {
+
+		velocity = new Velocity(0, 0, timeDelta);
+		position = newPosition;
+		orientation = newOrientation;
+
+		if (newPosition != null && newOrientation != null) {
+			double[][] array = { { position.x }, { position.y },
+					{ newOrientation.radians() }, { 0.0 }, { 0.0 }, { 0.0 } };
+			Matrix state_pre = new Matrix(array);
+
+			kalman.setState_pre(state_pre);
+
+			kalman.setMeasurement_matrix(Matrix.identity(6, 6));
+		}
+
 	}
 }

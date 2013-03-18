@@ -10,7 +10,6 @@ import balle.world.objects.Goal;
 import balle.world.objects.Pitch;
 import balle.world.objects.Robot;
 
-
 /**
  * Immutable
  */
