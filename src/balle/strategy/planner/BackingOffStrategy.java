@@ -36,9 +36,7 @@ public class BackingOffStrategy extends GoToBall {
 	/**
 	 * Velocity threshold below which we could be stuck
 	 */
-	private static final double VELOCITY_THRESH = 5;// 3E-5;// NOTE: noise
-													// renders the velocity
-													// really unreliable atm
+	private static final double VELOCITY_THRESH = 5;
 
 	/**
 	 * Distance between our front and the other robot below which we could be

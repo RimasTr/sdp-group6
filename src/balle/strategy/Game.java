@@ -45,7 +45,7 @@ public class Game extends AbstractPlanner {
 	protected final Strategy defensiveStrategy;
     protected final Strategy opponentKickDefendStrategy;
 	protected final Strategy pickBallFromWallStrategy;
-    protected final BackingOffStrategy backingOffStrategy;
+	protected final BackingOffStrategy backingOffStrategy;
 	protected final RotateToOrientationExecutor turningExecutor;
 	protected final GoToGoalSafeProportional kickingStrategy;
     protected Strategy initialStrategy;
@@ -124,9 +124,6 @@ public class Game extends AbstractPlanner {
     public boolean isInitial(Snapshot snapshot) {
         if (initial == false)
             return false;
-		// q: can this be triggered at all?
-		// a: this is a variable we set before running the code, in the
-		// simulator/run gui there is an option to set 'init' to true or false.
 
         // Check if we have ball
         Ball ball = snapshot.getBall();
@@ -161,12 +158,10 @@ public class Game extends AbstractPlanner {
     }
 
     @Override
-	// shouldn't we stop all the strategies?
     public void stop(Controller controller) {
-		// fix made by Toms not tested
         defensiveStrategy.stop(controller);
         pickBallFromWallStrategy.stop(controller);
-        backingOffStrategy.stop(controller);
+		backingOffStrategy.stop(controller);
 		defensiveStrategy.stop(controller);
 		opponentKickDefendStrategy.stop(controller);
 		turningExecutor.stop(controller);
@@ -188,44 +183,19 @@ public class Game extends AbstractPlanner {
 
 
 		// fix made by Toms not tested
-		if (ourRobot.getPosition().dist(ball.getPosition()) < Math.min(Globals.ROBOT_LENGTH / 2,
-				Globals.ROBOT_WIDTH / 2)) {
-			LOG.info("Ball uvisible/under our robot.");
-			return;
-		}
-		if (oppRobot.getPosition().dist(ball.getPosition()) < Math.min(Globals.ROBOT_LENGTH / 2,
-				Globals.ROBOT_WIDTH / 2)) {
-			LOG.info("Ball uvisible/under opp robot.");
-			return;
-		}
-
-		// Maybe remove so we don't get an error like in the milestone 3?
-		// if (scored(snapshot, ball)) {
-		// LOG.info("End of match.");
-		// stop(controller);
-		// try {
-		// Thread.sleep(500);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
+		// if (ourRobot.getPosition().dist(ball.getPosition()) <
+		// Math.min(Globals.ROBOT_LENGTH / 2,
+		// Globals.ROBOT_WIDTH / 2)) {
+		// LOG.info("Ball uvisible/under our robot.");
 		// return;
 		// }
-        
-		// if (proximityAlert(snapshot, ourRobot, oppRobot)) {
-		// backingOffStrategy.step(controller, snapshot);
+		// if (oppRobot.getPosition().dist(ball.getPosition()) <
+		// Math.min(Globals.ROBOT_LENGTH / 2,
+		// Globals.ROBOT_WIDTH / 2)) {
+		// LOG.info("Ball uvisible/under opp robot.");
 		// return;
 		// }
 
-		// q: what is this?
-		// a: after looking into the shouldStealStep() call, it looks as if this
-		// is doing a similar task to the above proximityAlert() function.
-		// however, it could be causing problems.
-		// as far as i can tell it works by checking if we're stuck (our speed
-		// is low and we're near opp or wall)
-		// if we've just become stuck, then backoff, if we're already stuck we
-		// should be backing off already so continue to.
-		// TODO: could we test this by removing it and solely using
-		// proximityAlert?
 		if (backingOffStrategy.shouldStealStep(snapshot)) {
 			backingOffStrategy.step(controller, snapshot);
 			return;
@@ -241,10 +211,6 @@ public class Game extends AbstractPlanner {
         }
 
 		// SnapshotPredictor sp = snapshot.getSnapshotPredictor();
-        // addDrawable(new Circle(ourRobot.getFrontSide().midpoint(), 0.07,
-        // Color.GREEN));
-        // addDrawable(new Circle(ourRobot.getFrontSide().midpoint(), 0.1,
-        // Color.RED));
 
         String oldStrategy = getCurrentStrategy();
 		Strategy strategy = getStrategy(snapshot);
@@ -378,71 +344,5 @@ public class Game extends AbstractPlanner {
 		// return goToBallBezier;
 		return goToBallPFN;
 	}
-
-	private boolean proximityAlert(Snapshot snapshot, Robot ourRobot,
-			Robot oppRobot) {
-		Pitch pitch = snapshot.getPitch();
-		Goal ourGoal = snapshot.getOwnGoal();
-
-		Line topWall = pitch.getTopWall();
-		Line bottomWall = pitch.getBottomWall();
-
-		Line leftUpperWall = pitch.getLeftUpperWall(ourGoal);
-		Line leftLowerWall = pitch.getLeftLowerWall(ourGoal);
-		Line rightUpperWall = pitch.getRightUpperWall(ourGoal);
-		Line rightLowerWall = pitch.getRightLowerWall(ourGoal);
-
-		Coord ourPosition = ourRobot.getPosition();
-		Coord oppPosition = oppRobot.getPosition();
-
-		// If we are in line with goals, return false as we want to be able to
-		// move into goals to score.
-		// Might cause problems with running in the other robot TODO: test!
-		// if ((ourPosition.getY() < rightUpperWall.minY()) &&
-		// (ourPosition.getY() > rightLowerWall.maxY())) {
-		// return false;
-		// }
-
-		double dist = 0.1;
-
-		boolean top = (topWall.pointToLineDistance(ourPosition) < dist);
-		boolean bottom = (bottomWall.pointToLineDistance(ourPosition) < dist);
-
-		boolean leftUpper = (leftUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0));
-		boolean leftLower = (leftLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0));
-		boolean rightUpper = (rightUpperWall.pointToLineDistance(ourPosition) < (dist / 2.0));
-		boolean rightLower = (rightLowerWall.pointToLineDistance(ourPosition) < (dist / 2.0));
-
-		// not tested fix by toms
-		boolean opp = (ourPosition.dist(oppPosition) < Globals.COLLISION_DISTANCE);
-
-		// LOG.info("Proximity: " + top + " " + bottom + " " + leftUpper + " "
-		// + leftLower + " "
-		// + rightUpper + " " + rightLower + " " + opp);
-
-		return (top || bottom || leftUpper || leftLower || rightUpper
-				|| rightLower || opp);
-	}
-
-	private boolean scored(Snapshot snapshot, Ball ball) {
-		Goal opp = snapshot.getOpponentsGoal();
-		Goal own = snapshot.getOwnGoal();
-
-		if (opp.isLeftGoal()) {
-			return opp.getMaxX() - ball.getPosition().getX() > 0;
-		} else if (opp.isRightGoal()) {
-			return opp.getMinX() - ball.getPosition().getX() < 0;
-		}
-
-		if (own.isLeftGoal()) {
-			return own.getMaxX() - ball.getPosition().getX() > 0;
-		} else if (own.isRightGoal()) {
-			return own.getMinX() - ball.getPosition().getX() < 0;
-		}
-
-		return false;
-
-	}
-
 
 }
