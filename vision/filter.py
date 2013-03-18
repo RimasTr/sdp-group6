@@ -5,7 +5,7 @@ class Filter:
         self.lastBallCoords = [-1, -1, -1]
         self.lastRobotCoords = [-1, -1, -1]
         self.dribler = '--'
-        self.minDist = 99999999999
+        self.minDist = 2000
         pass
 
     def change(self, name, x, y, angle):
@@ -25,14 +25,14 @@ class Filter:
                 print 'dBlue', dBlue
                 print self.coords
                 print self.lastBallCoords
-                #if (min(dYellow, dBlue) < self.minDist):
-                if (dYellow < dBlue):
-                    self.dribler = 'yellow'
+                if (min(dYellow, dBlue) < self.minDist):
+                    if (dYellow < dBlue):
+                        self.dribler = 'yellow'
+                    else:
+                        self.dribler = 'blue'
                 else:
-                    self.dribler = 'blue'
-                #else:
-                #    self.dribler = '-'
-                #    return self.coords
+                    self.dribler = '-'
+                    return self.coords
                 self.lastRobotCoords = self.coords[self.dribler]
             if (self.dribler == 'yellow' or self.dribler == 'blue'):
                 print (self.dribler, 'is dribling!')
