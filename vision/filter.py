@@ -35,8 +35,9 @@ class Filter:
                     return self.coords
                 self.lastRobotCoords = self.coords[self.dribler]
             if (self.dribler == 'yellow' or self.dribler == 'blue'):
-                print (self.dribler, 'is dribling!')
-                self.coords['ball'] = self.findBallCoords(self.lastBallCoords, self.lastRobotCoords, self.coords[self.dribler])
+                if (not self.coords[self.dribler][0] == -1):
+                    print (self.dribler, 'is dribling!')
+                    self.coords['ball'] = self.findBallCoords(self.lastBallCoords, self.lastRobotCoords, self.coords[self.dribler])
             return self.coords
 
     def findDist(self, p1, p2):
