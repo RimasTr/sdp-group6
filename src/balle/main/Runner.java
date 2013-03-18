@@ -265,6 +265,6 @@ public class Runner {
 		System.out.println(botA);
 		System.out.println(botB);
 
-		initialiseGUI(botA, null, worldA, null, strategyLog, simulator);
+		initialiseGUI(botA, botB, worldA, null, strategyLog, simulator);
 	}
 }
