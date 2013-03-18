@@ -86,83 +86,99 @@ public class SocketVisionReader extends Reader {
 				 * } coordinateCount++;
 				 */
 
-				double x1p = Double.parseDouble(tokens[1]);
-				double y1p = Double.parseDouble(tokens[2]);
-				double d1p = Double.parseDouble(tokens[3]);
+				double x1 = Double.parseDouble(tokens[1]);
+				double y1 = Double.parseDouble(tokens[2]);
+				double d1 = Double.parseDouble(tokens[3]);
 
-				double x2p = Double.parseDouble(tokens[4]);
-				double y2p = Double.parseDouble(tokens[5]);
-				double d2p = Double.parseDouble(tokens[6]);
+				double x2 = Double.parseDouble(tokens[4]);
+				double y2 = Double.parseDouble(tokens[5]);
+				double d2 = Double.parseDouble(tokens[6]);
 
-				double x3p = Double.parseDouble(tokens[7]);
-				double y3p = Double.parseDouble(tokens[8]);
+				double x3 = Double.parseDouble(tokens[7]);
+				double y3 = Double.parseDouble(tokens[8]);
 
-				// propagate(x1p, y1p, d1p, x2p, y2p, d2p, x3p, y3p,
-				// Long.parseLong(tokens[9]));
+				// double x1p = Double.parseDouble(tokens[1]);
+				// double y1p = Double.parseDouble(tokens[2]);
+				// double d1p = Double.parseDouble(tokens[3]);
+				//
+				// double x2p = Double.parseDouble(tokens[4]);
+				// double y2p = Double.parseDouble(tokens[5]);
+				// double d2p = Double.parseDouble(tokens[6]);
+				//
+				// double x3p = Double.parseDouble(tokens[7]);
+				// double y3p = Double.parseDouble(tokens[8]);
+				//
+				// // propagate(x1p, y1p, d1p, x2p, y2p, d2p, x3p, y3p,
+				// // Long.parseLong(tokens[9]));
+				//
+				// if ((Math.abs(x1p - x1) > DISTMINTRESHOLD && x1p > 0 && Math
+				// .abs(x1p - x1) < DISTMAXTRESHOLD) || x1 == 0)
+				// x1 = x1p;
+				// else if (Math.abs(x1p - x1) > DISTMAXTRESHOLD && bx1 ==
+				// false)
+				// bx1 = true;
+				// else if (bx1) {
+				// bx1 = false;
+				// x1 = x1p;
+				// }
+				// if ((Math.abs(y1p - y1) > DISTMINTRESHOLD && y1p > 0 && Math
+				// .abs(y1p - y1) < DISTMAXTRESHOLD) || y1 == 0)
+				// y1 = y1p;
+				// else if (Math.abs(y1p - y1) > DISTMAXTRESHOLD && by1 ==
+				// false)
+				// by1 = true;
+				// else if (by1) {
+				// by1 = false;
+				// y1 = y1p;
+				// }
+				// if ((Math.abs(d1p - d1) > DIRMINTRESHOLD && d1p > 0 && Math
+				// .abs(d1p - d1) < DIRMAXTRESHOLD) || d1 == 0)
+				// d1 = d1p;
+				// else if (Math.abs(d1p - d1) > DIRMAXTRESHOLD && bd1 == false)
+				// bd1 = true;
+				// else if (bd1) {
+				// bd1 = false;
+				// d1 = d1p;
+				// }
+				// if ((Math.abs(x2p - x2) > DISTMINTRESHOLD && x2p > 0 && Math
+				// .abs(x2p - x2) < DISTMAXTRESHOLD) || x2 == 0)
+				// x2 = x2p;
+				// else if (Math.abs(x2p - x2) > DISTMAXTRESHOLD && bx2 ==
+				// false)
+				// bx2 = true;
+				// else if (bx2) {
+				// bx2 = false;
+				// x2 = x2p;
+				// }
+				//
+				// if ((Math.abs(y2p - y2) > DISTMINTRESHOLD && y2p > 0 && Math
+				// .abs(y2p - y2) < DISTMAXTRESHOLD) || y2 == 0)
+				// y2 = y2p;
+				// else if (Math.abs(y2p - y2) > DISTMAXTRESHOLD && by2 ==
+				// false)
+				// by2 = true;
+				// else if (by2) {
+				// by2 = false;
+				// y2 = y2p;
+				// }
+				//
+				// if ((Math.abs(d2p - d2) > DIRMINTRESHOLD && d2p > 0 && Math
+				// .abs(d2p - d2) < DIRMAXTRESHOLD) || d2 == 0)
+				// d2 = d2p;
+				// else if (Math.abs(d2p - d2) > DIRMAXTRESHOLD && bd2 == false)
+				// bd2 = true;
+				// else if (bd2) {
+				// bd2 = false;
+				// d2 = d2p;
+				// }
+				//
+				// if ((Math.abs(x3p - x3) > DISTMINTRESHOLD && x3p > 0)
+				// || x3 == 0)
+				// x3 = x3p;
+				// if ((Math.abs(y3p - y3) > DISTMINTRESHOLD && y3p > 0)
+				// || y3 == 0)
+				// y3 = y3p;
 
-				if ((Math.abs(x1p - x1) > DISTMINTRESHOLD && x1p > 0 && Math
-						.abs(x1p - x1) < DISTMAXTRESHOLD) || x1 == 0)
-					x1 = x1p;
-				else if (Math.abs(x1p - x1) > DISTMAXTRESHOLD && bx1 == false)
-					bx1 = true;
-				else if (bx1) {
-					bx1 = false;
-					x1 = x1p;
-				}
-				if ((Math.abs(y1p - y1) > DISTMINTRESHOLD && y1p > 0 && Math
-						.abs(y1p - y1) < DISTMAXTRESHOLD) || y1 == 0)
-					y1 = y1p;
-				else if (Math.abs(y1p - y1) > DISTMAXTRESHOLD && by1 == false)
-					by1 = true;
-				else if (by1) {
-					by1 = false;
-					y1 = y1p;
-				}
-				if ((Math.abs(d1p - d1) > DIRMINTRESHOLD && d1p > 0 && Math
-						.abs(d1p - d1) < DIRMAXTRESHOLD) || d1 == 0)
-					d1 = d1p;
-				else if (Math.abs(d1p - d1) > DIRMAXTRESHOLD && bd1 == false)
-					bd1 = true;
-				else if (bd1) {
-					bd1 = false;
-					d1 = d1p;
-				}
-				if ((Math.abs(x2p - x2) > DISTMINTRESHOLD && x2p > 0 && Math
-						.abs(x2p - x2) < DISTMAXTRESHOLD) || x2 == 0)
-					x2 = x2p;
-				else if (Math.abs(x2p - x2) > DISTMAXTRESHOLD && bx2 == false)
-					bx2 = true;
-				else if (bx2) {
-					bx2 = false;
-					x2 = x2p;
-				}
-
-				if ((Math.abs(y2p - y2) > DISTMINTRESHOLD && y2p > 0 && Math
-						.abs(y2p - y2) < DISTMAXTRESHOLD) || y2 == 0)
-					y2 = y2p;
-				else if (Math.abs(y2p - y2) > DISTMAXTRESHOLD && by2 == false)
-					by2 = true;
-				else if (by2) {
-					by2 = false;
-					y2 = y2p;
-				}
-
-				if ((Math.abs(d2p - d2) > DIRMINTRESHOLD && d2p > 0 && Math
-						.abs(d2p - d2) < DIRMAXTRESHOLD) || d2 == 0)
-					d2 = d2p;
-				else if (Math.abs(d2p - d2) > DIRMAXTRESHOLD && bd2 == false)
-					bd2 = true;
-				else if (bd2) {
-					bd2 = false;
-					d2 = d2p;
-				}
-
-				if ((Math.abs(x3p - x3) > DISTMINTRESHOLD && x3p > 0)
-						|| x3 == 0)
-					x3 = x3p;
-				if ((Math.abs(y3p - y3) > DISTMINTRESHOLD && y3p > 0)
-						|| y3 == 0)
-					y3 = y3p;
 				// System.out.println("Updating (entity): " + line);
 				// System.out.println("1st team (" + x1 + "," + y1 + "," + d1
 				// + ")");
