@@ -6,8 +6,8 @@ import balle.memory.utility.Saves;
 
 public class Config implements Saves {
 	public static final int NAME = 0;
-	public static final int GREEN_STRATEGY = 1;
-	public static final int RED_STRATEGY = 2;
+	public static final int BLUE_STRATEGY = 1;
+	public static final int YELLOW_STRATEGY = 2;
 	public static final int POWER_VELO_DATA = 3;
 
 	// Instance

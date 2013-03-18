@@ -231,7 +231,7 @@ public class Runner {
 		visionInput = new SocketVisionReader();
 		visionInput.addListener(world);
 
-        initialiseGUI(controllerA, null, world, null, strategyLog, null);
+		initialiseGUI(controllerA, null, world, null, strategyLog, null);
 	}
 
 	public static void runSimulator(boolean balleIsBlue, boolean goalIsLeft,
@@ -265,6 +265,6 @@ public class Runner {
 		System.out.println(botA);
 		System.out.println(botB);
 
-		initialiseGUI(botA, botB, worldA, null, strategyLog, simulator);
+		initialiseGUI(botA, null, worldA, null, strategyLog, simulator);
 	}
 }
