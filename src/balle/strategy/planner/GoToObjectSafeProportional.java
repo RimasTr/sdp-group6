@@ -27,7 +27,7 @@ public class GoToObjectSafeProportional extends GoToObject {
 	private final AbstractPlanner turnHack;
 
     public GoToObjectSafeProportional() {
-		super(new GoToObjectPFN(0.1, true));
+		super(new GoToObjectPFN(0.10, true));
 
 		turnHack = new TurnHack();
     }

@@ -7,11 +7,8 @@ import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
 import balle.main.drawable.Drawable;
-import balle.main.drawable.DrawableLine;
-import balle.main.drawable.DrawableRectangularObject;
 import balle.main.drawable.Label;
 import balle.misc.Globals;
-import balle.simulator.SnapshotPredictor;
 import balle.strategy.basic.GoToGoal;
 import balle.strategy.basic.Initial;
 import balle.strategy.planner.AbstractPlanner;
@@ -20,7 +17,6 @@ import balle.world.Coord;
 import balle.world.Snapshot;
 import balle.world.objects.Ball;
 import balle.world.objects.Goal;
-import balle.world.objects.RectangularObject;
 import balle.world.objects.Robot;
 
 	
@@ -159,18 +155,6 @@ public class Game2 extends AbstractPlanner {
 		Goal oppGoal = snapshot.getOpponentsGoal();
 		Ball ball = snapshot.getBall();
 
-		// Get predicted snapshot
-        SnapshotPredictor sp = snapshot.getSnapshotPredictor();
-        Snapshot newsnap = sp.getSnapshotAfterTime(50);
-
-		RectangularObject dribbleBox = ourRobot.getFrontSide().extendBothDirections(0.01).widen(0.25);
-        addDrawable(new DrawableRectangularObject(dribbleBox, Color.CYAN));
-		addDrawable(new DrawableLine(newsnap.getBalle().getFrontSide(), Color.RED));
-
-		/*
-		 * Choosing Strategy:
-		 */
-
 		boolean attack = weShouldAttack(ourRobot, oppRobot, ball, ourGoal, oppGoal);
 
 		if (attack) {
@@ -181,7 +165,7 @@ public class Game2 extends AbstractPlanner {
 
 			if (oppDistanceToGoal < ourDistanceToGoal) {
 				return goDirectToGoal;
-			} else {
+			} else { // TODO: Update this Strategy to use Intercept()
 				return defendAndIntercept;
 			}
 		}
@@ -199,10 +183,19 @@ public class Game2 extends AbstractPlanner {
 			return true;
 		}
 
-		double ourDistanceToBall = ourRobot.getPosition().dist(ball.getPosition());
-		double oppDistanceToBall = oppRobot.getPosition().dist(ball.getPosition());
+		double ourDistanceToBall = Math.abs(ourRobot.getPosition().dist(ball.getPosition()));
+		double oppDistanceToBall = Math.abs(oppRobot.getPosition().dist(ball.getPosition()));
 		
+		// Opponent is closer to the ball than us
 		if (ourDistanceToBall * 1.1 < oppDistanceToBall) {
+			return true;
+		}
+		
+		double oppDistanceToGoal = Math.abs(oppRobot.getPosition().dist(ourGoal.getPosition()));
+		double ballDistanceToGoal = Math.abs(ball.getPosition().dist(ourGoal.getPosition()));
+
+		// Ball is behind the Opponent
+		if (oppDistanceToGoal < ballDistanceToGoal) {
 			return true;
 		}
 

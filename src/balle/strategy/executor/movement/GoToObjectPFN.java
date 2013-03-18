@@ -33,7 +33,7 @@ public class GoToObjectPFN implements MovementExecutor {
 	private static final double DEFAULT_ALPHA = 0;
 
 	private static final double WALL_POWER = 0.05;
-	private static final double WALL_INFLUENCE_DISTANCE = 0.3;
+	private static final double WALL_INFLUENCE_DISTANCE = 0.01;
 
     private double OPPONENT_POWER;
     private double OPPONENT_INFLUENCE_DISTANCE;
