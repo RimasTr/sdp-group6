@@ -120,7 +120,7 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 2;
-		blueStrategy.setEnabled(simulator != null || worldA.isBlue());
+		// blueStrategy.setEnabled(simulator != null || worldA.isBlue());
 		controlPanel.add(blueStrategy, c);
 
 		yellowLabel = new JLabel(YELLOW_LABEL_TEXT);
@@ -133,7 +133,7 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 2;
-		yellowStrategy.setEnabled(simulator != null || !worldA.isBlue());
+		yellowStrategy.setEnabled(simulator != null);
 		controlPanel.add(yellowStrategy, c);
 
 		startButton = new JButton("Start");
@@ -161,7 +161,6 @@ public class StratTab extends JPanel implements ActionListener {
 		switchRobot.setActionCommand("robot");
 		c.gridx = 1;
 		c.gridy = 4;
-		switchRobot.setEnabled(simulator != null);
 		controlPanel.add(switchRobot, c);
 
 		noiseButton = new JButton("Noise: On");
