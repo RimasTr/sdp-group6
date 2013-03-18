@@ -311,7 +311,7 @@ public class Game extends AbstractPlanner {
 		    
 		// 5.
 		if (!ourRobot.isApproachingTargetFromCorrectSide(ball, opponentsGoal,
-				25)) {
+				25) || (ourRobot.getPosition().dist(ball.getPosition()) > 1)) {
 			return goToBallPFN;
 		}
 
@@ -322,11 +322,12 @@ public class Game extends AbstractPlanner {
 
 		// Bezier can have trouble next to walls
 		// 7.
-		if (ourRobot.isNearWall(pitch)
-				&& (!ball.isNearWall(pitch) || ourRobot.getPosition().dist(
-						ball.getPosition()) > 0.5)) {
-			return goToBallPFN;
-		}
+		// DO WE USE BEZZIER?
+		// if (ourRobot.isNearWall(pitch)
+		// && (!ball.isNearWall(pitch) || ourRobot.getPosition().dist(
+		// ball.getPosition()) > 0.5)) {
+		// return goToBallPFN;
+		// }
 
 		// 8.
         if ((!ourRobot.isNearWall(snapshot.getPitch()))

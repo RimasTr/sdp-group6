@@ -129,7 +129,6 @@ public class Game2 extends AbstractPlanner {
     public void onStep(Controller controller, Snapshot snapshot)
             throws ConfusedException {
 
-
         if (isInitial(snapshot)) {
             setCurrentStrategy(initialStrategy.getClass().getName());
 
@@ -189,6 +188,11 @@ public class Game2 extends AbstractPlanner {
 
 	}
 
+	/*
+	 * We attack if we have the ball OR we are closer to the ball than the
+	 * opponent
+	 */
+
 	private boolean weShouldAttack(Robot ourRobot, Robot oppRobot, Ball ball, Goal ourGoal, Goal oppGoal) {
 
 		if (ourRobot.possessesBall(ball)) {
@@ -197,15 +201,13 @@ public class Game2 extends AbstractPlanner {
 
 		double ourDistanceToBall = ourRobot.getPosition().dist(ball.getPosition());
 		double oppDistanceToBall = oppRobot.getPosition().dist(ball.getPosition());
-
 		
 		if (ourDistanceToBall * 1.1 < oppDistanceToBall) {
-			LOG.info(ourDistanceToBall + " " + oppDistanceToBall);
-			LOG.info((ourDistanceToBall * 1.5 < oppDistanceToBall));
 			return true;
 		}
 
 		return false;
+
 	}
 
 
