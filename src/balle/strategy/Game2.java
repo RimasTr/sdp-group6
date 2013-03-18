@@ -68,8 +68,7 @@ public class Game2 extends AbstractPlanner {
     public Game2() {
 		initialStrategy = new Initial();
 		goDribbleAndShoot = new GoToObjectSafeProportional();
-		// defendAndIntercept = new Interception();
-		defendAndIntercept = new GoToObjectSafeProportional();
+		defendAndIntercept = new DefendAndIntercept();
 		goDirectToGoal = new GoToGoal();
 
 		initial = false;
@@ -165,7 +164,7 @@ public class Game2 extends AbstractPlanner {
 
 			if (oppDistanceToGoal < ourDistanceToGoal) {
 				return goDirectToGoal;
-			} else { // TODO: Update this Strategy to use Intercept()
+			} else {
 				return defendAndIntercept;
 			}
 		}
@@ -179,27 +178,28 @@ public class Game2 extends AbstractPlanner {
 
 	private boolean weShouldAttack(Robot ourRobot, Robot oppRobot, Ball ball, Goal ourGoal, Goal oppGoal) {
 
-		if (ourRobot.possessesBall(ball)) {
-			return true;
+		if (oppRobot.possessesBall(ball)) {
+			return false;
 		}
 
 		double ourDistanceToBall = Math.abs(ourRobot.getPosition().dist(ball.getPosition()));
 		double oppDistanceToBall = Math.abs(oppRobot.getPosition().dist(ball.getPosition()));
 		
 		// Opponent is closer to the ball than us
-		if (ourDistanceToBall * 1.1 < oppDistanceToBall) {
-			return true;
+		if (ourDistanceToBall * 1.25 > oppDistanceToBall) {
+			return false;
 		}
 		
-		double oppDistanceToGoal = Math.abs(oppRobot.getPosition().dist(ourGoal.getPosition()));
-		double ballDistanceToGoal = Math.abs(ball.getPosition().dist(ourGoal.getPosition()));
-
-		// Ball is behind the Opponent
-		if (oppDistanceToGoal < ballDistanceToGoal) {
-			return true;
+		double ourDistanceToGoal = ourRobot.getPosition().dist(ourGoal.getPosition());
+		double oppDistanceToGoal = oppRobot.getPosition().dist(ourGoal.getPosition());
+		double ballDistanceToGoal = ball.getPosition().dist(ourGoal.getPosition());
+		
+		// Opponent is closer to our goal and ball is between them and Goal
+		if (oppDistanceToGoal < ourDistanceToGoal && ballDistanceToGoal <= oppDistanceToGoal) {
+			return false;
 		}
 
-		return false;
+		return true;
 
 	}
 
