@@ -24,44 +24,28 @@ public class GoToObjectPFN implements MovementExecutor {
 
     private static final Logger LOG               = Logger.getLogger(MovementExecutor.class);
 
-    // cm
     private static final double ROBOT_TRACK_WIDTH = Globals.ROBOT_TRACK_WIDTH * 100;
     private static final double WHEEL_RADIUS = Globals.ROBOT_WHEEL_DIAMETER * 100 / 2.0;
 
-    private double OPPONENT_POWER;
 	private static final double DEFAULT_OPPONENT_POWER = 0;
-    private double OPPONENT_INFLUENCE_DISTANCE;
 	private static final double DEFAULT_OPPONENT_INFLUENCE_DISTANCE = 0;
-    private double TARGET_POWER;
 	private static final double DEFAULT_TARGET_POWER = 10;
-    private double ALPHA;
-    private static final double DEFAULT_ALPHA = 0;
+	private static final double DEFAULT_ALPHA = 0;
 
-    private double stopDistance; // meters
+	private static final double WALL_POWER = 0.05;
+	private static final double WALL_INFLUENCE_DISTANCE = 0.3;
+
+    private double OPPONENT_POWER;
+    private double OPPONENT_INFLUENCE_DISTANCE;
+    private double TARGET_POWER;
+    private double ALPHA;
+
+	private double stopDistance;
     private boolean slowDownCloseToTarget;
 
     private final ArrayList<Drawable> drawables = new ArrayList<Drawable>();
-
-    public boolean shouldSlowDownCloseToTarget() {
-        return slowDownCloseToTarget;
-    }
-
-    public void setSlowDownCloseToTarget(boolean slowDownCloseToTarget) {
-        this.slowDownCloseToTarget = slowDownCloseToTarget;
-    }
-
-    public double getStopDistance() {
-        return stopDistance;
-    }
-
-    @Override
-    public void setStopDistance(double stopDistance) {
-        this.stopDistance = stopDistance;
-    }
-
     private FieldObject target;
-
-    PFPlanning                plann;
+	protected PFPlanning plann;
 
     public GoToObjectPFN(double stopDistance, boolean slowDownCloseToTarget) {
         this(stopDistance, slowDownCloseToTarget, DEFAULT_OPPONENT_POWER,
@@ -73,26 +57,23 @@ public class GoToObjectPFN implements MovementExecutor {
             double opponentPower, double opponentInfluenceDistance,
             double targetPower, double alpha) {
 		this.stopDistance = stopDistance;
-        setSlowDownCloseToTarget(slowDownCloseToTarget);
+		this.slowDownCloseToTarget = slowDownCloseToTarget;
 
         OPPONENT_POWER = opponentPower;
         OPPONENT_INFLUENCE_DISTANCE = opponentInfluenceDistance;
         TARGET_POWER = targetPower;
         ALPHA = alpha;
 
-        setSlowDownCloseToTarget(slowDownCloseToTarget);
         RobotConf conf = new RobotConf(ROBOT_TRACK_WIDTH, WHEEL_RADIUS);
         plann = new PFPlanning(conf, OPPONENT_POWER,
                 OPPONENT_INFLUENCE_DISTANCE, TARGET_POWER, ALPHA);
 
-        // Add walls
-        double wallPower = 0.05;
-        double wallInfDist = 0.3;
+		double wallPower = WALL_POWER;
+		double wallInfDist = WALL_INFLUENCE_DISTANCE;
 
 		RectObject leftUpperWall = new RectObject(new Point(0, Globals.PITCH_GOAL_MAX_Y), new Point(0,
 				Globals.PITCH_MAX_Y), wallPower, wallInfDist);
-		RectObject leftLowerWall = new RectObject(new Point(0, 0), new Point(0, Globals.PITCH_GOAL_MIN_Y),
-				wallPower,
+		RectObject leftLowerWall = new RectObject(new Point(0, 0), new Point(0, Globals.PITCH_GOAL_MIN_Y), wallPower,
 				wallInfDist);
 		RectObject rightUpperWall = new RectObject(new Point(Globals.PITCH_MAX_X, Globals.PITCH_GOAL_MAX_Y), new Point(
 				Globals.PITCH_MAX_X, Globals.PITCH_MAX_Y), wallPower, wallInfDist);
@@ -105,24 +86,6 @@ public class GoToObjectPFN implements MovementExecutor {
                 wallPower, wallInfDist);
 		RectObject bottomWall = new RectObject(new Point(0, 0), new Point(Globals.PITCH_MAX_X, 0), wallPower,
 				wallInfDist);
-
-		// RectObject leftWall = new RectObject(
-		// new Point(0, Globals.PITCH_HEIGHT), new Point(0, 0), wallPower,
-		// wallInfDist);
-		// RectObject rightWall = new RectObject(new Point(Globals.PITCH_WIDTH,
-		// Globals.PITCH_HEIGHT), new Point(Globals.PITCH_WIDTH, 0),
-		// wallPower, wallInfDist);
-		// RectObject topWall = new RectObject(new Point(0,
-		// Globals.PITCH_HEIGHT),
-		// new Point(Globals.PITCH_WIDTH, Globals.PITCH_HEIGHT),
-		// wallPower, wallInfDist);
-		// RectObject bottomWall = new RectObject(new Point(0, 0), new Point(
-		// Globals.PITCH_WIDTH, 0), wallPower, wallInfDist);
-
-		// plann.addObject(leftWall);
-		// plann.addObject(rightWall);
-		// plann.addObject(topWall);
-		// plann.addObject(bottomWall);
 
 		plann.addObject(topWall);
 		plann.addObject(bottomWall);
@@ -147,30 +110,6 @@ public class GoToObjectPFN implements MovementExecutor {
     public void stop(Controller controller) {
         controller.stop();
 
-    }
-
-    @Override
-    public void updateTarget(FieldObject target) {
-        this.target = target;
-
-    }
-
-    @Override
-    public boolean isFinished(Snapshot snapshot) {
-        if ((snapshot == null) || (target == null)
-                || (target.getPosition() == null)
-                || (snapshot.getBalle().getPosition() == null))
-            return false;
-        return target.getPosition().dist(snapshot.getBalle().getPosition()) <= getStopDistance();
-
-    }
-
-    @Override
-    public boolean isPossible(Snapshot snapshot) {
-        return ((snapshot != null) && (target != null)
-                && (target.getPosition() != null)
-                && (snapshot.getBalle().getPosition() != null) && (snapshot
-                .getBalle().getOrientation() != null));
     }
 
     @Override
@@ -218,8 +157,46 @@ public class GoToObjectPFN implements MovementExecutor {
 		controller.setWheelSpeeds((int) left, (int) right);
     }
 
+	@Override
+	public void updateTarget(FieldObject target) {
+		this.target = target;
+
+	}
+
+	@Override
+	public boolean isFinished(Snapshot snapshot) {
+		if ((snapshot == null) || (target == null) || (target.getPosition() == null)
+				|| (snapshot.getBalle().getPosition() == null))
+			return false;
+		return target.getPosition().dist(snapshot.getBalle().getPosition()) <= getStopDistance();
+
+	}
+
+	@Override
+	public boolean isPossible(Snapshot snapshot) {
+		return ((snapshot != null) && (target != null) && (target.getPosition() != null)
+				&& (snapshot.getBalle().getPosition() != null) && (snapshot.getBalle().getOrientation() != null));
+	}
+
     @Override
     public ArrayList<Drawable> getDrawables() {
         return drawables;
     }
+
+	public boolean shouldSlowDownCloseToTarget() {
+		return slowDownCloseToTarget;
+	}
+
+	public void setSlowDownCloseToTarget(boolean slowDownCloseToTarget) {
+		this.slowDownCloseToTarget = slowDownCloseToTarget;
+	}
+
+	public double getStopDistance() {
+		return stopDistance;
+	}
+
+	@Override
+	public void setStopDistance(double stopDistance) {
+		this.stopDistance = stopDistance;
+	}
 }

@@ -20,103 +20,36 @@ import balle.world.objects.Pitch;
 import balle.world.objects.Point;
 import balle.world.objects.Robot;
 
-public class GoToGoalSafeProportional extends GoToGoal {
+public class GoToObjectSafeProportional extends GoToObject {
 
-	private static final double GOAL_SAFE_GAP = 0.4;
+	private static final double TARGET_SAFE_GAP = 0.4;
 
 	private final AbstractPlanner turnHack;
 
-    public GoToGoalSafeProportional() {
+    public GoToObjectSafeProportional() {
 		super(new GoToObjectPFN(0.1, true));
 
 		turnHack = new TurnHack();
     }
 
-    public GoToGoalSafeProportional(double avoidanceGap, double overshootGap,
+    public GoToObjectSafeProportional(double avoidanceGap, double overshootGap,
             boolean approachfromCorrectSide) {
         super(new GoToObjectPFN(0), avoidanceGap, overshootGap,
                 approachfromCorrectSide);
         turnHack = new TurnHack();
     }
 
-    protected FieldObject getOriginalTarget(Snapshot snapshot) {
-		return super.getTarget(snapshot);
+   
+	@FactoryMethod(designator = "GoToObjectSafeProportional", parameterNames = {})
+    public static GoToObjectSafeProportional factoryMethod() {
+        return new GoToObjectSafeProportional();
     }
 
-    protected boolean ballSafeGapCanBeIncreased(Snapshot snapshot, Line newTargetLine) {
-        Pitch pitch = snapshot.getPitch();
-        Robot ourRobot = snapshot.getBalle();
-		FieldObject ball = getOriginalTarget(snapshot);
-
-        // We cannot extend the line, if we cannot reach the endpoint
-        if (!pitch.containsCoord(newTargetLine.extend(
-                Globals.ROBOT_LENGTH).getB())) return false;
-
-        // We must extend the line if we are not approaching the ball from
-        // correct side
-        Line targetGoalLine = new Line(snapshot.getBalle().getPosition(),
-                ball.getPosition());
-        targetGoalLine = targetGoalLine.extend(Globals.PITCH_WIDTH);
-
-        if (!targetGoalLine.intersects(snapshot.getOpponentsGoal()
-                .getGoalLine().extendBothDirections(0.7)))
-           return true;
-        else {
-            // If we are approaching the ball from correct side
-            // and we are far away from point, keep extending the line
-            if (newTargetLine.getB().dist(ourRobot.getPosition()) > Globals.ROBOT_LENGTH
-                    / 2 + GOAL_SAFE_GAP / 3) {
-                return true;
-            } else
-                // Otherwise do not extend it anymore
-                return false;
-        }
-    }
-    @Override
-    protected FieldObject getTarget(Snapshot snapshot) {
-        FieldObject ball = getOriginalTarget(snapshot);
-        Robot ourRobot = snapshot.getBalle();
-
-        if (ball.getPosition() == null) {
-            LOG.warn("Cannot see the ball");
-            return null;
-        }
-        if (ourRobot.getPosition() == null) {
-            LOG.warn("Cannot see self");
-            return null;
-        }
-        Goal targetGoal = snapshot.getOpponentsGoal();
-
-        Line targetLine = new Line(targetGoal.getPosition(), ball.getPosition());
-
-        double ballSafeGap = 0.005;
-        Line newTargetLine = targetLine;
-
-        Line targetGoalLine = new Line(snapshot.getBalle().getPosition(),
-                ball.getPosition());
-        targetGoalLine = targetGoalLine.extend(Globals.PITCH_WIDTH);
-
-        while (ballSafeGap < GOAL_SAFE_GAP
-                && ballSafeGapCanBeIncreased(snapshot, newTargetLine)) {
-            ballSafeGap *= 1.05;
-            newTargetLine = targetLine.extend(ballSafeGap);
-        }
-        targetLine = newTargetLine;
-
-        addDrawable(new DrawableLine(targetLine, Color.ORANGE));
-        return new Point(targetLine.getB());
-    }
-
-	@FactoryMethod(designator = "GoToGoalSafeProportional", parameterNames = {})
-    public static GoToGoalSafeProportional factoryMethod() {
-        return new GoToGoalSafeProportional();
-    }
-
-	@FactoryMethod(designator = "GTBSP", parameterNames = { "avoidanceGap",
+	@FactoryMethod(designator = "GTOSP", parameterNames = { "avoidanceGap",
 			"overshootGap", "CorrectSide?" })
-	public static GoToGoalSafeProportional gTBSP(double aG, double oG,
+	public static GoToObjectSafeProportional gTBSP(double aG, double oG,
 			boolean CorrectSide) {
-		return new GoToGoalSafeProportional(aG, oG, CorrectSide);
+		return new GoToObjectSafeProportional(aG, oG, CorrectSide);
 	}
 
     @Override
@@ -150,6 +83,70 @@ public class GoToGoalSafeProportional extends GoToGoal {
 
         super.onStep(controller, snapshot);
     }
+
+	protected boolean targetSafeGapCanBeIncreased(Snapshot snapshot, Line newTargetLine) {
+		Pitch pitch = snapshot.getPitch();
+		Robot ourRobot = snapshot.getBalle();
+		FieldObject target = getOriginalTarget(snapshot);
+
+		// We cannot extend the line, if we cannot reach the endpoint
+		if (!pitch.containsCoord(newTargetLine.extend(Globals.ROBOT_LENGTH).getB()))
+			return false;
+
+		// We must extend the line if we are not approaching the ball from
+		// correct side
+		Line targetGoalLine = new Line(snapshot.getBalle().getPosition(), target.getPosition());
+		targetGoalLine = targetGoalLine.extend(Globals.PITCH_WIDTH);
+
+		if (!targetGoalLine.intersects(snapshot.getOpponentsGoal().getGoalLine().extendBothDirections(0.7)))
+			return true;
+		else {
+			// If we are approaching the ball from correct side
+			// and we are far away from point, keep extending the line
+			if (newTargetLine.getB().dist(ourRobot.getPosition()) > Globals.ROBOT_LENGTH / 2 + TARGET_SAFE_GAP / 3) {
+				return true;
+			} else
+				// Otherwise do not extend it anymore
+				return false;
+		}
+	}
+
+	protected FieldObject getOriginalTarget(Snapshot snapshot) {
+		return super.getTarget(snapshot);
+	}
+
+	@Override
+	protected FieldObject getTarget(Snapshot snapshot) {
+		FieldObject target = getOriginalTarget(snapshot);
+		Robot ourRobot = snapshot.getBalle();
+
+		if (target.getPosition() == null) {
+			LOG.warn("Cannot see the target");
+			return null;
+		}
+		if (ourRobot.getPosition() == null) {
+			LOG.warn("Cannot see self");
+			return null;
+		}
+		Goal targetGoal = snapshot.getOpponentsGoal();
+
+		Line targetLine = new Line(targetGoal.getPosition(), target.getPosition());
+
+		double ballSafeGap = 0.005;
+		Line newTargetLine = targetLine;
+
+		Line targetGoalLine = new Line(snapshot.getBalle().getPosition(), target.getPosition());
+		targetGoalLine = targetGoalLine.extend(Globals.PITCH_WIDTH);
+
+		while (ballSafeGap < TARGET_SAFE_GAP && targetSafeGapCanBeIncreased(snapshot, newTargetLine)) {
+			ballSafeGap *= 1.05;
+			newTargetLine = targetLine.extend(ballSafeGap);
+		}
+		targetLine = newTargetLine;
+
+		addDrawable(new DrawableLine(targetLine, Color.ORANGE));
+		return new Point(targetLine.getB());
+	}
 
 	/**
 	 * PFN's large turning radius mean that we usually overshoot the ball when

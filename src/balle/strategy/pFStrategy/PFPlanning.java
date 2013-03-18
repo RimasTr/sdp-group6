@@ -10,15 +10,15 @@ public class PFPlanning {
 
     Pos                         robot;
     PointObject                 opponent;
-    PointObject                 ball;
+	PointObject target;
     RobotConf                   config;
-    List<PFObject>                objects;
+	List<PFObject> objects;
     /** power for opponent. */
     double                      opponentPower;
     /** influence distance for opponent */
     double                      opponentInf;
     /** power for goal location. */
-    double                      ballPower;
+	double targetPower;
     /** power orientation, extended potential field. */
     double                      opponentAlphaPower;
 
@@ -42,11 +42,11 @@ public class PFPlanning {
         objects = new ArrayList<PFObject>();
         this.opponentPower = opponentPower;
         this.opponentInf = opponentInf;
-        this.ballPower = targetPower;
+		this.targetPower = targetPower;
         this.opponentAlphaPower = alpha;
     }
 
-    private void init(Pos robot, Pos opponent, Point ball) {
+	private void init(Pos robot, Pos opponent, Point target) {
         if (opponent != null) {
             PointObject opponentObj = new PointObject(opponent.getLocation(),
                     opponentPower, opponentInf, opponentAlphaPower);
@@ -54,32 +54,33 @@ public class PFPlanning {
         } else
             this.opponent = null;
 
-        PointObject ballObj = new PointObject(ball, ballPower, Double.MAX_VALUE);
+		PointObject targetObj = new PointObject(target, targetPower, Double.MAX_VALUE);
         this.robot = robot;
-        this.ball = ballObj;
+		this.target = targetObj;
 
     }
-    /**
-     * Given Pos of different objects, this function will create PointObjects to
-     * be used later.
-     * 
-     * @param robot
-     *            Pos.
-     * @param opponent
-     *            opponent Pos
-     * @param ball
-     *            ball Location
-     * @return the velocity vec
-     */
-    public VelocityVec update(Pos robot, Pos opponent, Point ball) {
+    
+	/**
+	 * Given Pos of different objects, this function will create PointObjects to
+	 * be used later.
+	 * 
+	 * @param robot
+	 *            Pos.
+	 * @param opponent
+	 *            opponent Pos
+	 * @param target
+	 *            target Location
+	 * @return the velocity vec
+	 */
+    public VelocityVec update(Pos robot, Pos opponent, Point target) {
 
-        init(robot, opponent, ball);
+        init(robot, opponent, target);
 
         List<PFObject> complList = new ArrayList<PFObject>(objects);
         if (this.opponent != null)
             complList.add(this.opponent);
 
-        Vector res = GoTo(complList, this.ball, robot);
+		Vector res = GoTo(complList, this.target, robot);
 
         return getVelocity(res, robot);
 

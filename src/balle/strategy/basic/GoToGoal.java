@@ -3,27 +3,34 @@ package balle.strategy.basic;
 import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
+import balle.misc.Globals;
 import balle.strategy.ConfusedException;
 import balle.strategy.FactoryMethod;
-import balle.strategy.executor.movement.GoToObject;
-import balle.strategy.executor.turning.FaceAngle;
+import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.planner.AbstractPlanner;
 import balle.world.Snapshot;
 import balle.world.objects.Ball;
+import balle.world.objects.Goal;
+import balle.world.objects.Point;
 import balle.world.objects.Robot;
 
-public class Initial extends AbstractPlanner {
+/*
+ * if (movementExecutor != null) {
+                movementExecutor.updateTarget(new Point(goToCoord));
+                addDrawables(movementExecutor.getDrawables());
+                movementExecutor.step(controller, snapshot);
+ */
+
+public class GoToGoal extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(Initial.class);
 
-	GoToObject goto_executor;
-	FaceAngle turning_executor;
-	public static Boolean finished = false;
-	Boolean arrived_at_ball = false;
+	GoToObjectPFN goto_executor;
+	Boolean finished = false;
+	Boolean arrived_at_goal = false;
 
-	public Initial() {
-		turning_executor = new FaceAngle();
-		goto_executor = new GoToObject(turning_executor);
+	public GoToGoal() {
+		goto_executor = new GoToObjectPFN(Globals.ROBOT_LENGTH / 3.0, false);
 	}
 
 	@Override
@@ -31,25 +38,23 @@ public class Initial extends AbstractPlanner {
 
 		Robot ourRobot = snapshot.getBalle();
 		Robot oppRobot = snapshot.getOpponent();
+		Goal ownGoal = snapshot.getOwnGoal();
 		Ball ball = snapshot.getBall();
 
 		if (finished || ourRobot.getPosition() == null || oppRobot.getPosition() == null || ball.getPosition() == null) {
 			return;
 		}
 
-		if (oppRobot.possessesBall(ball) || ourRobot.getPosition().dist(ball.getPosition()) < 0.4) {
+		if (ourRobot.getPosition().dist(ownGoal.getPosition()) < 0.4) {
 
 			goto_executor.stop(controller);
 			finished = true;
 
-			if (oppRobot.possessesBall(ball)) {
-				LOG.info("Opponent has ball: Stopping.");
-			} else {
-				LOG.info("Close to ball: Stopping.");
-			}
+			LOG.info("Reached our goal!");
 
 			return;
 		} else {
+			goto_executor.updateTarget(new Point(ownGoal.getPosition()));
 			goto_executor.step(controller, snapshot);
 			return;
 		}
@@ -59,12 +64,12 @@ public class Initial extends AbstractPlanner {
 	@Override
 	public void stop(Controller controller) {
 		goto_executor.stop(controller);
-		turning_executor.stop(controller);
 	}
 
-	@FactoryMethod(designator = "Initial", parameterNames = {})
-	public static final Initial factory() {
-		return new Initial();
+	@FactoryMethod(designator = "GoToGoal", parameterNames = {})
+	public static final GoToGoal factory() {
+		return new GoToGoal();
 	}
 
 }
+

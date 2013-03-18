@@ -12,6 +12,7 @@ import balle.main.drawable.DrawableLine;
 import balle.main.drawable.DrawableVector;
 import balle.main.drawable.Label;
 import balle.misc.Globals;
+import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.executor.movement.MovementExecutor;
 import balle.strategy.executor.movement.OrientedMovementExecutor;
 import balle.strategy.planner.AbstractPlanner;
@@ -48,6 +49,10 @@ public class Interception extends AbstractPlanner {
     protected void setIAmDoing(String message) {
         LOG.info(message);
     }
+
+	public Interception() {
+		this(false, new GoToObjectPFN(Globals.ROBOT_LENGTH / 3, false), null, true, true);
+	}
 
     public Interception(boolean useCpOnly, MovementExecutor movementExecutor,
             OrientedMovementExecutor orientedMovementExecutor, boolean mirror,

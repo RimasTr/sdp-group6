@@ -25,7 +25,7 @@ import balle.strategy.planner.BackingOffStrategy;
 import balle.strategy.planner.DefensiveStrategy;
 import balle.strategy.planner.GoToBall;
 import balle.strategy.planner.GoToBallSafeProportional;
-import balle.strategy.planner.GoToGoalSafeProportional;
+import balle.strategy.planner.GoToObjectSafeProportional;
 import balle.strategy.planner.KickFromWall;
 import balle.strategy.planner.SimpleGoToBallFaceGoal;
 import balle.world.Coord;
@@ -47,7 +47,7 @@ public class Game extends AbstractPlanner {
 	protected final Strategy pickBallFromWallStrategy;
 	protected final BackingOffStrategy backingOffStrategy;
 	protected final RotateToOrientationExecutor turningExecutor;
-	protected final GoToGoalSafeProportional kickingStrategy;
+	protected final GoToObjectSafeProportional kickingStrategy;
     protected Strategy initialStrategy;
 
     protected final Strategy goToBallPFN;
@@ -111,8 +111,7 @@ public class Game extends AbstractPlanner {
         pickBallFromWallStrategy = new KickFromWall(new GoToObjectPFN(0));
 		backingOffStrategy = new BackingOffStrategy();
         turningExecutor = new IncFaceAngle();
-		// kickingStrategy = new Dribble();
-		kickingStrategy = new GoToGoalSafeProportional();
+		kickingStrategy = new GoToObjectSafeProportional();
 		initialStrategy = new Initial();
 		goToBallPFN = new GoToBallSafeProportional();
 		goToBallBezier = new SimpleGoToBallFaceGoal(new BezierNav(

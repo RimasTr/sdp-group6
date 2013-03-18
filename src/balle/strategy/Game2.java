@@ -12,10 +12,10 @@ import balle.main.drawable.DrawableRectangularObject;
 import balle.main.drawable.Label;
 import balle.misc.Globals;
 import balle.simulator.SnapshotPredictor;
+import balle.strategy.basic.GoToGoal;
 import balle.strategy.basic.Initial;
 import balle.strategy.planner.AbstractPlanner;
-import balle.strategy.planner.GoToBallSafeProportional;
-import balle.strategy.planner.GoToGoalSafeProportional;
+import balle.strategy.planner.GoToObjectSafeProportional;
 import balle.world.Coord;
 import balle.world.Snapshot;
 import balle.world.objects.Ball;
@@ -28,10 +28,9 @@ public class Game2 extends AbstractPlanner {
 
     private static final Logger LOG = Logger.getLogger(Game2.class);
 
-	protected final Strategy defend;
-	protected final Strategy goToGoal;
-	protected final GoToGoalSafeProportional dribbleAndShoot;
-	protected final Strategy goToBall;
+	protected final Strategy defendAndIntercept;
+	protected final Strategy goDirectToGoal;
+	protected final GoToObjectSafeProportional goDribbleAndShoot;
 	protected Strategy initialStrategy;
 
     protected boolean initial;
@@ -72,12 +71,10 @@ public class Game2 extends AbstractPlanner {
 
     public Game2() {
 		initialStrategy = new Initial();
-
-		goToBall = new GoToBallSafeProportional();
-		dribbleAndShoot = new GoToGoalSafeProportional();
-
-		defend = new GoToBallSafeProportional();
-		goToGoal = new GoToGoalSafeProportional();
+		goDribbleAndShoot = new GoToObjectSafeProportional();
+		// defendAndIntercept = new Interception();
+		defendAndIntercept = new GoToObjectSafeProportional();
+		goDirectToGoal = new GoToGoal();
 
 		initial = false;
     }
@@ -102,6 +99,8 @@ public class Game2 extends AbstractPlanner {
         else if (ball.getPosition().dist(centerOfPitch) > 0.05) {
             LOG.info("Ball has moved. Turning off initial strategy");
             setInitial(false);
+		} else if (Initial.finished) {
+			setInitial(false);
         }
         
         return initial;
@@ -121,9 +120,8 @@ public class Game2 extends AbstractPlanner {
     @Override
     public void stop(Controller controller) {
 
-		dribbleAndShoot.stop(controller);
+		goDribbleAndShoot.stop(controller);
 		initialStrategy.stop(controller);
-		goToBall.stop(controller);
 
 	}
 
@@ -147,11 +145,9 @@ public class Game2 extends AbstractPlanner {
         try {
             strategy.step(controller, snapshot);
         } catch (ConfusedException e) {
-            // If a strategy does not know what to do
 			LOG.error("Game catch block in: " + getCurrentStrategy(), e);
 			System.out.println("Error in: " + getCurrentStrategy());
-			// Default to goToBall
-			goToBall.step(controller, snapshot);
+			goDribbleAndShoot.step(controller, snapshot);
         }
 
 		addDrawables(strategy.getDrawables());
@@ -168,8 +164,7 @@ public class Game2 extends AbstractPlanner {
         SnapshotPredictor sp = snapshot.getSnapshotPredictor();
         Snapshot newsnap = sp.getSnapshotAfterTime(50);
 
-        RectangularObject dribbleBox = ourRobot.getFrontSide()
-                .extendBothDirections(0.01).widen(0.25);
+		RectangularObject dribbleBox = ourRobot.getFrontSide().extendBothDirections(0.01).widen(0.25);
         addDrawable(new DrawableRectangularObject(dribbleBox, Color.CYAN));
 		addDrawable(new DrawableLine(newsnap.getBalle().getFrontSide(), Color.RED));
 
@@ -180,21 +175,15 @@ public class Game2 extends AbstractPlanner {
 		boolean attack = weShouldAttack(ourRobot, oppRobot, ball, ourGoal, oppGoal);
 
 		if (attack) {
-			if (ourRobot.possessesBall(ball)) {
-				return dribbleAndShoot;
-			} else {
-				return goToBall;
-			}
+			return goDribbleAndShoot;
 		} else {
 			double ourDistanceToGoal = ourRobot.getPosition().dist(ourGoal.getPosition());
 			double oppDistanceToGoal = oppRobot.getPosition().dist(ourGoal.getPosition());
 
 			if (oppDistanceToGoal < ourDistanceToGoal) {
-				// GoToGoal;
-				return goToBall;
+				return goDirectToGoal;
 			} else {
-				// Defend;
-				return goToBall;
+				return defendAndIntercept;
 			}
 		}
 
@@ -209,7 +198,10 @@ public class Game2 extends AbstractPlanner {
 		double ourDistanceToBall = ourRobot.getPosition().dist(ball.getPosition());
 		double oppDistanceToBall = oppRobot.getPosition().dist(ball.getPosition());
 
-		if (ourDistanceToBall < oppDistanceToBall) {
+		
+		if (ourDistanceToBall * 1.1 < oppDistanceToBall) {
+			LOG.info(ourDistanceToBall + " " + oppDistanceToBall);
+			LOG.info((ourDistanceToBall * 1.5 < oppDistanceToBall));
 			return true;
 		}
 
