@@ -282,9 +282,11 @@ public class Interception extends AbstractPlanner {
         
 		Coord predictCoord = pivot.sub(scaler);
 		Line robotPredictLine = new Line(currPos, predictCoord);
-        // robotPredictLine = robotPredictLine.extend(0.5);
+		robotPredictLine = robotPredictLine.extend(1);
         addDrawable(new DrawableLine(robotPredictLine, Color.PINK));
-        predictCoord = robotPredictLine.getB();
+		Line oppFacingLine = s.getOpponent().getFacingLine();
+		predictCoord = robotPredictLine.getIntersect(oppFacingLine);
+		// predictCoord = robotPredictLine.getB();
 
          // addDrawable(new DrawableLine(rotatedRobotBallLine, Color.PINK));
         
