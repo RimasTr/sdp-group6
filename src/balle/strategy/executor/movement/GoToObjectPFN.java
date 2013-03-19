@@ -161,7 +161,8 @@ public class GoToObjectPFN implements MovementExecutor {
                 || (target.getPosition() == null)
                 || (snapshot.getBalle().getPosition() == null))
             return false;
-        return target.getPosition().dist(snapshot.getBalle().getPosition()) <= getStopDistance();
+		return Math.abs(target.getPosition().dist(
+				snapshot.getBalle().getPosition())) <= getStopDistance();
 
     }
 
@@ -199,7 +200,7 @@ public class GoToObjectPFN implements MovementExecutor {
 
         VelocityVec res = plann.update(initPos, opponent, targetLoc);
         if (!shouldSlowDownCloseToTarget()) {
-            Vector newRes = res.mult(4);
+			Vector newRes = res.mult(20);
             res = new VelocityVec(newRes.getX(), newRes.getY());
         }
 		LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())

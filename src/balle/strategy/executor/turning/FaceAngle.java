@@ -19,7 +19,7 @@ public class FaceAngle implements Executor, RotateToOrientationExecutor {
 
     private int                   timeToTurn              = 0;
     private long                  startedTurning          = 0;
-    private static final int      ADDITIONAL_TIME_TO_TURN = 700;         // ms
+	private static final int ADDITIONAL_TIME_TO_TURN = 0; // TODO was 700
                                                                           // to
                                                                           // always
                                                                           // add

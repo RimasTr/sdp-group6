@@ -11,7 +11,7 @@ public class IncFaceAngle extends FaceAngle {
 
     private boolean turning = false;
 
-    private int     SPEED   = 300;
+	private int SPEED = 300;
 
     public IncFaceAngle() {
         super();

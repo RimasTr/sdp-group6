@@ -66,7 +66,9 @@ public class BrickController implements Controller {
      */
     @Override
     public void stop() {
+		pilot.setAcceleration(30000);
         pilot.stop();
+		pilot.setAcceleration(7200);
     }
 
     /*
