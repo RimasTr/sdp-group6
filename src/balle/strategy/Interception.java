@@ -32,7 +32,7 @@ public class Interception extends AbstractPlanner {
     private boolean ballHasMoved = false;
     private Coord   intercept          = new Coord(0, 0);
     private boolean shouldPlayGame;
-    private static final double STRATEGY_STOP_DISTANCE = 0.3;
+	private static final double STRATEGY_STOP_DISTANCE = 0.15;
     private static final double GO_DIRECTLY_TO_BALL_DISTANCE = STRATEGY_STOP_DISTANCE * 1.75;
 	boolean doThisStrat = true;
     protected final boolean useCpOnly;
@@ -48,6 +48,7 @@ public class Interception extends AbstractPlanner {
 
     private boolean startGameAfterwards;
 	private boolean initialTurn;
+	private boolean playingGame;
 
     protected void setIAmDoing(String message) {
         LOG.info(message);
@@ -66,7 +67,8 @@ public class Interception extends AbstractPlanner {
         shouldPlayGame = false;
         this.gameStrategy = new Game(false);
         this.startGameAfterwards = startGameAfterwards;
-		this.initialTurn = true;
+		initialTurn = true;
+		playingGame = false;
 
         // new Game(new SimpleGoToBallFaceGoal(new BezierNav(
         // new SimplePathFinder(new CustomCHI()))), false);
@@ -76,6 +78,11 @@ public class Interception extends AbstractPlanner {
     @Override
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
+
+		if (playingGame) {
+			gameStrategy.step(controller, snapshot);
+			return;
+		}
 
 		Coord optimum = new Coord(0, 0);
 		Goal goal = snapshot.getOwnGoal();
@@ -137,7 +144,8 @@ public class Interception extends AbstractPlanner {
 		}
 
 		if (shouldPlayGame) {
-			setIAmDoing("GAME!");
+			setIAmDoing("Game on!");
+			playingGame = true;
 			gameStrategy.step(controller, snapshot);
 			addDrawables(gameStrategy.getDrawables());
 		} else if (ballHasMoved) {
@@ -317,10 +325,12 @@ public class Interception extends AbstractPlanner {
         
 		Coord predictCoord = pivot.sub(scaler);
 		Line robotPredictLine = new Line(currPos, predictCoord);
-        // robotPredictLine = robotPredictLine.extend(0.5);
+		robotPredictLine = robotPredictLine.extend(1);
         addDrawable(new DrawableLine(robotPredictLine, Color.PINK));
-        predictCoord = robotPredictLine.getB();
+		// predictCoord = robotPredictLine.getB();
 
+		Line oppLine = s.getOpponent().getFacingLine();
+		predictCoord = oppLine.getIntersect(robotPredictLine);
          // addDrawable(new DrawableLine(rotatedRobotBallLine, Color.PINK));
         
          // Coord predictCoord = rotatedRobotBallLine
