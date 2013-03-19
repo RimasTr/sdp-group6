@@ -53,10 +53,10 @@ public class Robot extends RectangularObject {
     }
 
     /**
-     * Returns that represents the robot's facing direction
-     * 
-     * @return the facing line
-     */
+	 * Returns line that represents the robot's facing direction
+	 * 
+	 * @return the facing line
+	 */
     public Line getFacingLine() {
         double x0, y0, x1, y1;
         x0 = getPosition().getX();

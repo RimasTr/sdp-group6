@@ -12,8 +12,10 @@ import balle.main.drawable.DrawableLine;
 import balle.main.drawable.DrawableVector;
 import balle.main.drawable.Label;
 import balle.misc.Globals;
+import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.executor.movement.MovementExecutor;
 import balle.strategy.executor.movement.OrientedMovementExecutor;
+import balle.strategy.executor.turning.IncFaceAngle;
 import balle.strategy.planner.AbstractPlanner;
 import balle.world.Coord;
 import balle.world.Line;
@@ -32,7 +34,7 @@ public class Interception extends AbstractPlanner {
     private boolean shouldPlayGame;
     private static final double STRATEGY_STOP_DISTANCE = 0.3;
     private static final double GO_DIRECTLY_TO_BALL_DISTANCE = STRATEGY_STOP_DISTANCE * 1.75;
-
+	boolean doThisStrat = true;
     protected final boolean useCpOnly;
 	protected final boolean mirror;
     protected CircularBuffer<Coord> ballCoordBuffer;
@@ -41,16 +43,18 @@ public class Interception extends AbstractPlanner {
 
     private MovementExecutor movementExecutor;
     private OrientedMovementExecutor orientedMovementExecutor;
+	private IncFaceAngle rotationExecutor;
     private AbstractPlanner gameStrategy;
 
     private boolean startGameAfterwards;
+	private boolean initialTurn;
 
     protected void setIAmDoing(String message) {
         LOG.info(message);
     }
 
     public Interception(boolean useCpOnly, MovementExecutor movementExecutor,
-            OrientedMovementExecutor orientedMovementExecutor, boolean mirror,
+			IncFaceAngle incFaceAngle, boolean mirror,
             boolean startGameAfterwards) {
         super();
         ballCoordBuffer = new CircularBuffer<Coord>(6);
@@ -58,10 +62,11 @@ public class Interception extends AbstractPlanner {
 		this.mirror = mirror;
         
         this.movementExecutor = movementExecutor;
-        this.orientedMovementExecutor = orientedMovementExecutor;
+		this.rotationExecutor = incFaceAngle;
         shouldPlayGame = false;
         this.gameStrategy = new Game(false);
         this.startGameAfterwards = startGameAfterwards;
+		this.initialTurn = true;
 
         // new Game(new SimpleGoToBallFaceGoal(new BezierNav(
         // new SimplePathFinder(new CustomCHI()))), false);
@@ -69,66 +74,102 @@ public class Interception extends AbstractPlanner {
 
 
     @Override
-    public void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
+	public void onStep(Controller controller, Snapshot snapshot)
+			throws ConfusedException {
 
-        Coord optimum = new Coord(0, 0);
-        Goal goal = snapshot.getOwnGoal();
-        Ball ball = snapshot.getBall();
-        if (ball.getPosition() == null)
-            return;
+		Coord optimum = new Coord(0, 0);
+		Goal goal = snapshot.getOwnGoal();
+		Ball ball = snapshot.getBall();
+		if (ball.getPosition() == null)
+			return;
 
-        ballCoordBuffer.add(ball.getPosition());
+		ballCoordBuffer.add(ball.getPosition());
+		double beta = snapshot.getOpponent().getFacingLine().angle().degrees();
+		double alfa = snapshot.getBalle().getFacingLine().angle().degrees();
+		double angle = getAngle(alfa, beta);
+		setIAmDoing("Alfa " + alfa);
+		setIAmDoing("Beta " + beta);
+		setIAmDoing("Angle " + Math.abs(angle - 90));
+		
+		if (Math.abs(angle - 90) < 30) {
+			intercept = snapshot.getBalle().getFacingLine()
+					.getIntersect(snapshot.getOpponent().getFacingLine());
+			doThisStrat = false;
+			setIAmDoing("Going to intersection line in direction I'm heading");
+		} else {
+			LOG.info("Update angle, has ball moved?");
+			if (ballHasMoved && initialTurn) {
+				initialTurn = false;
+				if (alfa > 120) {
+					LOG.info("Ball moved, update angle");
+					rotationExecutor.setTargetOrientation(new Orientation(120));
+					rotationExecutor.step(controller, snapshot);
+					return;
+				} else {
+					LOG.info("Ball moved, update angle");
+					rotationExecutor.setTargetOrientation(new Orientation(60));
+					rotationExecutor.step(controller, snapshot);
+					return;
+				}
 
-        if (ballIsMoving(ball) /* && !predictionCoordSet */) {
+			}
+		}
+
+		if (doThisStrat) {
 			intercept = getPredictionCoordVelocityvector(snapshot, useCpOnly,
 					mirror);
-            ballHasMoved = true;
-        }
+		}
+		// ballHasMoved = true;
+		if (ballIsMoving(ball)) {
+			LOG.info("BALL IS MOVIN'");
+			ballHasMoved = true;
+		}
+		if (!shouldPlayGame) {
+			addDrawable(new Circle(snapshot.getBalle().getPosition(),
+					STRATEGY_STOP_DISTANCE, Color.red));
+			addDrawable(new Circle(snapshot.getBalle().getPosition(),
+					STRATEGY_STOP_DISTANCE * 1.75, Color.red));
+		}
+		if (snapshot.getBalle().getPosition()
+				.dist(snapshot.getBall().getPosition()) < STRATEGY_STOP_DISTANCE) {
+			if (startGameAfterwards)
+				shouldPlayGame = true;
+		}
 
-        if (!shouldPlayGame) {
-            addDrawable(new Circle(snapshot.getBalle().getPosition(),
-                    STRATEGY_STOP_DISTANCE, Color.red));
-            addDrawable(new Circle(snapshot.getBalle().getPosition(),
-                    STRATEGY_STOP_DISTANCE * 1.75, Color.red));
-        }
-        if (snapshot.getBalle().getPosition()
-                .dist(snapshot.getBall().getPosition()) < STRATEGY_STOP_DISTANCE) {
-            if (startGameAfterwards)
-                shouldPlayGame = true;
-        }
+		if (shouldPlayGame) {
+			setIAmDoing("GAME!");
+			gameStrategy.step(controller, snapshot);
+			addDrawables(gameStrategy.getDrawables());
+		} else if (ballHasMoved) {
 
-        if (shouldPlayGame) {
-            setIAmDoing("GAME!");
-            gameStrategy.step(controller, snapshot);
-            addDrawables(gameStrategy.getDrawables());
-        } else if (ballHasMoved) {
-            setIAmDoing("Going to point - predict");
+			setIAmDoing("Going to point - predict");
 
-            Coord goToCoord = intercept;
-            if (snapshot.getBalle().getPosition()
-                    .dist(snapshot.getBall().getPosition()) < GO_DIRECTLY_TO_BALL_DISTANCE) {
-                goToCoord = snapshot.getBall().getPosition();
-            }
-            addDrawable(new Dot(goToCoord, Color.BLACK));
-            addDrawable(new Dot(intercept, new Color(0, 0, 0, 100)));
-            if (movementExecutor != null) {
-                movementExecutor.updateTarget(new Point(goToCoord));
-                addDrawables(movementExecutor.getDrawables());
-                movementExecutor.step(controller, snapshot);
+			Coord goToCoord = intercept;
+			if (snapshot.getBalle().getPosition()
+					.dist(snapshot.getBall().getPosition()) < GO_DIRECTLY_TO_BALL_DISTANCE) {
+				goToCoord = snapshot.getBall().getPosition();
+			}
+			addDrawable(new Dot(goToCoord, Color.BLACK));
+			addDrawable(new Dot(intercept, new Color(0, 0, 0, 100)));
+			if (movementExecutor != null) {
+				movementExecutor.updateTarget(new Point(goToCoord));
+				addDrawables(movementExecutor.getDrawables());
+				movementExecutor.step(controller, snapshot);
 
-            } else if (orientedMovementExecutor != null) {
-                orientedMovementExecutor.updateTarget(new Point(goToCoord),
-                        snapshot.getOpponentsGoal().getGoalLine().midpoint()
-                                .sub(intercept).orientation());
-                addDrawables(orientedMovementExecutor.getDrawables());
-                orientedMovementExecutor.step(controller, snapshot);
+			} else if (orientedMovementExecutor != null) {
+				orientedMovementExecutor.updateTarget(new Point(goToCoord),
+						snapshot.getOpponentsGoal().getGoalLine().midpoint()
+								.sub(intercept).orientation());
+				addDrawables(orientedMovementExecutor.getDrawables());
+				orientedMovementExecutor.step(controller, snapshot);
 
-            }
-        } else {
-            setIAmDoing("Waiting");
-            controller.stop();
-        }
-    }
+
+			}
+		} else {
+			setIAmDoing("Waiting");
+			controller.stop();
+		}
+	}
 
 	/*
 	 * Commenting out strategy in simulator
@@ -152,12 +193,15 @@ public class Interception extends AbstractPlanner {
 	 * {}) public static final Interception factoryCPPFNFNG() { return new
 	 * Interception(true, new GoToObjectPFN( Globals.ROBOT_LENGTH / 3, false),
 	 * null, true, false); }
-	 * 
-	 * @FactoryMethod(designator = "InterceptsM4-NCP-PFNF", parameterNames = {})
-	 * public static final Interception factoryNCPPFNF() { return new
-	 * Interception(false, new GoToObjectPFN( Globals.ROBOT_LENGTH / 3, false),
-	 * null, true, true); }
-	 * 
+	 */
+	@FactoryMethod(designator = "InterceptsM4-NCP-PFNF", parameterNames = {})
+	public static final Interception factoryNCPPFNF() {
+		return new Interception(false, new GoToObjectPFN(
+				Globals.ROBOT_LENGTH / 3, false), new IncFaceAngle(), true,
+				true);
+	}
+
+	/*
 	 * @FactoryMethod(designator = "InterceptsM4-CP-BZR", parameterNames = {})
 	 * public static final Interception factoryCPBZR() { return new
 	 * Interception(true, null, new BezierNav(new SimplePathFinder( new
@@ -167,12 +211,8 @@ public class Interception extends AbstractPlanner {
 	 * {}) public static final Interception factoryCPBZRNG() { return new
 	 * Interception(true, null, new BezierNav(new SimplePathFinder( new
 	 * CustomCHI())), true, false); }
-	 * 
-	 * @FactoryMethod(designator = "InterceptsM4-NCP-BZR", parameterNames = {})
-	 * public static final Interception factoryNCPBZR() { return new
-	 * Interception(false, null, new BezierNav( new SimplePathFinder(new
-	 * CustomCHI())), true, true); }
 	 */
+
 
     /**
      * Checks when ball has moved since last reading
@@ -299,6 +339,33 @@ public class Interception extends AbstractPlanner {
         addDrawable(new DrawableVector(pivot, scaler, Color.BLACK));
         return predictCoord;
     }
+	
+	// private double normalize_angle(double angle) {
+	// if (angle > 270)
+	// return angle - 270;
+	// else if (angle > 180)
+	// return angle - 180;
+	// else if (angle > 90)
+	// return angle - 90;
+	// else
+	// return angle;
+	// }
 
+	private double getAngle(double alfa, double beta) {
+		if (alfa > 180)
+			alfa = alfa - 180;
+		if (beta < 180 && alfa < 90)
+			return alfa - beta;
+		if (beta < 360 && alfa < 90)
+			return beta - 180 - alfa;
+		if (beta < 180 && alfa >= 90)
+			return 180 - alfa - beta;
+		if (beta < 360 && alfa >= 90) {
+			return beta - 180 - alfa;
+		}
+		if (beta == 0)
+			return alfa;
+		return 0;
+	}
 
 }

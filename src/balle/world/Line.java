@@ -199,8 +199,9 @@ public class Line {
 		return new Coord((getA().getX() + getB().getX()) / 2,
 				(getA().getY() + getB().getY()) / 2);
 	}
+	
 	/**
-	 * Get the angle of the line from the horizontal (going from A to B).
+	 * Get the angle of the line from the horizontal (11.
 	 * 
 	 * @return The angle
 	 */
