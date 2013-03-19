@@ -140,6 +140,9 @@ public class GoToObjectPFN implements MovementExecutor {
         if (!shouldSlowDownCloseToTarget()) {
             Vector newRes = res.mult(4);
             res = new VelocityVec(newRes.getX(), newRes.getY());
+		} else {
+			Vector newRes = res.mult(2);
+			res = new VelocityVec(newRes.getX(), newRes.getY());
         }
 		LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())
                 + " right speed: " + Math.toDegrees(res.getRight()));

@@ -15,6 +15,7 @@ import balle.strategy.planner.AbstractPlanner;
 import balle.strategy.planner.GoToObjectSafeProportional;
 import balle.world.Coord;
 import balle.world.Snapshot;
+import balle.world.Velocity;
 import balle.world.objects.Ball;
 import balle.world.objects.Goal;
 import balle.world.objects.Robot;
@@ -165,7 +166,21 @@ public class Game2 extends AbstractPlanner {
 			if (oppDistanceToGoal < ourDistanceToGoal) {
 				return goDirectToGoal;
 			} else {
-				return defendAndIntercept;
+				Velocity oppVelocity = oppRobot.getVelocity();
+				// If our opponent crashes and is not moving, we should go to
+				// the ball.
+				// Otherwise, we should retreat to our goal line and intercept
+				// when possible.
+				if (oppVelocity.abs() > 0) {
+					if (!oppRobot.isFacingGoal(ourGoal)) {
+						return goDirectToGoal;
+					} else {
+						return defendAndIntercept;
+					}
+				} else {
+					return goDribbleAndShoot;
+				}
+
 			}
 		}
 

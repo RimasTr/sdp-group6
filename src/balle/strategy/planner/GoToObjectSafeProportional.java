@@ -175,7 +175,7 @@ public class GoToObjectSafeProportional extends GoToObject {
 			// Steal step when the line from the centre of the goal through the
 			// wall intersects the robot, and the robot is close to the ball
 			
-			return isTurning || needsToTurn(snapshot);
+			return isTurning || needsToTurn(snapshot) || shouldTurnToGoal(snapshot);
 
 		}
 
@@ -193,16 +193,44 @@ public class GoToObjectSafeProportional extends GoToObject {
 					&& line.dist(ourRobot.getPosition()) < DIST_THRESH;
 		}
 
+		/*
+		 * The opponent is behind us, we have a clear shot and goal and should
+		 * therefore face it as soon as we can. Return false if we're already
+		 * facing the goal.
+		 */
+		private boolean shouldTurnToGoal(Snapshot snapshot) {
+			Robot ourRobot = snapshot.getBalle();
+			Robot oppRobot = snapshot.getOpponent();
+			Ball ball = snapshot.getBall();
+			Goal opponentsGoal = snapshot.getOpponentsGoal();
+
+			double oppDistToGoal = oppRobot.getPosition().dist(opponentsGoal.getPosition());
+			double ourDistToGoal = ourRobot.getPosition().dist(opponentsGoal.getPosition());
+			boolean weAreCloser = ourDistToGoal <= oppDistToGoal;
+			
+			/*
+			 * are we already facing the goal?
+			 */
+			boolean facingGoal = ourRobot.isFacingGoal(opponentsGoal);
+			
+			return !facingGoal && weAreCloser && ourRobot.possessesBall(ball);
+		}
+
 		@Override
 		protected void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
 
 			Robot ourRobot = snapshot.getBalle();
 			Ball ball = snapshot.getBall();
+			Goal oppGoal = snapshot.getOpponentsGoal();
 
 			if (!isTurning) {
-				Orientation targetAngle = ball.getPosition()
-						.sub(ourRobot.getPosition()).orientation();
-
+				Orientation targetAngle;
+				if (!ourRobot.possessesBall(ball)) {
+					targetAngle = ball.getPosition().sub(ourRobot.getPosition()).orientation();
+				} else {
+					LOG.info("turn to goal");
+					targetAngle = oppGoal.getPosition().sub(ourRobot.getPosition()).orientation();
+				}
 				LOG.info("TurnHack: Setting target orientation");
 				turnExecutor.setTargetOrientation(targetAngle);
 
