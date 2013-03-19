@@ -86,7 +86,9 @@ public class Interception extends AbstractPlanner {
 			return;
 
 		ballCoordBuffer.add(ball.getPosition());
-		double beta = snapshot.getOpponent().getFacingLine().angle().degrees();
+		Line ballLine = new Line(0, ball.getPosition().getY(),
+				Globals.PITCH_MAX_X, ball.getPosition().getY());
+		double beta = ballLine.angle().degrees(); // changed
 		double alfa = snapshot.getBalle().getFacingLine().angle().degrees();
 		double angle = getAngle(alfa, beta);
 		setIAmDoing("Alfa " + alfa);
@@ -95,8 +97,7 @@ public class Interception extends AbstractPlanner {
 		
 		if (Math.abs(angle - 90) < 30) {
 			initialTurn = false;
-			Line ballLine = new Line(0, ball.getPosition().getY(),
-					Globals.PITCH_MAX_X, ball.getPosition().getY());
+
 			intercept = snapshot.getBalle().getFacingLine()
 					.getIntersect(ballLine);
 			// .getIntersect(snapshot.getOpponent().getFacingLine());
@@ -105,6 +106,7 @@ public class Interception extends AbstractPlanner {
 
 			setIAmDoing("Going to intersection line in direction I'm heading");
 		} else {
+			doThisStrat = false;
 			LOG.info("Update angle, has ball moved?");
 			if (ballHasMoved && initialTurn) {
 				LOG.info("Ball moved, update angle");
@@ -126,10 +128,10 @@ public class Interception extends AbstractPlanner {
 			}
 		}
 
-		if (doThisStrat) {
-			intercept = getPredictionCoordVelocityvector(snapshot, useCpOnly,
-					mirror);
-		}
+		// if (doThisStrat) {
+		// intercept = getPredictionCoordVelocityvector(snapshot, useCpOnly,
+		// mirror);
+		// }
 		// ballHasMoved = true;
 		if (ballIsMoving(ball)) {
 			LOG.info("BALL IS MOVIN'");
@@ -151,7 +153,7 @@ public class Interception extends AbstractPlanner {
 			setIAmDoing("GAME!");
 			gameStrategy.step(controller, snapshot);
 			addDrawables(gameStrategy.getDrawables());
-		} else if (ballHasMoved) {
+		} else if (ballHasMoved && doThisStrat) {
 
 			setIAmDoing("Going to point - predict");
 
