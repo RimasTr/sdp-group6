@@ -73,6 +73,7 @@ public class Roboto {
 
 	private static boolean touchingFront = false;
 	private static boolean touchingRear = false;
+	private static boolean waiting = false;
 
     /**
      * Processes the decoded message and issues correct commands to controller
@@ -149,23 +150,34 @@ public class Roboto {
 
             while (true) {
                 // Enter button click will halt the program
+
 				if (Button.ENTER.isDown()) {
                     controller.stop();
                     listener.cancel();
                     break;
                 }
 				if (Button.ESCAPE.isDown()) {
-                    return;
+					controller.stop();
+					listener.cancel();
+					break;
                 }
+
+				if (waiting) {
+					continue;
+				}
+
                 try {
                     // Check for sensors when idle
 					if (touchLeft.isPressed() || touchRight.isPressed()) {
 						if (!touchingFront) {
 							touchingFront = true;
+							waiting = true;
 							controller.backward(controller.getMaximumWheelSpeed());
 							drawMessage("Obstacle in front!");
 							Thread.sleep(150);
+							controller.stop();
 							touchingFront = false;
+							waiting = false;
 						}
 						continue;
                     }
@@ -174,10 +186,13 @@ public class Roboto {
                     if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
 						if (!touchingRear) {
 							touchingRear = true;
+							waiting = true;
 							controller.forward(controller.getMaximumWheelSpeed());
 							drawMessage("Obstacle behind!");
 							Thread.sleep(150);
+							controller.stop();
 							touchingRear = false;
+							waiting = false;
 						}
 						continue;
                     }
@@ -202,8 +217,8 @@ public class Roboto {
 						continue; // Changed from break.
                     }
 
-                } catch (Exception e1) {
-                    drawMessage("Error in MainLoop: " + e1.getMessage());
+				} catch (Exception e) {
+					drawMessage("Error in MainLoop: " + e.getMessage());
                 }
             }
 

@@ -34,6 +34,7 @@ public class BrickController implements Controller {
 	public final float TRACK_WIDTH = 128f; // mm
 
     public static final int MAXIMUM_MOTOR_SPEED = 900;
+	public static final int ACCELERATION = MAXIMUM_MOTOR_SPEED * 8;
 
     public static final int GEAR_ERROR_RATIO = 2; // Gears cut our turns in half
 
@@ -45,7 +46,7 @@ public class BrickController implements Controller {
 				RIGHT_WHEEL, INVERSE_WHEELS);
         pilot.setTravelSpeed(maxPilotSpeed);
 		pilot.setRotateSpeed(45);
-		pilot.setAcceleration(7200);
+		pilot.setAcceleration(ACCELERATION);
 
     }
 
@@ -67,7 +68,9 @@ public class BrickController implements Controller {
      */
     @Override
     public void stop() {
-        pilot.stop();
+		pilot.setAcceleration(ACCELERATION * 2);
+		pilot.stop();
+		pilot.setAcceleration(ACCELERATION);
     }
 
     /*
