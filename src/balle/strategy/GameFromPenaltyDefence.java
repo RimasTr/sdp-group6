@@ -46,13 +46,6 @@ public class GameFromPenaltyDefence extends Game {
         return new GameFromPenaltyDefence();
 	}
 
-    // @FactoryMethod(designator = "Game (Penalty Defence SP)", parameterNames =
-    // { "speed" })
-    // public static GameFromPenaltyDefence gameFromPenaltyDefenceFactory(
-    // double speed) {
-    // return new GameFromPenaltyDefence((int) speed);
-    // }
-
 	public boolean isStillInPenaltyDefence(Snapshot snapshot) {
 
 		Coord ball = snapshot.getBall().getPosition();

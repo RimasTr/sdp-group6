@@ -12,7 +12,7 @@ import balle.world.Snapshot;
 import balle.world.objects.FieldObject;
 import balle.world.objects.Robot;
 
-public class GoToObject implements MovementExecutor {
+public class GoToObjectExecutor implements MovementExecutor {
 
 	private double stopDistance = 0.2;
 
@@ -28,7 +28,7 @@ public class GoToObject implements MovementExecutor {
 
 	RotateToOrientationExecutor turningExecutor = null;
 
-	public GoToObject(RotateToOrientationExecutor turningExecutor) {
+	public GoToObjectExecutor(RotateToOrientationExecutor turningExecutor) {
 		this.turningExecutor = turningExecutor;
 	}
 

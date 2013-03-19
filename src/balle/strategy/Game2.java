@@ -182,14 +182,6 @@ public class Game2 extends AbstractPlanner {
 			return false;
 		}
 
-		double ourDistanceToBall = Math.abs(ourRobot.getPosition().dist(ball.getPosition()));
-		double oppDistanceToBall = Math.abs(oppRobot.getPosition().dist(ball.getPosition()));
-		
-		// Opponent is closer to the ball than us
-		if (ourDistanceToBall * 1.25 > oppDistanceToBall) {
-			return false;
-		}
-		
 		double ourDistanceToGoal = ourRobot.getPosition().dist(ourGoal.getPosition());
 		double oppDistanceToGoal = oppRobot.getPosition().dist(ourGoal.getPosition());
 		double ballDistanceToGoal = ball.getPosition().dist(ourGoal.getPosition());

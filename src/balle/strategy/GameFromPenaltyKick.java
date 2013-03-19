@@ -7,8 +7,7 @@ import balle.world.Snapshot;
 
 public class GameFromPenaltyKick extends Game {
 
-	private static final Logger LOG = Logger
-			.getLogger(GameFromPenaltyKick.class);
+	private static final Logger LOG = Logger.getLogger(GameFromPenaltyKick.class);
 
 	public long timeToKick = 0;
 	public long timeToGame = 0;

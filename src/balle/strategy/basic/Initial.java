@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import balle.controller.Controller;
 import balle.strategy.ConfusedException;
 import balle.strategy.FactoryMethod;
-import balle.strategy.executor.movement.GoToObject;
+import balle.strategy.executor.movement.GoToObjectExecutor;
 import balle.strategy.executor.turning.FaceAngle;
 import balle.strategy.planner.AbstractPlanner;
 import balle.world.Snapshot;
@@ -16,14 +16,14 @@ public class Initial extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(Initial.class);
 
-	GoToObject goto_executor;
+	GoToObjectExecutor goto_executor;
 	FaceAngle turning_executor;
 	public static Boolean finished = false;
 	Boolean arrived_at_ball = false;
 
 	public Initial() {
 		turning_executor = new FaceAngle();
-		goto_executor = new GoToObject(turning_executor);
+		goto_executor = new GoToObjectExecutor(turning_executor);
 	}
 
 	@Override

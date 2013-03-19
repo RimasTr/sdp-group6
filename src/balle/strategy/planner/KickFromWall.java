@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
 import balle.strategy.ConfusedException;
-import balle.strategy.executor.movement.GoToObject;
+import balle.strategy.executor.movement.GoToObjectExecutor;
 import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.executor.movement.MovementExecutor;
 import balle.strategy.executor.turning.FaceAngle;
@@ -105,7 +105,7 @@ public class KickFromWall extends GoToBall {
 			if (snapshot.getBalle().getPosition()
 					.dist(snapshot.getBall().getPosition()) < 0.5) {
                 LOG.info("Approaching the ball gently");
-				strategy = new GoToObject(new FaceAngle());
+				strategy = new GoToObjectExecutor(new FaceAngle());
 				strategy.setStopDistance(0);
 			} else {
                 LOG.info("Approaching the ball with PFN");
