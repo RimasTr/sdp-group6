@@ -77,6 +77,12 @@ public class Interception extends AbstractPlanner {
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
 
+		if (shouldPlayGame) {
+			gameStrategy.step(controller, snapshot);
+			addDrawables(gameStrategy.getDrawables());
+			return;
+		}
+
 		Coord optimum = new Coord(0, 0);
 		Robot ourRobot = snapshot.getBalle();
 		Goal goal = snapshot.getOwnGoal();
@@ -152,6 +158,10 @@ public class Interception extends AbstractPlanner {
 			gameStrategy.step(controller, snapshot);
 			addDrawables(gameStrategy.getDrawables());
 		} else if (ballHasMoved) {
+
+			if (intercept == null) {
+				return;
+			}
 
 			setIAmDoing("Going to point - predict");
 
