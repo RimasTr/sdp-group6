@@ -32,7 +32,7 @@ public class Interception extends AbstractPlanner {
     private boolean ballHasMoved = false;
     private Coord   intercept          = new Coord(0, 0);
     private boolean shouldPlayGame;
-	private static final double STRATEGY_STOP_DISTANCE = 0.25;
+	private static final double STRATEGY_STOP_DISTANCE = 0.35;
 	private static final double GO_DIRECTLY_TO_BALL_DISTANCE = STRATEGY_STOP_DISTANCE * 2;
 	boolean doThisStrat = true;
     protected final boolean useCpOnly;
@@ -77,6 +77,12 @@ public class Interception extends AbstractPlanner {
 	public void onStep(Controller controller, Snapshot snapshot)
 			throws ConfusedException {
 
+		if (shouldPlayGame) {
+			gameStrategy.step(controller, snapshot);
+			addDrawables(gameStrategy.getDrawables());
+			return;
+		}
+
 		Coord optimum = new Coord(0, 0);
 		Robot ourRobot = snapshot.getBalle();
 		Goal goal = snapshot.getOwnGoal();
@@ -95,6 +101,13 @@ public class Interception extends AbstractPlanner {
 		setIAmDoing("Beta " + beta);
 		setIAmDoing("Angle " + Math.abs(angle - 90));
 		
+		double robotY = ourRobot.getPosition().getY();
+		double topwallY = pitch.getTopWall().getA().getY();
+		double bottomY = pitch.getBottomWall().getA().getY();
+
+		double robotToTop = Math.abs(topwallY - robotY);
+		double robotToBottom = Math.abs(robotY - bottomY);
+
 		if (Math.abs(angle - 90) < 30) {
 			initialTurn = false;
 
@@ -106,22 +119,17 @@ public class Interception extends AbstractPlanner {
 
 			setIAmDoing("Going to intersection line in direction I'm heading");
 		} else {
-			doThisStrat = false;
+			
 			LOG.info("Update angle, has ball moved?");
 			if (ballHasMoved && initialTurn) {
 				LOG.info("Ball moved, update angle");
 
-				double robotY = ourRobot.getPosition().getY();
-				double topwallY = pitch.getTopWall().getA().getY();
-				double bottomY = pitch.getBottomWall().getA().getY();
-
-				double robotToTop = Math.abs(topwallY - robotY);
-				double robotToBottom = Math.abs(robotY - bottomY);
-
 				if (robotToTop > robotToBottom) { // maybe > 90?
-					rotationExecutor.setTargetOrientation(new Orientation(120));
+					LOG.info("Turn north");
+					rotationExecutor.setTargetOrientation(new Orientation(125));
 				} else { // maybe < 270?
-					rotationExecutor.setTargetOrientation(new Orientation(240));
+					LOG.info("Turn south");
+					rotationExecutor.setTargetOrientation(new Orientation(235));
 				}
 				rotationExecutor.step(controller, snapshot);
 				return;
@@ -134,7 +142,7 @@ public class Interception extends AbstractPlanner {
 		// }
 		// ballHasMoved = true;
 		if (ballIsMoving(ball)) {
-			LOG.info("BALL IS MOVIN'");
+			LOG.info("Ball moving.");
 			ballHasMoved = true;
 		}
 		if (!shouldPlayGame) {
@@ -153,7 +161,10 @@ public class Interception extends AbstractPlanner {
 			setIAmDoing("GAME!");
 			gameStrategy.step(controller, snapshot);
 			addDrawables(gameStrategy.getDrawables());
-		} else if (ballHasMoved && doThisStrat) {
+		} else if (ballHasMoved) {
+
+			if (intercept == null)
+				return;
 
 			setIAmDoing("Going to point - predict");
 
