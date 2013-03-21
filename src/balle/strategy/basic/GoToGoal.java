@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
 import balle.main.drawable.DrawableLine;
-import balle.misc.Globals;
 import balle.strategy.ConfusedException;
 import balle.strategy.FactoryMethod;
 import balle.strategy.executor.movement.GoToObjectPFN;
@@ -35,7 +34,7 @@ public class GoToGoal extends AbstractPlanner {
 	Boolean arrived_at_goal = false;
 
 	public GoToGoal() {
-		goto_executor = new GoToObjectPFN(Globals.ROBOT_LENGTH / 3.0, false);
+		goto_executor = new GoToObjectPFN(0, true);
 	}
 
 	@Override
@@ -45,14 +44,7 @@ public class GoToGoal extends AbstractPlanner {
 		Robot oppRobot = snapshot.getOpponent();
 		Goal ownGoal = snapshot.getOwnGoal();
 		Ball ball = snapshot.getBall();
-		
-		double center = Globals.PITCH_GOAL_MIN_Y + ((Globals.PITCH_GOAL_MAX_Y - Globals.PITCH_GOAL_MIN_Y) / 2.0);
-		Coord middleCoord;
-		if (snapshot.getOwnGoal().isLeftGoal()) {
-			middleCoord = new Coord(0.2, center);
-		} else {
-			middleCoord = new Coord(Globals.PITCH_MAX_X - 0.2, center);
-		}
+		Coord target = snapshot.getPitch().goToGoalTarget(snapshot);
 
 		if (finished || ourRobot.getPosition() == null || oppRobot.getPosition() == null || ball.getPosition() == null) {
 			return;
@@ -68,8 +60,8 @@ public class GoToGoal extends AbstractPlanner {
 			return;
 		} else {
 			
-			goto_executor.updateTarget(new Point(middleCoord));
-			addDrawable(new DrawableLine(new Line(middleCoord, middleCoord), Color.magenta));
+			goto_executor.updateTarget(new Point(target));
+			addDrawable(new DrawableLine(new Line(target, target), Color.magenta));
 			goto_executor.step(controller, snapshot);
 			return;
 		}

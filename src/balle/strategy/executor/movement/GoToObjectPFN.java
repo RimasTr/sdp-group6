@@ -19,6 +19,7 @@ import balle.strategy.pFStrategy.VelocityVec;
 import balle.world.Coord;
 import balle.world.Snapshot;
 import balle.world.objects.FieldObject;
+import balle.world.objects.Robot;
 
 public class GoToObjectPFN implements MovementExecutor {
 
@@ -114,6 +115,11 @@ public class GoToObjectPFN implements MovementExecutor {
 
     @Override
 	public void step(Controller controller, Snapshot snapshot) {
+		if (isFinished(snapshot)) {
+			controller.stop();
+			return;
+		}
+
         drawables.clear();
         if (!isPossible(snapshot))
             return;
@@ -137,13 +143,10 @@ public class GoToObjectPFN implements MovementExecutor {
                 .getPosition().getY());
 
         VelocityVec res = plann.update(initPos, opponent, targetLoc);
-        if (!shouldSlowDownCloseToTarget()) {
-            Vector newRes = res.mult(4);
+		if (!shouldSlowDownCloseToTarget(snapshot)) {
+			Vector newRes = res.mult(8);
             res = new VelocityVec(newRes.getX(), newRes.getY());
-		} else {
-			Vector newRes = res.mult(2);
-			res = new VelocityVec(newRes.getX(), newRes.getY());
-        }
+		}
 		LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())
                 + " right speed: " + Math.toDegrees(res.getRight()));
         double left, right;
@@ -186,8 +189,12 @@ public class GoToObjectPFN implements MovementExecutor {
         return drawables;
     }
 
-	public boolean shouldSlowDownCloseToTarget() {
-		return slowDownCloseToTarget;
+	public boolean shouldSlowDownCloseToTarget(Snapshot snapshot) {
+		Robot ourRobot = snapshot.getBalle();
+		boolean closeToTarget = (ourRobot.getPosition().dist(target.getPosition()) < 0.2);
+
+		
+		return slowDownCloseToTarget && closeToTarget;
 	}
 
 	public void setSlowDownCloseToTarget(boolean slowDownCloseToTarget) {

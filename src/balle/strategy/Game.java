@@ -116,7 +116,7 @@ public class Game extends AbstractPlanner {
 		goToBallPFN = new GoToBallSafeProportional();
 		goToBallBezier = new SimpleGoToBallFaceGoal(new BezierNav(
                 new SimplePathFinder(new CustomCHI())));
-        goToBallPrecision = new GoToBall(new GoToObjectPFN(0), false);
+		goToBallPrecision = new GoToBall(new GoToObjectPFN(0), false);
         initial = false;
     }
 

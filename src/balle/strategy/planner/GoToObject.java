@@ -140,7 +140,7 @@ public class GoToObject extends AbstractPlanner {
 		Robot ourRobot = snapshot.getBalle();
 		if (ourRobot.possessesBall(snapshot.getBall())) {
 			return new Point(snapshot.getOpponentsGoal().getPosition());
-		} 
+		}
 		return new Point(snapshot.getBall().getPosition());
     }
 

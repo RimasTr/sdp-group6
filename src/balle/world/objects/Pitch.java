@@ -1,7 +1,9 @@
 package balle.world.objects;
 
+import balle.misc.Globals;
 import balle.world.Coord;
 import balle.world.Line;
+import balle.world.Snapshot;
 
 public class Pitch extends StaticFieldObject {
 
@@ -85,6 +87,19 @@ public class Pitch extends StaticFieldObject {
 	}
 	public Line[] getWalls() {
 		return new Line[] { getTopWall(), getRightWall(), getBottomWall(), getLeftWall() };
+	}
+
+	public Coord goToGoalTarget(Snapshot snapshot) {
+		double center = Globals.PITCH_GOAL_MIN_Y + ((Globals.PITCH_GOAL_MAX_Y - Globals.PITCH_GOAL_MIN_Y) / 2.0);
+		Coord middleCoord;
+		if (snapshot.getOwnGoal().isLeftGoal()) {
+			middleCoord = new Coord(0.2, center);
+		} else {
+			middleCoord = new Coord(Globals.PITCH_MAX_X - 0.2, center);
+		}
+
+		return middleCoord;
+
 	}
 
 	public void printCoordinates(Goal goal) {
