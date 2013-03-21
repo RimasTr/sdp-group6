@@ -6,12 +6,12 @@ import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
 import balle.main.drawable.Dot;
-import balle.misc.Globals;
+import balle.main.drawable.DrawableLine;
 import balle.world.Coord;
+import balle.world.Line;
 import balle.world.Orientation;
 import balle.world.Snapshot;
 import balle.world.objects.Ball;
-import balle.world.objects.Goal;
 import balle.world.objects.Robot;
 
 public class GameFromPenaltyDefence extends Game {
@@ -43,7 +43,7 @@ public class GameFromPenaltyDefence extends Game {
     @FactoryMethod(designator = "Game (Penalty Defence)", parameterNames = {})
 	public static GameFromPenaltyDefence gameFromPenaltyDefenceFactory()
 	{
-        return new GameFromPenaltyDefence();
+		return new GameFromPenaltyDefence(500);
 	}
 
 	public boolean isStillInPenaltyDefence(Snapshot snapshot) {
@@ -80,7 +80,6 @@ public class GameFromPenaltyDefence extends Game {
     public MovementDirection getMovementDirection(Snapshot snapshot) {
         Robot opponent = snapshot.getOpponent();
         Robot ourRobot = snapshot.getBalle();
-        Goal ourGoal = snapshot.getOwnGoal();
         Ball ball = snapshot.getBall();
 
         if ((opponent.getPosition() == null)
@@ -88,25 +87,33 @@ public class GameFromPenaltyDefence extends Game {
             return MovementDirection.NONE;
         
 
+		Coord intersectA = new Coord(ourRobot.getPosition().getX(), snapshot
+				.getPitch().getMaxY());
+		Coord intersectB = new Coord(ourRobot.getPosition().getX(), snapshot
+				.getPitch().getMinY());
+		Line ourBotLine = new Line(intersectA, intersectB);
+
+		addDrawable(new DrawableLine(ourBotLine, Color.PINK));
+
         Coord intersectionPoint = null;
-        if ((ball.getPosition() != null) && (!ball.getPosition().isEstimated()))
+		if ((ball.getPosition() != null) && (!ball.getPosition().isEstimated())) {
             intersectionPoint = opponent.getBallKickLine(ball).getIntersect(
-                    ourRobot.getFacingLineBothWays());
+					ourBotLine);
+			addDrawable(new DrawableLine(opponent.getBallKickLine(ball),
+					Color.PINK));
+		}
 
-        if (intersectionPoint == null)
+		if (intersectionPoint == null) {
             intersectionPoint = opponent.getFacingLine().getIntersect(
-                    ourRobot.getFacingLineBothWays());
+					ourBotLine);
+			addDrawable(new DrawableLine(opponent.getFacingLine(), Color.PINK));
 
+		}
+
+		addDrawable(new Dot(intersectionPoint, Color.GREEN));
 
         if (intersectionPoint == null)
             return MovementDirection.NONE;
-
-        double yCoord = intersectionPoint.getY();
-        yCoord = Math.max(yCoord, ourGoal.getMinY() + Globals.ROBOT_LENGTH / 3);
-        yCoord = Math.min(yCoord, ourGoal.getMaxY() - Globals.ROBOT_LENGTH / 3);
-
-        Coord targetPoint = new Coord(ourRobot.getPosition().getX(), yCoord);
-        addDrawable(new Dot(targetPoint, Color.WHITE));
         
         boolean isUpward;
         Orientation ourOrientation = ourRobot.getOrientation();
@@ -117,10 +124,10 @@ public class GameFromPenaltyDefence extends Game {
             isUpward = false;
 
         // If we are already blocking the point stop
-        if (ourRobot.containsCoord(targetPoint))
+		if (ourRobot.containsCoord(intersectionPoint))
             return MovementDirection.NONE;
 
-        double diff = (targetPoint.getY() - ourRobot.getPosition().getY());
+		double diff = (intersectionPoint.getY() - ourRobot.getPosition().getY());
         if (diff > 0)
             if (isUpward)
                 return MovementDirection.FORWARD;
@@ -134,6 +141,8 @@ public class GameFromPenaltyDefence extends Game {
     }
 	@Override
 	public void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
+
+
 
 		if (finished || !isStillInPenaltyDefence(snapshot)) {
 			super.onStep(controller, snapshot);
