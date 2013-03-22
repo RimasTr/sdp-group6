@@ -17,11 +17,14 @@ public abstract class AbstractMessage {
     public abstract int hash() throws InvalidOpcodeException;
 
     /**
-     * Function to hash the opcode of the message into correct place
-     * 
-     * @return
-     * @throws InvalidOpcodeException
-     */
+	 * Function to hash the opcode of the message into correct place. Basically,
+	 * it checks if the operation code is within the permitted range, then it
+	 * returns a bitcode sequence of <BITS_PER_INT> bits with the opcode as the
+	 * most significant bits
+	 * 
+	 * @return
+	 * @throws InvalidOpcodeException
+	 */
     protected int hashOpcode() throws InvalidOpcodeException {
         int opcode = getOpcode();
         if (opcode < 0)
@@ -35,8 +38,51 @@ public abstract class AbstractMessage {
         return opcode << (AbstractMessage.BITS_PER_INT - AbstractMessage.BITS_FOR_OPCODE);
     }
 
-    public static final int extactOpcodeFromEncodedMessage(int message) {
+	public static final int extractOpcodeFromEncodedMessage(int message) {
         return message >>> (BITS_PER_INT - BITS_FOR_OPCODE);
     }
 
+	/**
+	 * Given a message, this method splits it up into four bytes for
+	 * transmission through the BufferStream
+	 * 
+	 * @param message
+	 * @return
+	 */
+	public static final byte[] convertIntToFourBytes(int message) {
+		// extract each byte from the full message
+		byte byte1 = (byte) ((message & 0xFF000000) >> 24);
+		byte byte2 = (byte) ((message & 0x00FF0000) >> 16);
+		byte byte3 = (byte) ((message & 0x0000FF00) >> 8);
+		byte byte4 = (byte) (message & 0x000000FF);
+
+		// Return array of bites, most significant is first element
+		byte[] bytes = { byte1, byte2, byte3, byte4 };
+		return bytes;
+
+	}
+
+	/**
+	 * Given an array of bytes this method reconstructs the full message for
+	 * decoding by the NXT
+	 * 
+	 * @param bytes
+	 * @return
+	 */
+	public static final int convertFourBytesToInt(byte[] bytes) {
+		// Place each byte into its correct position in the 32 bit
+		// sequence
+		int byte1 = bytes[0] << 24;
+		int byte2 = bytes[1] << 16;
+		int byte3 = bytes[2] << 8;
+		System.out.println(byte1 + " " + byte2 + " " + byte3);
+		System.out.println(Integer.toBinaryString(bytes[0]));
+		System.out.println(Integer.toBinaryString(byte1));
+		System.out.println(Integer.toBinaryString(bytes[1]));
+		System.out.println(Integer.toBinaryString(byte2));
+		System.out.println(Integer.toBinaryString(bytes[2]));
+		System.out.println(Integer.toBinaryString(byte3));
+
+		return (byte1 | byte2 | byte3 | bytes[3]);
+	}
 }
