@@ -19,8 +19,6 @@ import balle.world.objects.Robot;
 
 public class Globals {
 
-	// ----------
-	// Constants.
 
     public static final float BALL_RADIUS = 0.02135f;
 	public static final float ROBOT_WIDTH = 0.18f;
@@ -99,9 +97,30 @@ public class Globals {
 	@Deprecated
 	public static final String configFolder = "initConfig.txt";
 
+	// Face angle globals
+	public static final double DEFAULT_ACCURACY = Math.PI / 72; // 5 degrees
+	public static final int TURN_SPEED = 180;
+
+	// Inc Face Angle globals
+	public static final int INC_FACE_ANGLE_SPEED = 300;
+
+	// GoToObjectExecutor globals
+
+	public final static double GO_TO_OBJ_STOP_DISTANCE = 0.2;
+	// if we are within GO_TO_OBJ_EPSILON distance form the target we say we are
+	// there
+	public final static double GO_TO_OBJ_EPSILON = 0.01;
+	// if we don't face the ball precisely but approximately we might ignore
+	// this difference if target position is less than
+	// GO_TO_OBJ_DISTANCE_DIFF_TO_TURN_FOR far away from the resulting position
+	public final static double GO_TO_OBJ_DISTANCE_DIFF_TO_TURN_FOR = ROBOT_WIDTH;
+
+	public final static int GO_TO_OBJ_DEFAULT_MOVEMENT_SPEED = 900;
 
 	// --------
+
 	// Methods
+
 
 	public static float powerToVelocity(float p) {
 		Powers powerAbove = null;
