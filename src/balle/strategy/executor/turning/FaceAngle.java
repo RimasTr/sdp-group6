@@ -22,6 +22,7 @@ public class FaceAngle implements Executor, RotateToOrientationExecutor {
     private int                   timeToTurn              = 0;
     private long                  startedTurning          = 0;
 
+
     private boolean               needStop                = false;
 
     /**

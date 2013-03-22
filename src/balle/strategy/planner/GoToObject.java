@@ -88,6 +88,10 @@ public class GoToObject extends AbstractPlanner {
 			}
 		}
 
+		// Check if the target is outwidth the bounding box of the pitch.
+		// If so, find the closest point and update target.
+		// TODO
+
 		// Update the target's location in executorStrategy (e.g. if target
 		// moved)
 		executorStrategy.updateTarget(target);
@@ -145,7 +149,7 @@ public class GoToObject extends AbstractPlanner {
     }
 
     protected Color getTargetColor() {
-        return Color.CYAN;
+		return Color.RED;
     }
 
 	protected Coord calculateAvoidanceCoord(double gap, boolean belowPoint,
@@ -249,27 +253,9 @@ public class GoToObject extends AbstractPlanner {
         // If the point is in the pitch
         if (pitch.containsCoord(overshootCoord)) {
             return new Point(overshootCoord);
-
         }
-        // If its not in the pitch, pick a new one
-        // DOESN't really work :(
 
-        // overshootCoord = calculateOvershootCoord(target, OVERSHOOT_GAP,
-        // !belowBall);
-        // if (pitch.containsCoord(overshootCoord)) {
-        // // Check if it is suitable
-        // Coord overshootVector = overshootCoord.sub(target.getPosition());
-        // if ((getSnapshot().getOpponentsGoal().isLeftGoal() && overshootVector
-        // .orientation().isFacingLeft(0))
-        // || (getSnapshot().getOpponentsGoal().isRightGoal() && overshootVector
-        // .orientation().isFacingRight(0))) {
-        // // Return it as a new target
-        // return new Point(overshootCoord);
-        // }
-        // }
-        // If the target is *still* not suitable, go to the original target at
-        // least
-        // Recurse with smaller gap
+
 		return getOvershootTarget(target, overshootGap / 2.0, snapshot);
     }
 
@@ -322,8 +308,6 @@ public class GoToObject extends AbstractPlanner {
 
     @Override
     public void stop(Controller controller) {
-		// TODO: do we really need to check this?
-		// if (!executorStrategy.isFinished(snapshot))
 		executorStrategy.stop(controller);
 
     }

@@ -120,10 +120,5 @@ public class DummyController implements Controller {
 		System.out.println("Adding listener.");
 	}
 
-/*	@Override
-	public void gentleKick(int speed, int angle) {
-		// TODO Auto-generated method stub
-		
-	}*/
 
 }
