@@ -85,15 +85,13 @@ public class BrickController implements Controller {
             return;
         }
 
-		// KICKER.flt();
-
         isKicking = true;
 
 		KICKER.setSpeed(900);
 
 		// Move kicker back
-		// KICKER.rotateTo(-5);
-		// KICKER.waitComplete();
+		KICKER.rotateTo(-5);
+		KICKER.waitComplete();
 
 		// Kick
 		KICKER.rotateTo(45);
@@ -103,7 +101,6 @@ public class BrickController implements Controller {
 		KICKER.rotateTo(-45);
 		KICKER.waitComplete();
 
-		// TODO: this reduces power of the kick - only use for Milestones!
 		KICKER.flt();
 
 		isKicking = false;
@@ -169,7 +166,6 @@ public class BrickController implements Controller {
 	@Override
 	public void forward(int left, int right) {
 		setWheelSpeeds(left, right);
-		pilot.forward();
 	}
 
     @Override
@@ -199,6 +195,38 @@ public class BrickController implements Controller {
 
 	@Override
 	public void addListener(ControllerListener cl) {
+	}
+
+	public int getLeftTacho() {
+		return LEFT_WHEEL.getTachoCount();
+	}
+
+	public int getRightTacho() {
+		return RIGHT_WHEEL.getTachoCount();
+	}
+
+	public void resetLeftTacho() {
+		LEFT_WHEEL.resetTachoCount();
+	}
+
+	public void resetRightTacho() {
+		RIGHT_WHEEL.resetTachoCount();
+	}
+
+	public int getLeftSpeed() {
+		return LEFT_WHEEL.getSpeed();
+	}
+
+	public int getRightSpeed() {
+		return RIGHT_WHEEL.getSpeed();
+	}
+
+	public void setLeftSpeed(int speed) {
+		setMotorSpeed(LEFT_WHEEL, speed);
+	}
+
+	public void setRightSpeed(int speed) {
+		setMotorSpeed(RIGHT_WHEEL, speed);
 	}
 
 }

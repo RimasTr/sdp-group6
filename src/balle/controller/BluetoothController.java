@@ -195,5 +195,21 @@ public class BluetoothController implements Controller {
 			cl.commandSent(che);
 	}
 
+	public int getLeftTacho() {
+		return 0;
+	}
+
+	public int getRightTacho() {
+		return 0;
+	}
+
+	public void resetLeftTacho() {
+		System.err.println("Can't send message: Reset Left Wheel Tachocount.");
+	}
+
+	public void resetRightTacho() {
+		System.err.println("Can't send message: Reset Right Wheel Tachocount.");
+	}
+
 
 }

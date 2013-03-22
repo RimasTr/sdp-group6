@@ -85,4 +85,5 @@ public interface Controller {
 	public abstract void penaltyKickStraight();
 
 	public abstract void addListener(ControllerListener cl);
+
 }

@@ -34,7 +34,7 @@ public class GoToObjectPFN implements MovementExecutor {
 	private static final double DEFAULT_ALPHA = 0;
 
 	private static final double WALL_POWER = 0.05;
-	private static final double WALL_INFLUENCE_DISTANCE = 0.01;
+	private static final double WALL_INFLUENCE_DISTANCE = 0.02;
 
     private double OPPONENT_POWER;
     private double OPPONENT_INFLUENCE_DISTANCE;
@@ -144,7 +144,7 @@ public class GoToObjectPFN implements MovementExecutor {
 
         VelocityVec res = plann.update(initPos, opponent, targetLoc);
 		if (!shouldSlowDownCloseToTarget(snapshot)) {
-			Vector newRes = res.mult(8);
+			Vector newRes = res.mult(2);
             res = new VelocityVec(newRes.getX(), newRes.getY());
 		}
 		LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())
@@ -193,7 +193,7 @@ public class GoToObjectPFN implements MovementExecutor {
 		Robot ourRobot = snapshot.getBalle();
 		boolean closeToTarget = (ourRobot.getPosition().dist(target.getPosition()) < 0.2);
 
-		
+		// return slowDownCloseToTarget;
 		return slowDownCloseToTarget && closeToTarget;
 	}
 
