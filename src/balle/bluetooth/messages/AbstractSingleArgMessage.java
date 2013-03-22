@@ -2,6 +2,10 @@ package balle.bluetooth.messages;
 
 public abstract class AbstractSingleArgMessage extends AbstractMessage {
 
+	/*
+	 * Class that deals with bitcode messages that are for operations requiring
+	 * just one argument. Such operations are kick and stop.
+	 */
     private final int        arg1;
     private static final int BITS_PER_ARGUMENT = AbstractMessage.BITS_PER_INT
                                                        - AbstractMessage.BITS_FOR_OPCODE;
@@ -9,6 +13,11 @@ public abstract class AbstractSingleArgMessage extends AbstractMessage {
     public AbstractSingleArgMessage(int arg1) throws InvalidArgumentException {
         this.arg1 = arg1;
 
+		/*
+		 * Validation code to ensure arguments are within range. That is, ensure
+		 * that the value provided as the argument isn't too large to fit in the
+		 * allocated bit space
+		 */
         if (arg1 < 0) {
             throw new InvalidArgumentException("Provided argument " + arg1
                     + " is < 0. Arguments should be unsigned. "
@@ -27,11 +36,21 @@ public abstract class AbstractSingleArgMessage extends AbstractMessage {
         return this.arg1;
     }
 
+	/*
+	 * Combine the operation code and arguments into one bitcode sequence for
+	 * transmission.
+	 * 
+	 * @see balle.bluetooth.messages.AbstractMessage#hash()
+	 */
     @Override
     public int hash() throws InvalidOpcodeException {
         return hashOpcode() | hashArguments();
     }
 
+	/*
+	 * Returns just the bits containing the arguments which are in this case the
+	 * first 30 bits.
+	 */
     public static int decodeArgumentsFromHash(int hash) {
         return hash & 0x3FFFFFFF;
     }
