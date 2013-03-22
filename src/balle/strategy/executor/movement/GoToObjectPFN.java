@@ -72,8 +72,9 @@ public class GoToObjectPFN implements MovementExecutor {
     public GoToObjectPFN(double stopDistance, boolean slowDownCloseToTarget,
             double opponentPower, double opponentInfluenceDistance,
             double targetPower, double alpha) {
-		this.stopDistance = stopDistance;
-        setSlowDownCloseToTarget(slowDownCloseToTarget);
+
+		setStopDistance(stopDistance);
+		setSlowDownCloseToTarget(slowDownCloseToTarget);
 
         OPPONENT_POWER = opponentPower;
         OPPONENT_INFLUENCE_DISTANCE = opponentInfluenceDistance;
@@ -200,8 +201,11 @@ public class GoToObjectPFN implements MovementExecutor {
 
         VelocityVec res = plann.update(initPos, opponent, targetLoc);
         if (!shouldSlowDownCloseToTarget()) {
-			Vector newRes = res.mult(20);
+			Vector newRes = res.mult(6);
             res = new VelocityVec(newRes.getX(), newRes.getY());
+		} else {
+			Vector newRes = res.mult(2);
+			res = new VelocityVec(newRes.getX(), newRes.getY());
         }
 		LOG.trace("UNSCALED Left speed: " + Math.toDegrees(res.getLeft())
                 + " right speed: " + Math.toDegrees(res.getRight()));

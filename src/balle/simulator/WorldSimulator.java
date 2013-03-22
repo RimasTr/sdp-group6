@@ -801,4 +801,5 @@ public class WorldSimulator {
 				new Vec2((float) op.getX(), (float) op.getY()),
 				(float) o.getOrientation().radians());
 	}
+
 }

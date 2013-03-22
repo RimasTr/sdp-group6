@@ -10,6 +10,7 @@ import balle.main.drawable.Circle;
 import balle.main.drawable.Dot;
 import balle.main.drawable.DrawableLine;
 import balle.main.drawable.DrawableVector;
+import balle.main.drawable.Label;
 import balle.misc.Globals;
 import balle.strategy.executor.movement.GoToObjectPFN;
 import balle.strategy.executor.movement.MovementExecutor;
@@ -32,7 +33,7 @@ public class Interception extends AbstractPlanner {
     private boolean ballHasMoved = false;
     private Coord   intercept          = new Coord(0, 0);
     private boolean shouldPlayGame;
-	private static final double STRATEGY_STOP_DISTANCE = 0.25;
+	private static final double STRATEGY_STOP_DISTANCE = 0.35;
 	private static final double GO_DIRECTLY_TO_BALL_DISTANCE = STRATEGY_STOP_DISTANCE * 2;
 	boolean doThisStrat = true;
     protected final boolean useCpOnly;
@@ -92,49 +93,54 @@ public class Interception extends AbstractPlanner {
 			return;
 
 		ballCoordBuffer.add(ball.getPosition());
-		double beta = snapshot.getOpponent().getFacingLine().angle().degrees();
+		Line ballLine = new Line(0, ball.getPosition().getY(), Globals.PITCH_MAX_X, ball.getPosition().getY());
+		double beta = ballLine.angle().degrees();
 		double alfa = snapshot.getBalle().getFacingLine().angle().degrees();
 		double angle = getAngle(alfa, beta);
 		setIAmDoing("Alfa " + alfa);
 		setIAmDoing("Beta " + beta);
 		setIAmDoing("Angle " + Math.abs(angle - 90));
 		
-		if (Math.abs(angle - 90) < 30) {
-			initialTurn = false;
-			Line ballLine = new Line(0, ball.getPosition().getY(),
-					Globals.PITCH_MAX_X, ball.getPosition().getY());
-			intercept = snapshot.getBalle().getFacingLine()
-					.getIntersect(ballLine);
-			// .getIntersect(snapshot.getOpponent().getFacingLine());
+		intercept = snapshot.getBalle().getFacingLine().getIntersect(ballLine);
 
-			doThisStrat = false;
+		// if (Math.abs(angle - 90) < 30) {
+		// initialTurn = false;
+		// intercept = snapshot.getBalle().getFacingLine()
+		// .getIntersect(ballLine);
+		// // .getIntersect(snapshot.getOpponent().getFacingLine());
+		//
+		// doThisStrat = false;
+		//
+		// setIAmDoing("Going to intersection line in direction I'm heading");
+		// } else {
+		// LOG.info("Update angle, has ball moved?");
+		// if (ballHasMoved) {
+		// LOG.info("Ball moved, update angle");
+		//
+		// double robotY = ourRobot.getPosition().getY();
+		// double topwallY = pitch.getTopWall().getA().getY();
+		// double bottomY = pitch.getBottomWall().getA().getY();
+		//
+		// double robotToTop = Math.abs(topwallY - robotY);
+		// double robotToBottom = Math.abs(robotY - bottomY);
+		//
+		// if (robotToTop > robotToBottom) { // maybe > 90?
+		// rotationExecutor.setTargetOrientation(new Orientation(120));
+		// } else { // maybe < 270?
+		// rotationExecutor.setTargetOrientation(new Orientation(240));
+		// }
+		// rotationExecutor.step(controller, snapshot);
+		// return;
+		// }
+		// }
 
-			setIAmDoing("Going to intersection line in direction I'm heading");
-		} else {
-			LOG.info("Update angle, has ball moved?");
-			if (ballHasMoved && initialTurn) {
-				LOG.info("Ball moved, update angle");
+		if (intercept == null) {
+			// intercept = getPredictionCoordVelocityvector(snapshot, useCpOnly,
+			// mirror);
 
-				double robotY = ourRobot.getPosition().getY();
-				double topwallY = pitch.getTopWall().getA().getY();
-				double bottomY = pitch.getBottomWall().getA().getY();
-
-				double robotToTop = Math.abs(topwallY - robotY);
-				double robotToBottom = Math.abs(robotY - bottomY);
-
-				if (robotToTop > robotToBottom) { // maybe > 90?
-					rotationExecutor.setTargetOrientation(new Orientation(120));
-				} else { // maybe < 270?
-					rotationExecutor.setTargetOrientation(new Orientation(240));
-				}
-				rotationExecutor.step(controller, snapshot);
-				return;
-			}
-		}
-
-		if (doThisStrat) {
-			intercept = getPredictionCoordVelocityvector(snapshot, useCpOnly,
-					mirror);
+			Coord ourPos = ourRobot.getPosition();
+			Coord intersection = ballLine.closestPoint(ourPos);
+			intercept = new Coord(intersection.getX(), intersection.getY());
 		}
 		// ballHasMoved = true;
 		if (ballIsMoving(ball)) {
@@ -218,7 +224,7 @@ public class Interception extends AbstractPlanner {
 	 */
 	@FactoryMethod(designator = "InterceptsM4-NCP-PFNF", parameterNames = {})
 	public static final Interception factoryNCPPFNF() {
-		return new Interception(false, new GoToObjectPFN(0.1, false),
+		return new Interception(false, new GoToObjectPFN(0.5, false),
 				new IncFaceAngle(), true,
 				true);
 	}
@@ -267,21 +273,22 @@ public class Interception extends AbstractPlanner {
 		ballPos = ball.getPosition();
 		currPos = ourRobot.getPosition();
 
-		// double dist = (new Line(currPos, s.getOwnGoal().getPosition()))
-		// .length();
-		// if (mirror && dist > (Globals.PITCH_WIDTH / 2)) {
-		//
-		// // // Mirror X position.
-		// // double dX = currPos.getX() - s.getPitch().getPosition().getX();
-		// // currPos = new Coord(s.getPitch().getPosition().getX() - dX,
-		// // currPos.getY());
-		//
-		// addDrawable(new Label("length = " + dist, new Coord(0, 0),
-		// Color.ORANGE));
-		//
-		// return s.getOwnGoal().getPosition();
-		//
-		// }
+		double dist = (new Line(currPos, s.getOwnGoal().getPosition())).length();
+		if (mirror && dist > (Globals.PITCH_WIDTH / 2)) {
+
+			// // Mirror X position.
+			// double dX = currPos.getX() - s.getPitch().getPosition().getX();
+			// currPos = new Coord(s.getPitch().getPosition().getX() - dX,
+			// currPos.getY());
+
+			addDrawable(new Label("length = " + dist, new Coord(0, 0), Color.ORANGE));
+
+			Coord goalPos = s.getOwnGoal().getPosition();
+			Coord newGoalPos = new Coord(goalPos.getX() - 0.1, goalPos.getY());
+
+			return newGoalPos;
+
+		}
 
 
         Velocity vel = ball.getVelocity();
@@ -339,9 +346,11 @@ public class Interception extends AbstractPlanner {
         
 		Coord predictCoord = pivot.sub(scaler);
 		Line robotPredictLine = new Line(currPos, predictCoord);
-        // robotPredictLine = robotPredictLine.extend(0.5);
+		Line ballLine = new Line(0, ball.getPosition().getY(), Globals.PITCH_MAX_X, ball.getPosition().getY());
+		robotPredictLine = robotPredictLine.extend(1);
         addDrawable(new DrawableLine(robotPredictLine, Color.PINK));
-        predictCoord = robotPredictLine.getB();
+		predictCoord = robotPredictLine.getIntersect(ballLine);
+		// predictCoord = robotPredictLine.getB();
 
          // addDrawable(new DrawableLine(rotatedRobotBallLine, Color.PINK));
         
