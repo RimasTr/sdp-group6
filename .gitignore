@@ -14,3 +14,4 @@ vision/data
 JBox2d.log
 res/
 visionlib/
+.classpath
