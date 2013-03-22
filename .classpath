@@ -2,11 +2,30 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SDP"/>
-	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt"/>
-	<classpathentry kind="lib" path="lib/Jama-1.0.3.jar"/>
+	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/android.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/dom4j-2.0.0-ALPHA-2.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/encog-engine-2.5.0.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/guava-14.0-rc1.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/Jama-1.0.3.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/javassist-3.17.1-GA.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/jboss-vfs-3.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/jbox2d-library-2.1.2.2.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/jbox2d-serialization-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/jbox2d-testbed-2.1.2.2.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/JOCL-0.1.8.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/jopt-simple-4.4.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/mysql-connector-java-5.1.23.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/neuroph-2.6.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/reflections-0.9.8.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/slf4j-simple-1.7.2.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1037009/Java-workspace/sdp-group6/lib/xml-apis-2.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
