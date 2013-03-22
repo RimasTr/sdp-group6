@@ -1,17 +1,20 @@
 class Filter:
-    def __init__(self):
+    def __init__(self, disable=False):
         self.coords = dict()
         self.ballIsLost = False
         self.lastBallCoords = [-1, -1, -1]
         self.lastRobotCoords = [-1, -1, -1]
-        self.dribler = '--'
+        self.dribbler = '--'
         self.minDist = 2000
+        self.disable = disable
         pass
 
     def change(self, name, x, y, angle):
         self.coords[name] = (x, y, angle)
 
     def update(self):
+        if self.disable:
+            return self.coords
         if self.coords['ball'][0] != -1: # the ball is visible
             self.lastBallCoords = self.coords['ball']
             self.ballIsLost = False
@@ -27,17 +30,17 @@ class Filter:
                 print self.lastBallCoords
                 if (min(dYellow, dBlue) < self.minDist):
                     if (dYellow < dBlue):
-                        self.dribler = 'yellow'
+                        self.dribbler = 'yellow'
                     else:
-                        self.dribler = 'blue'
+                        self.dribbler = 'blue'
                 else:
-                    self.dribler = '-'
+                    self.dribbler = '-'
                     return self.coords
-                self.lastRobotCoords = self.coords[self.dribler]
-            if (self.dribler == 'yellow' or self.dribler == 'blue'):
-                if (not self.coords[self.dribler][0] == -1):
-                    print (self.dribler, 'is dribling!')
-                    self.coords['ball'] = self.findBallCoords(self.lastBallCoords, self.lastRobotCoords, self.coords[self.dribler])
+                self.lastRobotCoords = self.coords[self.dribbler]
+            if (self.dribbler == 'yellow' or self.dribbler == 'blue'):
+                if (not self.coords[self.dribbler][0] == -1):
+                    print (self.dribbler, 'is dribbling!')
+                    self.coords['ball'] = self.findBallCoords(self.lastBallCoords, self.lastRobotCoords, self.coords[self.dribbler])
             return self.coords
 
     def findDist(self, p1, p2):

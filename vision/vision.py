@@ -23,11 +23,11 @@ PITCH_SIZE_BIT  = 'P';
 
 class Vision:
     
-    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds, displayBlur, normalizeAtStartup):
+    def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize, resetThresholds, displayBlur, normalizeAtStartup, noDribbling):
                
         self.running = True
         self.connected = False
-        
+   
         self.stdout = stdout 
 
         if sourcefile is None:  
@@ -50,7 +50,7 @@ class Vision:
         self.threshold = Threshold(pitchnum, resetThresholds, displayBlur, normalizeAtStartup)
         self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.features = Features(self.gui, self.threshold)
-        self.filter = Filter()
+        self.filter = Filter(noDribbling)
         
         eventHandler = self.gui.getEventHandler()
         eventHandler.addListener('q', self.quit)
@@ -198,13 +198,15 @@ if __name__ == "__main__":
     parser.add_option('-n', '--normalize', action='store_true', dest='normalizeAtStartup', default=False,
                       help='Normalize at startup')
 
+    parser.add_option('-d', '--no-dribbling', action='store_true', dest='noDribbling', default=False,
+                      help='Disable robot-is-dribbling-the-ball filter')
 
     (options, args) = parser.parse_args()
 
     if options.pitch not in [0,1]:
         parser.error('Pitch must be 0 or 1')
 
-    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds, options.displayBlur, options.normalizeAtStartup)
+    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize, options.resetThresholds, options.displayBlur, options.normalizeAtStartup, options.noDribbling)
 
 
 
