@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import balle.controller.Controller;
 import balle.main.drawable.Drawable;
+import balle.misc.Globals;
 import balle.strategy.ConfusedException;
 import balle.strategy.executor.turning.RotateToOrientationExecutor;
 import balle.world.Coord;
@@ -16,10 +17,10 @@ public class GoToObjectExecutor implements MovementExecutor {
 
 	private double stopDistance = 0.2;
 
-	private final static double EPSILON = 0.00001;
-	private final static double DISTANCE_DIFF_TO_TURN_FOR = 0.3;
+	private final static double EPSILON = Globals.GO_TO_OBJ_EPSILON;
+	private final static double DISTANCE_DIFF_TO_TURN_FOR = Globals.GO_TO_OBJ_DISTANCE_DIFF_TO_TURN_FOR;
 
-	public final static int DEFAULT_MOVEMENT_SPEED = 900;
+	public final static int DEFAULT_MOVEMENT_SPEED = Globals.GO_TO_OBJ_DEFAULT_MOVEMENT_SPEED;
 
     protected FieldObject       target                    = null;
 	private boolean isMoving = false;
@@ -101,6 +102,11 @@ public class GoToObjectExecutor implements MovementExecutor {
 						.abs(Math.sin(turnAngle) * dist);
 
 				// sin(180) = sin(0) thus the check
+				// if we don't face the ball precisely but approximately we
+				// might ignore
+				// this difference if target position is less than
+				// GO_TO_OBJ_DISTANCE_DIFF_TO_TURN_FOR far away from the
+				// resulting position
 				if ((Math.abs(turnAngle) > Math.PI / 2)
 						|| (Math.abs(distDiffFromTarget) > DISTANCE_DIFF_TO_TURN_FOR
 								* dist)) {

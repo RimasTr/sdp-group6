@@ -1,6 +1,7 @@
 package balle.strategy.executor.turning;
 
 import balle.controller.Controller;
+import balle.misc.Globals;
 import balle.world.Orientation;
 import balle.world.Snapshot;
 
@@ -11,7 +12,7 @@ public class IncFaceAngle extends FaceAngle {
 
     private boolean turning = false;
 
-    private int     SPEED   = 300;
+	private int SPEED = Globals.INC_FACE_ANGLE_SPEED;
 
     public IncFaceAngle() {
         super();
