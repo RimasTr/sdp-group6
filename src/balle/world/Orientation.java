@@ -48,14 +48,24 @@ public class Orientation {
 		return angleInRadians;
 	}
 
+	/**
+	 * IMO crops angle to be under Pi
+	 * 
+	 * @return radians
+	 */
 	public double atan2styleradians() {
 		if (radians() <= Math.PI)
 			return radians();
 		else
-			return -1 * (2 * Math.PI - radians());
+			return radians() - 2 * Math.PI;
 
 	}
 
+	/**
+	 * IMO crops angle to be under 180
+	 * 
+	 * @return degrees
+	 */
 	public double atan2styledegrees() {
 		if (radians() <= Math.PI)
 			return degrees();

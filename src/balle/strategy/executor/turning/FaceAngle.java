@@ -6,28 +6,21 @@ import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
 import balle.main.drawable.Drawable;
+import balle.misc.Globals;
 import balle.strategy.executor.Executor;
 import balle.world.Orientation;
 import balle.world.Snapshot;
 
 public class FaceAngle implements Executor, RotateToOrientationExecutor {
     private static final Logger LOG = Logger.getLogger(FaceAngle.class);
-    protected final static double DEFAULT_ACCURACY        = Math.PI / 16;
+	protected final static double DEFAULT_ACCURACY = Globals.DEFAULT_ACCURACY;
+	private static final int TURN_SPEED = Globals.TURN_SPEED;
     protected final double        ACCURACY;
 
     Orientation                   targetOrientation       = null;
 
     private int                   timeToTurn              = 0;
     private long                  startedTurning          = 0;
-	private static final int ADDITIONAL_TIME_TO_TURN = 0; // TODO was 700
-                                                                          // to
-                                                                          // always
-                                                                          // add
-                                                                          // to
-                                                                          // timeToTurn
-    private static final int      TURN_SPEED              = 180;         // Degreees
-                                                                          // per
-                                                                          // second
 
     private boolean               needStop                = false;
 
@@ -42,7 +35,7 @@ public class FaceAngle implements Executor, RotateToOrientationExecutor {
     }
 
     public FaceAngle() {
-        this(DEFAULT_ACCURACY);
+		this(DEFAULT_ACCURACY);
     }
 
     /**
@@ -82,8 +75,8 @@ public class FaceAngle implements Executor, RotateToOrientationExecutor {
     }
 
     private int calculateTimeToTurn(double radiansToTurn) {
-        return (int) Math.round(Math.abs(radiansToTurn) / ((Math.toRadians(TURN_SPEED / 1000.0))))
-                + ADDITIONAL_TIME_TO_TURN;
+		return (int) Math.round(Math.abs(radiansToTurn)
+				/ ((Math.toRadians(TURN_SPEED / 1000.0))));
     }
 
     /**
