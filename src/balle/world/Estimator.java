@@ -21,12 +21,20 @@ public class Estimator {
 		velocity = new Velocity(0, 0, 1000);
 	}
 
+	// public static Estimator getBallEstimator() {
+	// return new Estimator(0.7, 0.4);
+	// }
+	//
+	// public static Estimator getRobotEstimator() {
+	// return new Estimator(0.4, 0.5);
+	// }
+
 	public static Estimator getBallEstimator() {
-		return new Estimator(0.7, 0.4);
+		return new Estimator(0.999, 0);
 	}
 
 	public static Estimator getRobotEstimator() {
-		return new Estimator(0.4, 0.5);
+		return new Estimator(0.999, 0);
 	}
 	
 	/**

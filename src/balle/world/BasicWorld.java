@@ -139,15 +139,17 @@ public class BasicWorld extends AbstractWorld {
 		ours = new Robot(ourPosition, oursVel, oursAngVel, ourOrientation);
 		ball = new Ball(ballPosition, ballVel);
 
-		them.lastPosition = theirsPosition;
-		ours.lastPosition = ourPosition;
-		ball.lastPosition = ballPosition;
+		// them.lastPosition = theirsPosition;
+		// ours.lastPosition = ourPosition;
+		// ball.lastPosition = ballPosition;
 
-		updateKalman(ours, them, ball, deltaT);
+		// updateKalman(ours, them, ball, deltaT);
+
 
 		// System.out.println(ourPosition.x + " " + ourPosition.y);
 		// System.out.println(ball.position.x + " " + ball.position.y);
-		// System.out.println(ball.position.dist(new Coord(1.22f, 0.61f)));
+		// System.out.println(them.position.dist(new Coord(0.0, 0.0)));
+		System.out.println(ball.position.dist(new Coord(1.22f, 0.61f)));
 
 		// Pack into a snapshot
 		Snapshot nextSnapshot = new Snapshot(this, them, ours, ball, timestamp);

@@ -25,13 +25,19 @@ public class DESP {
 	}
 
 	public void update(Coord vector) {
-		s1 = vector.mult(alpha).add(s1.mult(1 - alpha));
-		s2 = s1.mult(alpha).add(s2.mult(1 - alpha));
+		// s1 = vector.mult(alpha).add(s1.mult(1 - alpha));
+		// s2 = s1.mult(alpha).add(s2.mult(1 - alpha));
+		s1 = vector;
+		s2 = s1;
 	}
 
 	public Coord predict(int time) {
-		double a = 2 + alpha * time / (1 - alpha);
-		double b = 1 + alpha * time / (1 - alpha);
+		// double a = 2 + alpha * time / (1 - alpha);
+		// double b = 1 + alpha * time / (1 - alpha);
+
+		double a = 2;
+		double b = 1;
+
 		return s1.mult(a).sub(s2.mult(b));
 	}
 
