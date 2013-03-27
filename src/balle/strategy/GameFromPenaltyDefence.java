@@ -48,6 +48,11 @@ public class GameFromPenaltyDefence extends Game {
 
 	public boolean isStillInPenaltyDefence(Snapshot snapshot) {
 
+		if (snapshot.getBalle().possessesBall(snapshot.getBall())) {
+			finished = true;
+			return false;
+		}
+		
 		Coord ball = snapshot.getBall().getPosition();
 		if ((ball == null) && snapshot.getOwnGoal().isLeftGoal())
 			ball = new Coord(0.5, 0.6); // assume that ball is on penalty spot,

@@ -191,7 +191,7 @@ public class GoToObjectPFN implements MovementExecutor {
 
 	public boolean shouldSlowDownCloseToTarget(Snapshot snapshot) {
 		Robot ourRobot = snapshot.getBalle();
-		boolean closeToTarget = (ourRobot.getPosition().dist(target.getPosition()) < 0.2);
+		boolean closeToTarget = (ourRobot.getPosition().dist(target.getPosition()) < 0.25);
 
 		// return slowDownCloseToTarget;
 		return slowDownCloseToTarget && closeToTarget;

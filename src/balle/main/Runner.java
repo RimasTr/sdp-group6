@@ -207,14 +207,6 @@ public class Runner {
 					Globals.P1_CAMERA_HEIGHT));
 		}
 
-		// world.addFilter(new BallNearWallFilter());
-		// world.addFilter(new SmoothingFilter());
-
-		// Moving this forward so we do not start a GUI until controller is
-		// initialised
-		// If you're getting a merge conflict here leave this before
-		// SimpleWorldGUI start!
-
 		if (useDummyController)
 			controllerA = new DummyController();
 		else

@@ -20,16 +20,16 @@ public class GoStraight {
 	private static double start_time;
 	private static boolean first_move;
 
-	private int PID_SETPOINT = 300;
+	private int PID_SETPOINT = 600;
 	private int PID_DEADBAND = 1;
-	private float PID_KP = 0.0f;
+	private float PID_KP = 1.5f;
 	private float PID_KI = 0.0f;
 	private float PID_KD = 0.5f;
 	private float PID_LIMITHIGH = 100.0f;
 	private float PID_LIMITLOW = -100.0f;
-	private float PID_I_LIMITHIGH = 0.0f;
-	private float PID_I_LIMITLOW = 0.0f;
-	private int PID_DT = 10;
+	private float PID_I_LIMITHIGH = 10.0f;
+	private float PID_I_LIMITLOW = 10.0f;
+	private int PID_DT = 15;
 
 	private PIDController pidController;
 	private BrickController controller;
@@ -60,7 +60,7 @@ public class GoStraight {
 				isThreadStopped = false;
 				first_move = true;
 
-				pidController = new PIDController(PID_SETPOINT, PID_DT);
+				pidController = new PIDController(PID_SETPOINT, 0);
 				setPIDparameters();
 
 				while (!stopped) {
