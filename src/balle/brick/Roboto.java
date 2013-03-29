@@ -19,47 +19,47 @@ import balle.bluetooth.messages.MessageStop;
 import balle.controller.Controller;
 
 class ListenerThread extends Thread {
-    DataInputStream input;
-    boolean         shouldStop;
-    int             command;
-    boolean         commandConsumed;
+	DataInputStream input;
+	boolean shouldStop;
+	int command;
+	boolean commandConsumed;
 
-    ListenerThread(DataInputStream input) {
-        this.input = input;
-        this.shouldStop = false;
-        this.commandConsumed = true;
-    }
+	ListenerThread(DataInputStream input) {
+		this.input = input;
+		this.shouldStop = false;
+		this.commandConsumed = true;
+	}
 
-    @Override
-    public void run() {
+	@Override
+	public void run() {
 
-        while (!shouldStop) {
-            try {
-                int command = input.readInt();
-                setCommand(command);
-            } catch (IOException e) {
-                shouldStop = true;
-            }
-        }
-    }
+		while (!shouldStop) {
+			try {
+				int command = input.readInt();
+				setCommand(command);
+			} catch (IOException e) {
+				shouldStop = true;
+			}
+		}
+	}
 
-    private synchronized void setCommand(int command) {
-        this.command = command;
-        commandConsumed = false;
-    }
+	private synchronized void setCommand(int command) {
+		this.command = command;
+		commandConsumed = false;
+	}
 
-    public synchronized int getCommand() {
-        commandConsumed = true;
-        return command;
-    }
+	public synchronized int getCommand() {
+		commandConsumed = true;
+		return command;
+	}
 
-    public synchronized boolean available() {
-        return !commandConsumed;
-    }
+	public synchronized boolean available() {
+		return !commandConsumed;
+	}
 
-    public void cancel() {
-        shouldStop = true;
-    }
+	public void cancel() {
+		shouldStop = true;
+	}
 
 }
 
@@ -75,104 +75,107 @@ public class Roboto {
 	private static boolean touchingRear = false;
 	private static boolean waiting = false;
 
-    /**
-     * Processes the decoded message and issues correct commands to controller
-     * 
-     * @param decodedMessage
-     *            the decoded message
-     * @param controller
-     * @return true, if successful
-     */
-    public static boolean processMessage(AbstractMessage decodedMessage,
-            Controller controller) {
-        String name = decodedMessage.getName();
+	/**
+	 * Processes the decoded message and issues correct commands to controller
+	 * 
+	 * @param decodedMessage
+	 *            the decoded message
+	 * @param controller
+	 * @return true, if successful
+	 */
+	public static boolean processMessage(AbstractMessage decodedMessage,
+			Controller controller) {
+		String name = decodedMessage.getName();
 
-        if (name.equals(MessageKick.NAME)) {
-            MessageKick messageKick = (MessageKick) decodedMessage;
-            if (messageKick.isPenalty()) {
-                controller.penaltyKick();
-            } else {
-                controller.kick();
-            }
-        } else if (name.equals(MessageMove.NAME)) {
-            MessageMove messageMove = (MessageMove) decodedMessage;
-            controller.setWheelSpeeds(messageMove.getLeftWheelSpeed(),
-                    messageMove.getRightWheelSpeed());
-        } else if (name.equals(MessageStop.NAME)) {
-            MessageStop messageStop = (MessageStop) decodedMessage;
-            if (messageStop.floatWheels())
-                controller.floatWheels();
-            else
-                controller.stop();
-        } else if (name.equals(MessageRotate.NAME)) {
-            MessageRotate messageRotate = (MessageRotate) decodedMessage;
-            controller.rotate(messageRotate.getAngle(),
-                    messageRotate.getSpeed());
-        } else {
-            return false;
-        }
-        return true;
-    }
+		if (name.equals(MessageKick.NAME)) {
+			MessageKick messageKick = (MessageKick) decodedMessage;
+			if (messageKick.isPenalty()) {
+				controller.penaltyKick();
+			} else {
+				controller.kick();
+			}
+		} else if (name.equals(MessageMove.NAME)) {
+			MessageMove messageMove = (MessageMove) decodedMessage;
+			controller.setWheelSpeeds(messageMove.getLeftWheelSpeed(),
+					messageMove.getRightWheelSpeed());
+		} else if (name.equals(MessageStop.NAME)) {
+			MessageStop messageStop = (MessageStop) decodedMessage;
+			if (messageStop.floatWheels())
+				controller.floatWheels();
+			else
+				controller.stop();
+		} else if (name.equals(MessageRotate.NAME)) {
+			MessageRotate messageRotate = (MessageRotate) decodedMessage;
+			controller.rotate(messageRotate.getAngle(),
+					messageRotate.getSpeed());
+		} else {
+			return false;
+		}
+		return true;
+	}
 
-    /**
-     * Main program
-     * 
-     * @param args
-     */
-    public static void main(String[] args) {
+	/**
+	 * Main program
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
 
-        TouchSensor touchRight = new TouchSensor(SensorPort.S2);
-        TouchSensor touchLeft = new TouchSensor(SensorPort.S1);
+		TouchSensor touchRight = new TouchSensor(SensorPort.S2);
+		TouchSensor touchLeft = new TouchSensor(SensorPort.S1);
 
-        TouchSensor touchBackRight = new TouchSensor(SensorPort.S4);
-        TouchSensor touchBackLeft = new TouchSensor(SensorPort.S3);
+		TouchSensor touchBackRight = new TouchSensor(SensorPort.S4);
+		TouchSensor touchBackLeft = new TouchSensor(SensorPort.S3);
 
-        while (true) {
-            // Enter button click will halt the program
+		while (true) {
+			// Enter button click will halt the program
 			if (Button.ENTER.isDown() || Button.ESCAPE.isDown())
-                break;
+				break;
 
-            drawMessage("Connecting...");
-            Sound.twoBeeps();
+			drawMessage("Connecting...");
+			Sound.twoBeeps();
 
-            BTConnection connection = Bluetooth.waitForConnection();
+			BTConnection connection = Bluetooth.waitForConnection();
 
-            drawMessage("Connected");
-            Sound.beep();
+			drawMessage("Connected");
+			Sound.beep();
+			
+			
 
-            DataInputStream input = connection.openDataInputStream();
-            ListenerThread listener = new ListenerThread(input);
+			DataInputStream input = connection.openDataInputStream();
+			ListenerThread listener = new ListenerThread(input);
 
-            Controller controller = new BrickController();
-            MessageDecoder decoder = new MessageDecoder();
+			Controller controller = new BrickController();
+			MessageDecoder decoder = new MessageDecoder();
 
-            listener.start();
+			listener.start();
 
-            while (true) {
-                // Enter button click will halt the program
+			while (true) {
+				// Enter button click will halt the program
 
 				if (Button.ENTER.isDown()) {
-                    controller.stop();
-                    listener.cancel();
-                    break;
-                }
+					controller.stop();
+					listener.cancel();
+					break;
+				}
 				if (Button.ESCAPE.isDown()) {
 					controller.stop();
 					listener.cancel();
 					break;
-                }
+				}
 
 				if (waiting) {
 					continue;
 				}
 
-                try {
-                    // Check for sensors when idle
+				try {
+					// Check for sensors when idle
 					if (touchLeft.isPressed() || touchRight.isPressed()) {
 						if (!touchingFront) {
 							touchingFront = true;
 							waiting = true;
-							controller.backward(controller.getMaximumWheelSpeed());
+							controller.backward(controller
+									.getMaximumWheelSpeed());
 							drawMessage("Obstacle in front!");
 							Thread.sleep(150);
 							controller.stop();
@@ -180,14 +183,15 @@ public class Roboto {
 							waiting = false;
 						}
 						continue;
-                    }
+					}
 
-                    // Check for back sensors as well
-                    if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
+					// Check for back sensors as well
+					if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
 						if (!touchingRear) {
 							touchingRear = true;
 							waiting = true;
-							controller.forward(controller.getMaximumWheelSpeed());
+							controller.forward(controller
+									.getMaximumWheelSpeed());
 							drawMessage("Obstacle behind!");
 							Thread.sleep(150);
 							controller.stop();
@@ -195,41 +199,42 @@ public class Roboto {
 							waiting = false;
 						}
 						continue;
-                    }
+					}
 
-                    if (!listener.available())
-                        continue;
+					if (!listener.available())
+						continue;
 
-                    int hashedMessage = listener.getCommand();
-                    AbstractMessage message = decoder
-                            .decodeMessage(hashedMessage);
-                    if (message == null) {
-                        drawMessage("Could not decode: " + hashedMessage);
+					int hashedMessage = listener.getCommand();
+					AbstractMessage message = decoder
+							.decodeMessage(hashedMessage);
+					if (message == null) {
+						drawMessage("Could not decode: " + hashedMessage);
 						continue; // Changed from break.
-                    }
-                    String name = message.getName();
-                    drawMessage(name);
+					}
+					String name = message.getName();
+					drawMessage(name);
 
-                    boolean successful = processMessage(message, controller);
-                    if (!successful) {
-                        drawMessage("Unknown message received: "
-                                + hashedMessage);
+					boolean successful = processMessage(message, controller);
+					if (!successful) {
+						drawMessage("Unknown message received: "
+								+ hashedMessage);
 						continue; // Changed from break.
-                    }
+					}
 
 				} catch (Exception e) {
 					drawMessage("Error in MainLoop: " + e.getMessage());
-                }
-            }
+				}
+			}
 
-            connection.close();
-        }
-    }
+			connection.close();
+		}
+	}
 
-    private static void drawMessage(String message) {
-        LCD.clear();
-        LCD.drawString(message, 0, 0);
-        LCD.refresh();
-    }
+	private static void drawMessage(String message) {
+		LCD.clear();
+		LCD.drawString(message, 0, 0);
+		LCD.drawString("" + System.currentTimeMillis(), 0, 7);
+		LCD.refresh();
+	}
 
 }

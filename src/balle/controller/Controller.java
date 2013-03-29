@@ -8,6 +8,16 @@ public interface Controller {
      * @return true if controller is ready to operate
      */
     public abstract boolean isReady();
+    
+    /**
+     * Tries to connect to the communicator.
+     */
+    public abstract void connect();
+
+    /**
+     * Disconnects from the communicator.
+     */
+	public abstract void disconnect();
 
     /**
      * Makes the robot go backward with the specified speed

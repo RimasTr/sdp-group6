@@ -36,8 +36,11 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 	private final JPanel fpsMainPanel;
 	private final JPanel fpsVisionPanel;
 	private final JLabel fpsVisionText;
+	private final JPanel connectionPanel;
+	private final JLabel connectionText;
 	private final JLabel fpsWarning;
 	private final JLabel fpsVision;
+	private final JLabel connectionStatus;
 	private final JLabel fpsStrategyText;
 	private final JLabel fpsStrategy;
 	private final JPanel fpsStrategyPanel;
@@ -60,6 +63,10 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		}
 
 		fpsStrategy.setText(s);
+    }
+    
+    public void setConnectionStatus(String connectionStatus) {
+    	this.connectionStatus.setText(connectionStatus);
     }
 
     private static final Logger LOG = Logger.getLogger(SimpleWorldGUI.class);
@@ -95,11 +102,22 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		fpsStrategy = new JLabel();
 		fpsStrategyPanel.add(fpsStrategyText);
 		fpsStrategyPanel.add(fpsStrategy);
+		
+		// Initialising Connection Status
+		connectionPanel = new JPanel();
+		connectionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		connectionText = new JLabel("Connection:");
+
+		
+		connectionStatus = new JLabel("?");
+		connectionPanel.add(connectionText);
+		connectionPanel.add(connectionStatus);
 
 		// Put both FPS into one JPanel
 		fpsMainPanel = new JPanel();
 		fpsMainPanel.add(BorderLayout.WEST, fpsVisionPanel);
-		fpsMainPanel.add(BorderLayout.EAST, fpsStrategyPanel);
+		fpsMainPanel.add(BorderLayout.NORTH, fpsStrategyPanel);
+		fpsMainPanel.add(BorderLayout.EAST, connectionPanel);
 
 		screen = new Screen();
 		screen.addMouseMotionListener(screen);
@@ -497,10 +515,15 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 		fpsVision.setText(s);
 	}
+	
+	private void redrawConnectionStatus() {
+		connectionStatus.setText("?");
+	}
 
 	@Override
 	protected void actionOnStep() {
 		redrawFPS();
+		redrawConnectionStatus();
 	}
 
 	@Override
