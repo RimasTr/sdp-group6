@@ -1,6 +1,6 @@
 package balle.brick;
 
-import java.io.DataInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import lejos.nxt.Button;
@@ -19,12 +19,12 @@ import balle.bluetooth.messages.MessageStop;
 import balle.controller.Controller;
 
 class ListenerThread extends Thread {
-    DataInputStream input;
+	BufferedInputStream input;
     boolean         shouldStop;
     int             command;
     boolean         commandConsumed;
 
-    ListenerThread(DataInputStream input) {
+	ListenerThread(BufferedInputStream input) {
         this.input = input;
         this.shouldStop = false;
         this.commandConsumed = true;
@@ -35,7 +35,10 @@ class ListenerThread extends Thread {
 
         while (!shouldStop) {
             try {
-                int command = input.readInt();
+				byte[] message = null;
+				int bytesRead = input.read(message, 0, 4); // Number of bytes
+															// read
+				int command = AbstractMessage.convertFourBytesToInt(message);
                 setCommand(command);
             } catch (IOException e) {
                 shouldStop = true;
@@ -140,7 +143,8 @@ public class Roboto {
             drawMessage("Connected");
             Sound.beep();
 
-            DataInputStream input = connection.openDataInputStream();
+			BufferedInputStream input = new BufferedInputStream(
+					connection.openDataInputStream());
             ListenerThread listener = new ListenerThread(input);
 
             Controller controller = new BrickController();

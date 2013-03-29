@@ -1,8 +1,7 @@
 package balle.bluetooth;
 
-import java.io.DataOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
@@ -10,11 +9,11 @@ import lejos.pc.comm.NXTConnector;
 public class Communicator {
 
 	private final static String NAME = "group6";
-	private final static String MAC = "00:16:53:08:A0:E6";
+	private final static String MAC = "00:16:53:07:D7:1E";
 
     private boolean             connected = false;
 	NXTConnector conn;
-    DataOutputStream            dos;
+	BufferedOutputStream os;
     int                         m         = 5;
     int                         m2        = 0;
 
@@ -23,8 +22,8 @@ public class Communicator {
      */
     public Communicator() {
 		conn = connect();
-		OutputStream os = conn.getOutputStream();
-		dos = new DataOutputStream(os);
+		BufferedOutputStream os = new BufferedOutputStream(
+				conn.getOutputStream());
     }
 
     /**
@@ -59,8 +58,8 @@ public class Communicator {
     public boolean send(Integer message) {
         try {
             // System.err.println("Sending: " + Integer.toHexString(message));
-            dos.writeInt(message);
-            dos.flush();
+			os.write(message);
+			os.flush();
             return true;
         } catch (IOException e) {
             System.err.println("Sending failed, IOException: ");
@@ -80,9 +79,9 @@ public class Communicator {
      */
     public void close() {
         try {
-            dos.writeInt(-1);
-            dos.flush();
-            dos.close();
+			os.write(-1);
+			os.flush();
+			os.close();
 			conn.close();
             connected = false;
         } catch (IOException e) {

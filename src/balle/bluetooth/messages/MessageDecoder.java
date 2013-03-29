@@ -6,17 +6,20 @@ package balle.bluetooth.messages;
 public class MessageDecoder {
 
     /**
-     * Decode message.
-     * 
-     * @param hashedMessage
-     *            the hashed message
-     * @return An instance of particular message
-     * @throws InvalidArgumentException
-     *             when something went horribly wrong
-     */
+	 * Decodes a hashed message. First it extracts and checks the the operation
+	 * code of the message to see which operation it is trying to execute. Then
+	 * it extracts the arguments, returning an instance of the corrosponding
+	 * message class.
+	 * 
+	 * @param hashedMessage
+	 *            the hashed message
+	 * @return An instance of particular message
+	 * @throws InvalidArgumentException
+	 *             when something went horribly wrong
+	 */
     public AbstractMessage decodeMessage(int hashedMessage)
             throws InvalidArgumentException {
-        switch (AbstractMessage.extactOpcodeFromEncodedMessage(hashedMessage)) {
+		switch (AbstractMessage.extractOpcodeFromEncodedMessage(hashedMessage)) {
             case MessageKick.OPCODE:
                 int isPenalty = MessageKick
                         .decodeArgumentsFromHash(hashedMessage);

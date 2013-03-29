@@ -43,7 +43,7 @@ public class BluetoothController implements Controller {
     @Override
     public void stop() {
         try {
-            connection.send(new MessageStop(0).hash());
+			connection2.send(new MessageStop(0).hash());
 			propogate(0, 0);
         } catch (InvalidOpcodeException e) {
             System.err.println("Failed to send message STOP -- invalid opcode");
@@ -56,7 +56,7 @@ public class BluetoothController implements Controller {
     @Override
     public void kick() {
         try {
-            connection.send(new MessageKick(0).hash());
+			connection2.send(new MessageKick(0).hash());
         } catch (InvalidOpcodeException e) {
             System.err.println("Failed to send message KICK -- invalid opcode");
         } catch (InvalidArgumentException e) {
@@ -73,7 +73,7 @@ public class BluetoothController implements Controller {
     @Override
     public void backward(int speed) {
         try {
-            connection.send(new MessageMove(-speed, -speed).hash());
+			connection2.send(new MessageMove(-speed, -speed).hash());
 			propogate(-speed, -speed);
         } catch (InvalidOpcodeException e) {
             System.err
@@ -93,7 +93,7 @@ public class BluetoothController implements Controller {
     @Override
     public void forward(int speed) {
         try {
-			connection.send(new MessageMove(speed, speed).hash());
+			connection2.send(new MessageMove(speed, speed).hash());
 			propogate(speed, speed);
 		} catch (InvalidOpcodeException e) {
 			System.err.println("Failed to send message FORWARD -- invalid opcode");
@@ -110,7 +110,7 @@ public class BluetoothController implements Controller {
 	@Override
 	public void forward(int left, int right) {
 		try {
-			connection.send(new MessageMove(left, right).hash());
+			connection2.send(new MessageMove(left, right).hash());
 			propogate(left, right);
         } catch (InvalidOpcodeException e) {
             System.err
@@ -124,7 +124,7 @@ public class BluetoothController implements Controller {
     @Override
     public void rotate(int degrees, int speed) {
         try {
-            connection.send(new MessageRotate(degrees, speed).hash());
+			connection2.send(new MessageRotate(degrees, speed).hash());
         } catch (InvalidOpcodeException e) {
             System.err
                     .println("Failed to send message ROTATE -- invalid opcode");
@@ -138,7 +138,7 @@ public class BluetoothController implements Controller {
     @Override
     public void setWheelSpeeds(int leftWheelSpeed, int rightWheelSpeed) {
         try {
-            connection.send(new MessageMove(leftWheelSpeed, rightWheelSpeed)
+			connection2.send(new MessageMove(leftWheelSpeed, rightWheelSpeed)
                     .hash());
 			propogate(leftWheelSpeed, rightWheelSpeed);
         } catch (InvalidOpcodeException e) {
@@ -159,7 +159,7 @@ public class BluetoothController implements Controller {
     @Override
     public void penaltyKick() {
         try {
-            connection.send(new MessageKick(1).hash());
+			connection2.send(new MessageKick(1).hash());
         } catch (InvalidOpcodeException e) {
 			System.err.println("Failed to send message PENALTY_KICK -- invalid argument");
         } catch (InvalidArgumentException e) {
@@ -170,7 +170,7 @@ public class BluetoothController implements Controller {
 	@Override
 	public void penaltyKickStraight() {
 		try {
-			connection.send(new MessageKick(1).hash());
+			connection2.send(new MessageKick(1).hash());
 		} catch (InvalidOpcodeException e) {
 			System.err.println("Failed to send message PENALTY_KICK -- invalid argument");
 		} catch (InvalidArgumentException e) {
@@ -180,7 +180,7 @@ public class BluetoothController implements Controller {
 
     @Override
     public boolean isReady() {
-        return connection.isConnected();
+		return connection2.isConnected();
     }
 
 	@Override

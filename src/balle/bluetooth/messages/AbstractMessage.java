@@ -75,13 +75,6 @@ public abstract class AbstractMessage {
 		int byte1 = bytes[0] << 24;
 		int byte2 = bytes[1] << 16;
 		int byte3 = bytes[2] << 8;
-		System.out.println(byte1 + " " + byte2 + " " + byte3);
-		System.out.println(Integer.toBinaryString(bytes[0]));
-		System.out.println(Integer.toBinaryString(byte1));
-		System.out.println(Integer.toBinaryString(bytes[1]));
-		System.out.println(Integer.toBinaryString(byte2));
-		System.out.println(Integer.toBinaryString(bytes[2]));
-		System.out.println(Integer.toBinaryString(byte3));
 
 		return (byte1 | byte2 | byte3 | bytes[3]);
 	}

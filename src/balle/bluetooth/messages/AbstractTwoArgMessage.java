@@ -2,11 +2,20 @@ package balle.bluetooth.messages;
 
 public abstract class AbstractTwoArgMessage extends AbstractMessage {
 
+	/*
+	 * Class that deals with bitcode messages that are for operations requiring
+	 * two arguments. Such operations are move and rotate.
+	 */
     private final int        arg1;
     private final int        arg2;
 
     private static final int BITS_PER_ARGUMENT = (AbstractMessage.BITS_PER_INT - AbstractMessage.BITS_FOR_OPCODE) / 2;
 
+	/*
+	 * Validation code to ensure arguments are within range. That is, ensure
+	 * that the value provided as the argument isn't too large to fit in the
+	 * allocated bit space
+	 */
     private void validateArgument(int argument) throws InvalidArgumentException {
         if (argument < 0) {
             throw new InvalidArgumentException("Provided argument " + arg1
@@ -31,12 +40,14 @@ public abstract class AbstractTwoArgMessage extends AbstractMessage {
     }
 
     /**
-     * Decode arguments from hash.
-     * 
-     * @param hash
-     *            hashed version of command
-     * @return int[] of arguments of structure {firstArgument, secondArgument}
-     */
+	 * Decode arguments from hash. The first argument is the first 15 bits from
+	 * the left directly after the opcode bits and the second argument is the
+	 * first 15 bits from the right.
+	 * 
+	 * @param hash
+	 *            hashed version of command
+	 * @return int[] of arguments of structure {firstArgument, secondArgument}
+	 */
     public static int[] decodeArgumentsFromHash(int hash) {
         int firstArgument = (hash & 0x3FFF8000) >>> BITS_PER_ARGUMENT;
         int secondArgument = hash & 0x0007FFF;

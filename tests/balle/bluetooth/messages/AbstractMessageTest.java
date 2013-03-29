@@ -45,13 +45,16 @@ public class AbstractMessageTest {
     public void testExtactOpcodeFromEncodedMessage() {
 
         // 11 000000000000000000000000000000
-        assertEquals(3, AbstractMessage.extactOpcodeFromEncodedMessage(0xC0000000));
+		assertEquals(3,
+				AbstractMessage.extractOpcodeFromEncodedMessage(0xC0000000));
 
         // 01 000000000011010001010000010101
-        assertEquals(1, AbstractMessage.extactOpcodeFromEncodedMessage(0x400D1415));
+		assertEquals(1,
+				AbstractMessage.extractOpcodeFromEncodedMessage(0x400D1415));
 
         // 00 111111111111111111111111111111
-        assertEquals(0, AbstractMessage.extactOpcodeFromEncodedMessage(0x3FFFFFFF));
+		assertEquals(0,
+				AbstractMessage.extractOpcodeFromEncodedMessage(0x3FFFFFFF));
 
     }
 
