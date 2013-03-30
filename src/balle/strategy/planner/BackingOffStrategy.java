@@ -42,7 +42,7 @@ public class BackingOffStrategy extends GoToBall {
 	 * Distance between our front and the other robot below which we could be
 	 * stuck
 	 */
-	private static final double DISTANCE_THRESH = Globals.ROBOT_LENGTH * 3 / 4;
+	private static final double DISTANCE_THRESH = 0.1;
 
 	/**
 	 * Time in milliseconds that must pass before we decide that we're stuck
