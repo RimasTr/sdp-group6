@@ -209,13 +209,14 @@ public class Runner {
 
 		if (useDummyController)
 			controllerA = new DummyController();
-		else
-			controllerA = new BluetoothController(new Communicator());
+		else {
+			controllerA = new BluetoothController(new Communicator(true));
+		}
 
 		// Wait for controller to initialise
-		while (!controllerA.isReady()) {
+		/*while (!controllerA.isReady()) {
 			continue;
-		}
+		}*/
 
 
         controllerA.addListener(world);

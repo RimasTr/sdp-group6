@@ -26,6 +26,16 @@ public class BluetoothController implements Controller {
 	public BluetoothController(Communicator2 communicator2) {
 		connection2 = communicator2;
 	}
+	
+	@Override
+	public void connect() {
+		connection.init();
+	}
+	
+	@Override
+	public void disconnect() {
+		connection.close();
+	}
 
 	@Override
     public void floatWheels() {

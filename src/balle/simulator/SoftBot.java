@@ -212,4 +212,12 @@ public class SoftBot implements Controller {
 			cl.commandSent(che);
 	}
 
+	@Override
+	public void connect() {		
+	}
+	
+	@Override
+	public void disconnect() {		
+	}
+
 }
