@@ -87,11 +87,11 @@ public class RobotoMkII {
 	
 	private static int PID_SETPOINT = 600;
 	private static int PID_DEADBAND = 1;
-	private static float PID_KP = 1.5f;
+	private static float PID_KP = 5f;
 	private static float PID_KI = 0.0f;
-	private static float PID_KD = 0.5f;
-	private static float PID_LIMITHIGH = 100.0f;
-	private static float PID_LIMITLOW = -100.0f;
+	private static float PID_KD = 0.0f;
+	private static float PID_LIMITHIGH = 450.0f;
+	private static float PID_LIMITLOW = -PID_LIMITHIGH;
 	private static float PID_I_LIMITHIGH = 10.0f;
 	private static float PID_I_LIMITLOW = 10.0f;
 	private static int PID_DT = 15;
@@ -119,8 +119,10 @@ public class RobotoMkII {
         	forward = true;
         	start_time = System.currentTimeMillis();
             MessageMove messageMove = (MessageMove) decodedMessage;
-            controller.setWheelSpeeds(messageMove.getLeftWheelSpeed(),
-                    messageMove.getRightWheelSpeed());
+            int left = messageMove.getLeftWheelSpeed();
+            int right = messageMove.getRightWheelSpeed();
+            setPIDsetpoint(Math.max(left, right)); //TODO should we implement a seperate PID controller for each wheel?
+            controller.setWheelSpeeds(left,right);
         } else if (name.equals(MessageStop.NAME)) {
         	forward = false;
         	MessageStop messageStop = (MessageStop) decodedMessage;
@@ -177,7 +179,8 @@ public class RobotoMkII {
             controller = new BrickController();
             decoder = new MessageDecoder();
             
-            pidController = new PIDController(PID_SETPOINT, PID_DT); //TODO: test with 0 and PID_DT!
+            pidController = new PIDController(PID_SETPOINT, PID_DT);
+            setPIDparameters();
     		controller.resetLeftTacho();
     		controller.resetRightTacho();
     		
@@ -214,8 +217,6 @@ public class RobotoMkII {
 					int right_mv = pidController.doPID((int) right_actual);
 
 					controller.forward((PID_SETPOINT + left_mv), (PID_SETPOINT + right_mv));
-					
-					// TODO: linked to the above, should we have a wait here?
 				}
 
                 try {
@@ -272,7 +273,7 @@ public class RobotoMkII {
         LCD.refresh();
     }
     
-    public void setPIDparameters() {
+    public static void setPIDparameters() {
 		pidController.setPIDParam(PIDController.PID_SETPOINT, PID_SETPOINT);
 		pidController.setPIDParam(PIDController.PID_DEADBAND, PID_DEADBAND);
 		pidController.setPIDParam(PIDController.PID_KP, PID_KP);
@@ -284,7 +285,7 @@ public class RobotoMkII {
 		pidController.setPIDParam(PIDController.PID_I_LIMITLOW, PID_I_LIMITLOW);
 	}
     
-    public void setPIDsetpoint(int NEW_PID_SETPOINT) {
+    public static void setPIDsetpoint(int NEW_PID_SETPOINT) {
     	PID_SETPOINT = NEW_PID_SETPOINT;
     	pidController.setPIDParam(PIDController.PID_SETPOINT, PID_SETPOINT);
     }

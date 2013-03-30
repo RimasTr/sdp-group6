@@ -25,14 +25,17 @@ public class GoStraight {
 	private float PID_KP = 1.5f;
 	private float PID_KI = 0.0f;
 	private float PID_KD = 0.5f;
-	private float PID_LIMITHIGH = 100.0f;
-	private float PID_LIMITLOW = -100.0f;
+	private float PID_LIMITHIGH = 450.0f;
+	private float PID_LIMITLOW = -PID_LIMITHIGH;
 	private float PID_I_LIMITHIGH = 10.0f;
 	private float PID_I_LIMITLOW = 10.0f;
 	private int PID_DT = 15;
 
 	private PIDController pidController;
 	private BrickController controller;
+	
+	private static DataInputStream input;
+	private static DataOutputStream output; 
 	
 	public GoStraight() {
 		controller = new BrickController();
@@ -77,7 +80,7 @@ public class GoStraight {
 					double right_tacho = controller.getRightTacho();
 					double right_actual = right_tacho / running_time;
 					int right_mv = pidController.doPID((int) right_actual);
-
+					
 					LCD.clear();
 					LCD.drawString("l_act: " + left_actual, 0, 0);
 					LCD.drawString("r_act: " + right_actual, 0, 1);
@@ -95,7 +98,7 @@ public class GoStraight {
 					try {
 						Thread.sleep(PID_DT);
 					} catch (InterruptedException e) {
-
+						e.printStackTrace();
 					}
 				}
 
@@ -122,8 +125,8 @@ public class GoStraight {
 	      LCD.clear();
 	      LCD.drawString("connected...", 0, 0);
 
-	      final DataInputStream input = connection.openDataInputStream();
-	      final DataOutputStream output = connection.openDataOutputStream();
+	      input = connection.openDataInputStream();
+	      output = connection.openDataOutputStream();
 	   
 	      try {
 	         while (!Button.ESCAPE.isDown()) {
