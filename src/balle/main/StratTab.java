@@ -51,6 +51,7 @@ public class StratTab extends JPanel implements ActionListener {
 	private JButton resetButton;
 	private JButton saveButton;
 	private JButton penaltyButton;
+	private JButton connectButton;
 	private boolean isBlue;
 	private ArrayList<String> stratTabs;
 	private String[] strings = new String[0];
@@ -201,6 +202,13 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 2;
 		c.gridy = 2;
 		controlPanel.add(saveButton, c);
+		
+		connectButton = new JButton("Connect");
+		connectButton.addActionListener(this);
+		connectButton.setActionCommand("connect");
+		c.gridx = 0;
+		c.gridy = 6;
+		controlPanel.add(connectButton, c);		
 
         blueStrategy.addActionListener(new ActionListener() {
             @Override
@@ -394,6 +402,8 @@ public class StratTab extends JPanel implements ActionListener {
 				System.err.println("Couldn't save configurations.");
 			}
 
+		} else if (event.getActionCommand().equals("connect")) {
+			System.out.println("Connecting...");
 		}
 	}
 
