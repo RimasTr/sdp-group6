@@ -257,38 +257,26 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 							.getPosition().getY() - ball.getRadius() * 3), Color.RED);
 			ballSpeedLabel.draw(g, scaler);
 
-			boolean isBlue = snapshot.getWorld().isBlue();
 			String loss = "Get it together guys!";
 			String win = "Gooooaaallll";
 			String print;
 
 			if (isInGoal(snapshot.getOwnGoal(), ball)) {
-				if (isBlue) {
-					print = loss;
-				} else {
-					print = win;
-				}
-
+				print = loss;
+				Label nearWallLabel = new Label(print,
+						new Coord(ball.getPosition().getX(), ball.getPosition()
+								.getY() + ball.getRadius() * 3), Color.PINK);
+				nearWallLabel.draw(g, scaler);
+			} 
+			if (isInGoal(snapshot.getOpponentsGoal(), ball)) {
+				print = win;
 				Label nearWallLabel = new Label(print,
 						new Coord(
 								ball.getPosition().getX(), ball.getPosition().getY()
 								+ ball.getRadius() * 3), Color.ORANGE);
 				nearWallLabel.draw(g, scaler);
 			}
-
-			if (isInGoal(snapshot.getOpponentsGoal(), ball)) {
-				if (isBlue) {
-					print = win;
-				} else {
-					print = loss;
-				}
-				Label nearWallLabel = new Label(print,
-						new Coord(ball.getPosition().getX(), ball.getPosition()
-								.getY() + ball.getRadius() * 3), Color.PINK);
-				nearWallLabel.draw(g, scaler);
-
-			}
-
+			
 			Velocity vel = ball.getVelocity().mult(1000);
 			DrawableVector vec = new DrawableVector(ball.getPosition(), vel,
 					Color.CYAN);
@@ -409,7 +397,6 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		private void drawGoalText(Graphics g, Goal goal){
 			boolean isLeft = goal.isLeftGoal();
 			boolean theirGoal = goal.equals(getSnapshot().getOpponentsGoal());
-			boolean isBlue = getSnapshot().getWorld().isBlue();
 
 			int x, y;
 
@@ -422,27 +409,11 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			}
 
 			if (theirGoal) {
-				// it's their goal and we're blue
+				// it's their goal
 				g.drawString("Attacking", x, y);
 			} else {
 				g.drawString("Defending", x, y);
 			}
-
-			//			if (isBlue) {
-			//				if (theirGoal) {
-			//					// it's their goal and we're blue
-			//					g.drawString("Attacking", x, y);
-			//				} else {
-			//					g.drawString("Defending", x, y);
-			//				}
-			//			} else {
-			//				if (theirGoal) {
-			//					// it's their goal and they're blue
-			//					g.drawString("Defending", x, y);
-			//				} else {
-			//					g.drawString("Attacking", x, y);
-			//				}
-			//			}
 
 		} 
 

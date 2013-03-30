@@ -64,23 +64,11 @@ public class StrategyRunner extends AbstractWorldProcessor {
 			Snapshot snapshot2 = new OpponentSnapshot(snapshot);
 
 			try {
-//				strategyA.step(controllerA, snapshot);
-//				if (controllerB != null) {
-//					strategyB.step(controllerB, snapshot2);
-//				}
-				if (controllerA != null && controllerB != null) {
-					strategyA.step(controllerA, snapshot);
-					if (controllerB != null) {
-						strategyB.step(controllerB, snapshot2);
-					}
-				} else {
-					if (controllerA != null) {
-						strategyA.step(controllerA, snapshot);
-					} else {
-						strategyB.step(controllerB, snapshot);
-					}
+				strategyA.step(controllerA, snapshot);
+				if (controllerB != null) {
+					strategyB.step(controllerB, snapshot2);
 				}
-				
+
 			} catch (Exception e) {
 				LOG.error("Strategy raised exception" + e.toString());
 
@@ -94,7 +82,7 @@ public class StrategyRunner extends AbstractWorldProcessor {
 			}
 			ArrayList<Drawable> drawables = strategyA.getDrawables();
 			ArrayList<Drawable> opponentDrawables = strategyB
-.getDrawables();
+					.getDrawables();
 			for (Drawable d : opponentDrawables) {
 				d.reduceVisibility();
 				drawables.add(d);
@@ -138,16 +126,9 @@ public class StrategyRunner extends AbstractWorldProcessor {
 		if (currentStrategyA != null && currentStrategyB != null)
 			stopStrategy();
 		// Start the new strategy
-		if (controllerA != null){
-			currentStrategyA = strategyA;
-		} 
-		if (controllerB != null){
-			currentStrategyB = strategyB;
-
-		}
-//		currentStrategyA = strategyA;
-//		currentStrategyB = strategyB;
-		//LOG.info("Started " + currentStrategyA.getClass().getName());
+		currentStrategyA = strategyA;
+		currentStrategyB = strategyB;
+		LOG.info("Started " + currentStrategyA.getClass().getName());
 	}
 
 	/**

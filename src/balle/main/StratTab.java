@@ -114,28 +114,35 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 0;
 		c.insets = new Insets(1, 5, 1, 5);
+		if (!worldA.isBlue() && !isSimulator()){
+			blueLabel.setText(YELLOW_LABEL_TEXT);
+		}
 		controlPanel.add(blueLabel, c);
+
 
 		blueStrategy = new JComboBox(names);
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 2;
-		blueStrategy.setEnabled(simulator != null || worldA.isBlue());
+		//blueStrategy.setEnabled(simulator != null || worldA.isBlue());
 		controlPanel.add(blueStrategy, c);
 
 		yellowLabel = new JLabel(YELLOW_LABEL_TEXT);
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		controlPanel.add(yellowLabel, c);
+		if (isSimulator()){
+			controlPanel.add(yellowLabel, c);
+		}
 
 		yellowStrategy = new JComboBox(names);
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 2;
-		yellowStrategy.setEnabled(simulator != null || !worldA.isBlue());
-		controlPanel.add(yellowStrategy, c);
-
+		//yellowStrategy.setEnabled(simulator != null || !worldA.isBlue());
+		if (isSimulator()) {
+			controlPanel.add(yellowStrategy, c);
+		}
 		startButton = new JButton("Start");
 		startButton.addActionListener(this);
 		startButton.setActionCommand("startstop");
@@ -222,7 +229,7 @@ public class StratTab extends JPanel implements ActionListener {
 
 		generateStrategyConstructorSelector();
 
-		// Interprett Config object
+		// Interpret Config object
 
 		blueStrategy.setSelectedItem(config.get(Config.BLUE_STRATEGY));
 		if (simulator != null)
@@ -261,7 +268,9 @@ public class StratTab extends JPanel implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.add(parametersPanelYellow);
+		if (isSimulator()){
+			this.add(parametersPanelYellow);
+		}
 
 		this.validate();
 
@@ -273,64 +282,29 @@ public class StratTab extends JPanel implements ActionListener {
 		if (event.getActionCommand().equals("startstop")) {
 			if (startButton.getText().equals("Start")) {
 
-				//				String selectedStrategyA = (String) blueStrategy
-				//						.getSelectedItem();
-				//
-				//				String selectedStrategyB;
-				//				if (simulator == null) {
-				//					selectedStrategyB = (String) "NullStrategy";
-				//				} else {
-				//					selectedStrategyB = (String) yellowStrategy.getSelectedItem();
-				//					// selectedStrategyB = (String)
-				//					// redStrategy.getSelectedItem();
-				//				}
-				//				config.set(Config.BLUE_STRATEGY, selectedStrategyA);
-				//				if (simulator != null)
-				//					config.set(Config.YELLOW_STRATEGY, selectedStrategyB);
-				
-				String selectedStrategyA = (String) "NullStrategy";
-				String selectedStrategyB = (String) "NullStrategy";
-				
-				if (!isSimulator()) {
-					// Pitch
-					if (worldA.isBlue()){
-						selectedStrategyA = (String) blueStrategy.getSelectedItem();
-						config.set(Config.BLUE_STRATEGY, selectedStrategyA);
-						config.set(Config.YELLOW_STRATEGY, selectedStrategyB);
-					} else {
-						selectedStrategyB = (String) yellowStrategy.getSelectedItem();
-						config.set(Config.YELLOW_STRATEGY, selectedStrategyB);
-						config.set(Config.BLUE_STRATEGY, selectedStrategyA);
-					}
+				String selectedStrategyA = (String) blueStrategy
+						.getSelectedItem();
+
+				String selectedStrategyB;
+				if (simulator == null) {
+					selectedStrategyB = (String) "NullStrategy";
 				} else {
-					// Simulator
-					selectedStrategyA = (String) blueStrategy.getSelectedItem();
 					selectedStrategyB = (String) yellowStrategy.getSelectedItem();
-					config.set(Config.BLUE_STRATEGY, selectedStrategyA);
-					config.set(Config.YELLOW_STRATEGY, selectedStrategyB);
 				}
+				config.set(Config.BLUE_STRATEGY, selectedStrategyA);
+				if (simulator != null)
+					config.set(Config.YELLOW_STRATEGY, selectedStrategyB);
 
 				try {
-					if (!isSimulator()){
-						if (worldA.isBlue()){
-							strategyRunner.startStrategy(strategyFactory.createClass(selectedStrategyA,
-									parametersPanelBlue.getValues()), null);
-						} else {
-							strategyRunner.startStrategy(null, strategyFactory.createClass(selectedStrategyB,
+
+					strategyRunner.startStrategy(
+							strategyFactory.createClass(selectedStrategyA,
+									parametersPanelBlue.getValues()),
+									strategyFactory.createClass(selectedStrategyB,
 											parametersPanelYellow.getValues()));
-						}
-					} else {
-						strategyRunner.startStrategy(
-								strategyFactory.createClass(selectedStrategyA,
-										parametersPanelBlue.getValues()),
-										strategyFactory.createClass(selectedStrategyB,
-												parametersPanelYellow.getValues()));
-					}
-					
+
 				} catch (UnknownDesignatorException e) {
-					LOG.error("Cannot start Blue strategy \"" + selectedStrategyA
-							+ "\": " + e.toString());
-					LOG.error("Cannot start Yellow strategy \"" + selectedStrategyB
+					LOG.error("Cannot start strategy \"" + selectedStrategyA
 							+ "\": " + e.toString());
 					System.out.println("Valiant effort, chaps");
 					return;
@@ -405,6 +379,9 @@ public class StratTab extends JPanel implements ActionListener {
 
 			if (worldA.isBlue()) {
 				switchRobot.setText("Robot: Yellow");
+				if (!isSimulator()){
+					blueLabel.setText(YELLOW_LABEL_TEXT);
+				}
 				worldA.setIsBlue(false);
 				if (simulator != null) {
 					strategyRunner.setController(simulator.getYellowSoft(),
@@ -412,6 +389,9 @@ public class StratTab extends JPanel implements ActionListener {
 				}
 			} else {
 				switchRobot.setText("Robot: Blue");
+				if (!isSimulator()){
+					blueLabel.setText(BLUE_LABEL_TEXT);
+				}
 				worldA.setIsBlue(true);
 				if (simulator != null) {
 					strategyRunner.setController(simulator.getBlueSoft(),
