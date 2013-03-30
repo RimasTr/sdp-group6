@@ -223,7 +223,13 @@ public class Runner {
 		visionInput = new SocketVisionReader();
 		visionInput.addListener(world);
 
-		initialiseGUI(controllerA, null, world, null, strategyLog, null);
+		if (!balleIsBlue){
+			initialiseGUI(null, controllerA, world, null, strategyLog, null);
+		} else {
+			initialiseGUI(controllerA, null, world, null, strategyLog, null);
+		}
+		
+//		initialiseGUI(controllerA, null, world, null, strategyLog, null);
 	}
 
 	public static void runSimulator(boolean balleIsBlue, boolean goalIsLeft,

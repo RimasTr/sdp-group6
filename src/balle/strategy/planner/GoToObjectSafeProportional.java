@@ -5,6 +5,7 @@ import java.awt.Color;
 import balle.controller.Controller;
 import balle.main.drawable.DrawableLine;
 import balle.misc.Globals;
+import balle.simulator.SnapshotPredictor;
 import balle.strategy.ConfusedException;
 import balle.strategy.FactoryMethod;
 import balle.strategy.executor.movement.GoToObjectPFN;
@@ -65,7 +66,11 @@ public class GoToObjectSafeProportional extends GoToObject {
 		}
 
 		if (ourRobot.isInScoringPosition(ball, oppGoal, oppRobot)) {
-			controller.kick();
+			LOG.info("Passed first Kick check");
+			if (canStillScore(snapshot)){
+				LOG.info("Passed second Kick check");
+				controller.kick();
+			}
 		}
 
 		if (turnHack.shouldStealStep(snapshot)) {
@@ -146,6 +151,20 @@ public class GoToObjectSafeProportional extends GoToObject {
 
 		addDrawable(new DrawableLine(targetLine, Color.ORANGE));
 		return new Point(targetLine.getB());
+	}
+	
+	protected boolean canStillScore(Snapshot snapshot) {
+
+		// Get predicted snapshot after 50 frames
+		SnapshotPredictor sp = snapshot.getSnapshotPredictor();
+		Snapshot predSnap = sp.getSnapshotAfterTime(50);
+
+		boolean gotBall = predSnap.getBalle().possessesBall(predSnap.getBall());
+		boolean intersectingGoalLine = predSnap.getBalle().getFacingLine()
+				.intersects(predSnap.getOpponentsGoal().getGoalLine());
+
+		return (gotBall && intersectingGoalLine);
+
 	}
 
 	/**

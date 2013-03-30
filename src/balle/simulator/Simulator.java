@@ -93,7 +93,7 @@ public class Simulator extends TestbedTest implements AbstractVisionReader {
 	}
 
 	public static Simulator createSimulator() {
-		return createSimulator(true);
+		return createSimulator(false);
 	}
 
 	/**
