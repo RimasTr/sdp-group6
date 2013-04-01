@@ -198,7 +198,11 @@ public class Game2 extends AbstractPlanner {
 		}
 
 		double ourDistanceToGoal = ourRobot.getPosition().dist(ourGoal.getPosition());
-		double oppDistanceToGoal = oppRobot.getPosition().dist(ourGoal.getPosition());
+		double oppDistanceToGoal = Double.POSITIVE_INFINITY;
+		if (oppRobot != null && oppRobot.getPosition() != null) {
+			// Opponent is on the pitch
+			oppDistanceToGoal = oppRobot.getPosition().dist(ourGoal.getPosition());
+		}
 		double ballDistanceToGoal = ball.getPosition().dist(ourGoal.getPosition());
 		
 		// Opponent is closer to our goal and ball is between them and Goal

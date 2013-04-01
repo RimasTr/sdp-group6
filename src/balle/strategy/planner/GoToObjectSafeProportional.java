@@ -225,7 +225,11 @@ public class GoToObjectSafeProportional extends GoToObject {
 			Ball ball = snapshot.getBall();
 			Goal opponentsGoal = snapshot.getOpponentsGoal();
 
-			double oppDistToGoal = oppRobot.getPosition().dist(opponentsGoal.getPosition());
+			double oppDistToGoal = Double.POSITIVE_INFINITY;
+			if (oppRobot != null && oppRobot.getPosition() != null) {
+				// Opponent is on the pitch
+				oppDistToGoal = oppRobot.getPosition().dist(opponentsGoal.getPosition());
+			}
 			double ourDistToGoal = ourRobot.getPosition().dist(opponentsGoal.getPosition());
 			boolean weAreCloser = ourDistToGoal <= oppDistToGoal;
 
