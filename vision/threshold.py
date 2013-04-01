@@ -137,7 +137,7 @@ defaults[0] for the main pitch, and defaults[1] for the other table
 """
 defaults =[
         {
-        'yellow' : [[16, 56, 158], [36, 255, 255]],
+        'yellow' : [[20, 56, 175], [36, 255, 255]],
         'blue' : [[80,  57,  74], [115, 255, 255]],
         'ball' : [[0, 160, 90], [10, 255, 255]]
         },
