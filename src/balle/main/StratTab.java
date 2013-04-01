@@ -117,7 +117,7 @@ public class StratTab extends JPanel implements ActionListener {
 		// and topmost row is grid y = 0)
 
 		String[] names = new String[strategyFactory.availableDesignators()
-				.size()];
+		                            .size()];
 		for (int count = 0; count < strategyFactory.availableDesignators()
 				.size(); count++) {
 			names[count] = strategyFactory.availableDesignators().get(count);
@@ -132,6 +132,9 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.insets = new Insets(1, 5, 1, 5);
+		if (!worldA.isBlue() && !isSimulator()){
+			blueLabel.setText(YELLOW_LABEL_TEXT);
+		} 
 		controlPanel.add(blueLabel, c);
 
 		blueStrategy = new JComboBox(names);
@@ -145,14 +148,18 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 1;
-		controlPanel.add(yellowLabel, c);
+		if (isSimulator()){
+			controlPanel.add(yellowLabel, c);
+		} 
 
 		yellowStrategy = new JComboBox(names);
 		c.gridx = 0;
 		c.gridy = 4;
 		c.gridwidth = 2;
-		yellowStrategy.setEnabled(simulator != null);
-		controlPanel.add(yellowStrategy, c);
+		//yellowStrategy.setEnabled(simulator != null || !worldA.isBlue());
+		if (isSimulator()) {
+			controlPanel.add(yellowStrategy, c);
+		} 
 
 		startButton = new JButton("Start");
 		startButton.addActionListener(this);
@@ -181,7 +188,7 @@ public class StratTab extends JPanel implements ActionListener {
 		c.gridy = 5;
 		controlPanel.add(switchRobot, c);
 
-		noiseButton = new JButton("Noise: On");
+		noiseButton = new JButton("Noise: Off");
 		noiseButton.addActionListener(this);
 		noiseButton.setEnabled(simulator != null);
 		noiseButton.setActionCommand("noise");
@@ -265,7 +272,7 @@ public class StratTab extends JPanel implements ActionListener {
 
 		generateStrategyConstructorSelector();
 
-		// Interprett Config object
+		// Interpret Config object
 
 		blueStrategy.setSelectedItem(config.get(Config.BLUE_STRATEGY));
 		if (simulator != null)
@@ -305,7 +312,10 @@ public class StratTab extends JPanel implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.add(parametersPanelYellow);
+		if (isSimulator()){
+			this.add(parametersPanelYellow);
+		} 
+		//this.add(parametersPanelYellow);
 
 		this.validate();
 
@@ -326,8 +336,6 @@ public class StratTab extends JPanel implements ActionListener {
 				} else {
 					selectedStrategyB = (String) yellowStrategy
 							.getSelectedItem();
-					// selectedStrategyB = (String)
-					// redStrategy.getSelectedItem();
 				}
 
 				config.set(Config.BLUE_STRATEGY, selectedStrategyA);
@@ -338,8 +346,8 @@ public class StratTab extends JPanel implements ActionListener {
 					strategyRunner.startStrategy(
 							strategyFactory.createClass(selectedStrategyA,
 									parametersPanelBlue.getValues()),
-							strategyFactory.createClass(selectedStrategyB,
-									parametersPanelYellow.getValues()));
+									strategyFactory.createClass(selectedStrategyB,
+											parametersPanelYellow.getValues()));
 
 				} catch (UnknownDesignatorException e) {
 					LOG.error("Cannot start strategy \"" + selectedStrategyA
@@ -361,8 +369,8 @@ public class StratTab extends JPanel implements ActionListener {
 				strategyRunner.stopStrategy();
 			} catch (NullPointerException e) {
 				System.err
-						.println("No currently running Strategy. World randomised "
-								+ "\": " + e);
+				.println("No currently running Strategy. World randomised "
+						+ "\": " + e);
 			}
 			startButton.setText("Start");
 			strategyRunner.stopStrategy();
@@ -375,8 +383,8 @@ public class StratTab extends JPanel implements ActionListener {
 				strategyRunner.stopStrategy();
 			} catch (NullPointerException e) {
 				System.err
-						.println("No currently running Strategy. World reset "
-								+ "\": " + e);
+				.println("No currently running Strategy. World reset "
+						+ "\": " + e);
 			}
 			startButton.setText("Start");
 			strategyRunner.stopStrategy();
@@ -389,8 +397,8 @@ public class StratTab extends JPanel implements ActionListener {
 				strategyRunner.stopStrategy();
 			} catch (NullPointerException e) {
 				System.err
-						.println("No currently running Strategy. World reset "
-								+ "\": " + e);
+				.println("No currently running Strategy. World reset "
+						+ "\": " + e);
 			}
 			startButton.setText("Start");
 			strategyRunner.stopStrategy();
@@ -416,6 +424,9 @@ public class StratTab extends JPanel implements ActionListener {
 
 			if (worldA.isBlue()) {
 				switchRobot.setText("Robot: Yellow");
+				if (!isSimulator()){
+					blueLabel.setText(YELLOW_LABEL_TEXT);
+				} 
 				worldA.setIsBlue(false);
 				if (simulator != null) {
 					strategyRunner.setController(simulator.getYellowSoft(),
@@ -423,6 +434,9 @@ public class StratTab extends JPanel implements ActionListener {
 				}
 			} else {
 				switchRobot.setText("Robot: Blue");
+				if (!isSimulator()){
+					blueLabel.setText(BLUE_LABEL_TEXT);
+				} 
 				worldA.setIsBlue(true);
 				if (simulator != null) {
 					strategyRunner.setController(simulator.getBlueSoft(),

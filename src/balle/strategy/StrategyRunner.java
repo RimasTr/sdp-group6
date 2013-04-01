@@ -81,7 +81,7 @@ public class StrategyRunner extends AbstractWorldProcessor {
 			}
 			ArrayList<Drawable> drawables = strategyA.getDrawables();
 			ArrayList<Drawable> opponentDrawables = strategyB
-.getDrawables();
+					.getDrawables();
 			for (Drawable d : opponentDrawables) {
 				d.reduceVisibility();
 				drawables.add(d);

@@ -5,6 +5,7 @@ import java.awt.Color;
 import balle.controller.Controller;
 import balle.main.drawable.DrawableLine;
 import balle.misc.Globals;
+import balle.simulator.SnapshotPredictor;
 import balle.strategy.ConfusedException;
 import balle.strategy.FactoryMethod;
 import balle.strategy.executor.movement.GoToObjectPFN;
@@ -26,24 +27,24 @@ public class GoToObjectSafeProportional extends GoToObject {
 
 	private final AbstractPlanner turnHack;
 
-    public GoToObjectSafeProportional() {
+	public GoToObjectSafeProportional() {
 		super(new GoToObjectPFN(0, true));
 
 		turnHack = new TurnHack();
-    }
+	}
 
-    public GoToObjectSafeProportional(double avoidanceGap, double overshootGap,
-            boolean approachfromCorrectSide) {
-        super(new GoToObjectPFN(0), avoidanceGap, overshootGap,
-                approachfromCorrectSide);
-        turnHack = new TurnHack();
-    }
+	public GoToObjectSafeProportional(double avoidanceGap, double overshootGap,
+			boolean approachfromCorrectSide) {
+		super(new GoToObjectPFN(0), avoidanceGap, overshootGap,
+				approachfromCorrectSide);
+		turnHack = new TurnHack();
+	}
 
-   
+
 	@FactoryMethod(designator = "GoToObjectSafeProportional", parameterNames = {})
-    public static GoToObjectSafeProportional factoryMethod() {
-        return new GoToObjectSafeProportional();
-    }
+	public static GoToObjectSafeProportional factoryMethod() {
+		return new GoToObjectSafeProportional();
+	}
 
 	@FactoryMethod(designator = "GTOSP", parameterNames = { "avoidanceGap",
 			"overshootGap", "CorrectSide?" })
@@ -52,10 +53,10 @@ public class GoToObjectSafeProportional extends GoToObject {
 		return new GoToObjectSafeProportional(aG, oG, CorrectSide);
 	}
 
-    @Override
-    protected void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
-    	Robot ourRobot = snapshot.getBalle();
-    	Robot oppRobot = snapshot.getOpponent();
+	@Override
+	protected void onStep(Controller controller, Snapshot snapshot) throws ConfusedException {
+		Robot ourRobot = snapshot.getBalle();
+		Robot oppRobot = snapshot.getOpponent();
 		Ball ball = snapshot.getBall();
 		FieldObject target = getOriginalTarget(snapshot);
 		Goal oppGoal = snapshot.getOpponentsGoal();
@@ -65,7 +66,12 @@ public class GoToObjectSafeProportional extends GoToObject {
 		}
 
 		if (ourRobot.isInScoringPosition(ball, oppGoal, oppRobot)) {
-			controller.kick();
+			//			controller.kick();
+			LOG.info("Passed first Kick check");
+			if (canStillScore(snapshot)){
+				LOG.info("Passed second Kick check");
+				controller.kick();
+			} 
 		}
 
 		if (turnHack.shouldStealStep(snapshot)) {
@@ -75,14 +81,29 @@ public class GoToObjectSafeProportional extends GoToObject {
 		}
 
 		if (ourRobot.isApproachingTargetFromCorrectSide(target,
-                snapshot.getOpponentsGoal())) {
-            setApproachTargetFromCorrectSide(false);
-        } else {
-            setApproachTargetFromCorrectSide(true);
-        }
+				snapshot.getOpponentsGoal())) {
+			setApproachTargetFromCorrectSide(false);
+		} else {
+			setApproachTargetFromCorrectSide(true);
+		}
 
-        super.onStep(controller, snapshot);
-    }
+		super.onStep(controller, snapshot);
+	}
+
+
+	protected boolean canStillScore(Snapshot snapshot) {
+
+		// Get predicted snapshot after 50 frames
+		SnapshotPredictor sp = snapshot.getSnapshotPredictor();
+		Snapshot predSnap = sp.getSnapshotAfterTime(50);
+
+		boolean gotBall = predSnap.getBalle().possessesBall(predSnap.getBall());
+		boolean intersectingGoalLine = predSnap.getBalle().getFacingLine()
+				.intersects(predSnap.getOpponentsGoal().getGoalLine());
+
+		return (gotBall && intersectingGoalLine);
+
+	} 
 
 	protected boolean targetSafeGapCanBeIncreased(Snapshot snapshot, Line newTargetLine) {
 		Pitch pitch = snapshot.getPitch();
@@ -174,7 +195,7 @@ public class GoToObjectSafeProportional extends GoToObject {
 
 			// Steal step when the line from the centre of the goal through the
 			// wall intersects the robot, and the robot is close to the ball
-			
+
 			return isTurning || needsToTurn(snapshot) || shouldTurnToGoal(snapshot);
 
 		}
@@ -183,7 +204,7 @@ public class GoToObjectSafeProportional extends GoToObject {
 			Robot ourRobot = snapshot.getBalle();
 			Ball ball = snapshot.getBall();
 			Goal opponentsGoal = snapshot.getOpponentsGoal();
-			
+
 			Line line = new Line(opponentsGoal.getPosition(), ball.getPosition()).extend(Globals.PITCH_WIDTH);
 			boolean isOnCorrectSide = ourRobot.isApproachingTargetFromCorrectSide(ball, opponentsGoal);
 			double absAngleToTurn = Math.abs(ourRobot.getAngleToTurnToTarget(ball
@@ -207,12 +228,12 @@ public class GoToObjectSafeProportional extends GoToObject {
 			double oppDistToGoal = oppRobot.getPosition().dist(opponentsGoal.getPosition());
 			double ourDistToGoal = ourRobot.getPosition().dist(opponentsGoal.getPosition());
 			boolean weAreCloser = ourDistToGoal <= oppDistToGoal;
-			
+
 			/*
 			 * are we already facing the goal?
 			 */
 			boolean facingGoal = ourRobot.isFacingGoal(opponentsGoal);
-			
+
 			return !facingGoal && weAreCloser && ourRobot.possessesBall(ball);
 		}
 
@@ -240,7 +261,7 @@ public class GoToObjectSafeProportional extends GoToObject {
 				isTurning = false;
 			}
 
-            turnExecutor.step(controller, snapshot);
+			turnExecutor.step(controller, snapshot);
 
 		}
 

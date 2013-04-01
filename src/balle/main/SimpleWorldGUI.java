@@ -45,14 +45,17 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 	private final JLabel fpsStrategy;
 	private final JPanel fpsStrategyPanel;
 
-    private double strategyFps;
+	private double strategyFps;
 
-    public double getStrategyFps() {
-        return strategyFps;
-    }
+	private Color ourRobotColor;
+	private Color theirRobotColor; 
 
-    public void setStrategyFps(double strategyFps) {
-        this.strategyFps = strategyFps;
+	public double getStrategyFps() {
+		return strategyFps;
+	}
+
+	public void setStrategyFps(double strategyFps) {
+		this.strategyFps = strategyFps;
 		String s = String.format("%1$5.3f", this.strategyFps);
 		double visionFps = 1000.0 / getFPS();
 
@@ -63,21 +66,21 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		}
 
 		fpsStrategy.setText(s);
-    }
-    
-    public void setConnectionStatus(String connectionStatus) {
-    	this.connectionStatus.setText(connectionStatus);
-    }
+	}
 
-    private static final Logger LOG = Logger.getLogger(SimpleWorldGUI.class);
+	public void setConnectionStatus(String connectionStatus) {
+		this.connectionStatus.setText(connectionStatus);
+	}
 
-    public SimpleWorldGUI(AbstractWorld world) {
+	private static final Logger LOG = Logger.getLogger(SimpleWorldGUI.class);
+
+	public SimpleWorldGUI(AbstractWorld world) {
 		super(world);
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		try {
 			UIManager
-					.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+			.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 		} catch (Exception e) {
 			System.out.println("UI Manager exception: " + e.getMessage());
 		}
@@ -102,13 +105,13 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		fpsStrategy = new JLabel();
 		fpsStrategyPanel.add(fpsStrategyText);
 		fpsStrategyPanel.add(fpsStrategy);
-		
+
 		// Initialising Connection Status
 		connectionPanel = new JPanel();
 		connectionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		connectionText = new JLabel("Connection:");
 
-		
+
 		connectionStatus = new JLabel("?");
 		connectionPanel.add(connectionText);
 		connectionPanel.add(connectionStatus);
@@ -153,6 +156,7 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 		@Override
 		public void paintComponent(Graphics g) {
+			setColours(getSnapshot()); 
 			float scale = getHeight() / VIEWHEIGHTM;
 			scaler.setScale(scale);
 			g.setColor(new Color(72, 104, 22));
@@ -167,6 +171,21 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			}
 			drawables.clear();
 		}
+
+		private boolean areWeBlue(Snapshot snapshot){
+			return snapshot.getWorld().isBlue();
+		}
+
+		private void setColours(Snapshot snapshot){
+			if (areWeBlue(snapshot)){
+				ourRobotColor = Color.BLUE;
+				theirRobotColor = Color.YELLOW;
+			} else {
+				ourRobotColor = Color.YELLOW;
+				theirRobotColor = Color.BLUE;
+			}
+		}
+
 
 		private void drawField(Graphics g) {
 			g.setColor(Color.BLACK);
@@ -193,7 +212,7 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			drawLineTransformMeters(g, Globals.PITCH_WIDTH,
 					Globals.PITCH_HEIGHT - Globals.GOAL_POSITION,
 					Globals.PITCH_WIDTH + 0.1f, Globals.PITCH_HEIGHT
-							- Globals.GOAL_POSITION);
+					- Globals.GOAL_POSITION);
 			drawLineTransformMeters(g, 0f, Globals.PITCH_HEIGHT
 					- Globals.GOAL_POSITION, -0.1f, Globals.PITCH_HEIGHT
 					- Globals.GOAL_POSITION);
@@ -205,18 +224,18 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		private void drawFieldObjects(Graphics g) {
 			Snapshot s = getSnapshot();
 			if (s != null) {
-				drawRobot(g, Color.BLUE, s.getBalle(), s.getOpponentsGoal());
-				drawRobot(g, Color.YELLOW, s.getOpponent(), s.getOwnGoal());
+				drawRobot(g, ourRobotColor, s.getBalle(), s.getOpponentsGoal());
+				drawRobot(g, theirRobotColor, s.getOpponent(), s.getOwnGoal()); 
 				drawBall(g, Color.RED, s);
 				drawGoals(g);
 			}
 		}
 
-        private Color changeAlpha(Color color, double ratio) {
-            Color newColor = new Color(color.getRed(), color.getGreen(),
-                    color.getBlue(), (int) (color.getAlpha() * ratio));
-            return newColor;
-        }
+		private Color changeAlpha(Color color, double ratio) {
+			Color newColor = new Color(color.getRed(), color.getGreen(),
+					color.getBlue(), (int) (color.getAlpha() * ratio));
+			return newColor;
+		}
 
 		private boolean isInGoal(Goal goal, Ball ball) {
 			if (goal.isLeftGoal()) {
@@ -227,14 +246,14 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			return false;
 		}
 
-        private void drawBall(Graphics g, Color c, Snapshot snapshot) {
+		private void drawBall(Graphics g, Color c, Snapshot snapshot) {
 			// TODO: Use ball.getRadius() instead of constants here
 
 			// Daniel: There is no method getRadius() for ball because its a
 			// MovingPoint object?
 			// For the mean time I've changed the object to Ball
 
-            Ball ball = snapshot.getBall();
+			Ball ball = snapshot.getBall();
 			if ((ball == null) || (ball.getPosition() == null)) {
 				return;
 			}
@@ -249,44 +268,33 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			float w = radius * 2 * scaler.getScale();
 			g.fillOval((int) (scaler.m2PX(pos.getX()) - (w / 2)),
 					(int) (scaler.m2PY(pos.getY()) - (w / 2)), (int) w, (int) w);
-			
 
-            Label ballSpeedLabel = new Label(String.format("%.5fE-3", ball
-                    .getVelocity().abs() * 1000), new Coord(ball.getPosition()
-                    .getX(), ball
-                    .getPosition().getY() - ball.getRadius() * 3), Color.RED);
-            ballSpeedLabel.draw(g, scaler);
 
-			boolean isBlue = snapshot.getWorld().isBlue();
+			Label ballSpeedLabel = new Label(String.format("%.5fE-3", ball
+					.getVelocity().abs() * 1000), new Coord(ball.getPosition()
+							.getX(), ball
+							.getPosition().getY() - ball.getRadius() * 3), Color.RED);
+			ballSpeedLabel.draw(g, scaler);
+
 			String loss = "Get it together guys!";
 			String win = "Gooooaaallll";
 			String print;
 
 			if (isInGoal(snapshot.getOwnGoal(), ball)) {
-				if (isBlue) {
-					print = loss;
-				} else {
-					print = win;
-				}
-
+				print = loss;
 				Label nearWallLabel = new Label(print,
 						new Coord(
-						ball.getPosition().getX(), ball.getPosition().getY()
-								+ ball.getRadius() * 3), Color.ORANGE);
+								ball.getPosition().getX(), ball.getPosition().getY()
+								+ ball.getRadius() * 3), Color.PINK);
 				nearWallLabel.draw(g, scaler);
 			}
 
 			if (isInGoal(snapshot.getOpponentsGoal(), ball)) {
-				if (isBlue) {
-					print = win;
-				} else {
-					print = loss;
-				}
+				print = win;
 				Label nearWallLabel = new Label(print,
 						new Coord(ball.getPosition().getX(), ball.getPosition()
-								.getY() + ball.getRadius() * 3), Color.PINK);
+								.getY() + ball.getRadius() * 3), Color.ORANGE);
 				nearWallLabel.draw(g, scaler);
-				
 			}
 
 			Velocity vel = ball.getVelocity().mult(1000);
@@ -296,7 +304,7 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 		}
 
-        private void drawRobot(Graphics g, Color c, Robot robot, Goal targetGoal) {
+		private void drawRobot(Graphics g, Color c, Robot robot, Goal targetGoal) {
 
 			Snapshot s = getSnapshot();
 
@@ -368,14 +376,14 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 			g.fillPolygon(xs, ys, n);
 
-            // Dim the line if we're not approaching from correct side
-            if ((s.getBall().getPosition() != null)
-                    && (!robot.isApproachingTargetFromCorrectSide(s.getBall(),
-                            targetGoal))) {
-                c = new Color(c.getRed(), c.getGreen(), c.getBlue(),
-                        c.getAlpha() / 2);
-            }
-            DrawableLine orientationLine = new DrawableLine(
+			// Dim the line if we're not approaching from correct side
+			if ((s.getBall().getPosition() != null)
+					&& (!robot.isApproachingTargetFromCorrectSide(s.getBall(),
+							targetGoal))) {
+				c = new Color(c.getRed(), c.getGreen(), c.getBlue(),
+						c.getAlpha() / 2);
+			}
+			DrawableLine orientationLine = new DrawableLine(
 					robot.getFacingLine(), c);
 			orientationLine.draw(g, scaler);
 
@@ -383,12 +391,12 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 			g.fillPolygon(new int[] { xs[2], xs[3], scaler.m2PX(x) },
 					new int[] { ys[2], ys[3], scaler.m2PY(y) }, 3);
 
-            if (robot.isNearWall(s.getPitch())) {
-                Label nearWallLabel = new Label("NW", new Coord(robot
-                        .getPosition().getX(), robot.getPosition().getY()
-                        + robot.getHeight() / 2 + 0.03), Color.MAGENTA);
-                nearWallLabel.draw(g, scaler);
-            }
+			if (robot.isNearWall(s.getPitch())) {
+				Label nearWallLabel = new Label("NW", new Coord(robot
+						.getPosition().getX(), robot.getPosition().getY()
+						+ robot.getHeight() / 2 + 0.03), Color.MAGENTA);
+				nearWallLabel.draw(g, scaler);
+			}
 		}
 
 		// Convert meters into pixels and draws line
@@ -401,15 +409,14 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 		}
 
 		private void drawGoals(Graphics g) {
-			drawGoal(g, Color.BLUE, getSnapshot().getOwnGoal());
-			drawGoal(g, Color.YELLOW, getSnapshot().getOpponentsGoal());
+			drawGoal(g, ourRobotColor, getSnapshot().getOwnGoal());
+			drawGoal(g, theirRobotColor, getSnapshot().getOpponentsGoal()); 
 
 		}
 
 		private void drawGoalText(Graphics g, Goal goal){
 			boolean isLeft = goal.isLeftGoal();
 			boolean theirGoal = goal.equals(getSnapshot().getOpponentsGoal());
-			boolean isBlue = getSnapshot().getWorld().isBlue();
 
 			int x, y;
 
@@ -420,21 +427,13 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 				x = scaler.m2PX(goal.getRightPostCoord().x) - 20;
 				y = scaler.m2PY(goal.getRightPostCoord().y) - 50;
 			}
-			
-			if (isBlue) {
-				if (theirGoal) {
-					// it's their goal and we're blue
-					g.drawString("Attacking", x, y);
-				} else {
-					g.drawString("Defending", x, y);
-				}
+
+
+			if (theirGoal) {
+				// it's their goal
+				g.drawString("Attacking", x, y);
 			} else {
-				if (theirGoal) {
-					// it's their goal and they're blue
-					g.drawString("Defending", x, y);
-				} else {
-					g.drawString("Attacking", x, y);
-				}
+				g.drawString("Defending", x, y);
 			}
 
 		} 
@@ -515,7 +514,7 @@ public class SimpleWorldGUI extends AbstractWorldProcessor {
 
 		fpsVision.setText(s);
 	}
-	
+
 	private void redrawConnectionStatus() {
 		connectionStatus.setText("?");
 	}
