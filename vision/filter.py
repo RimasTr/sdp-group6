@@ -57,6 +57,9 @@ class Filter:
     # If the ball is lost, assume it is self.dribblingDist away from the nearest robot.
     def moveBallToRobot(self, ballCoords, robotCoords):
         realDist = self.findDist(ballCoords, robotCoords)
+        if (realDist == 0):
+            # Do not move the ball
+            return ballCoords
         k = self.dribblingDist*1.0/realDist
         # relative coordinates:
         x = robotCoords[0] - ballCoords[0]
