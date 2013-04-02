@@ -71,8 +71,6 @@ class ListenerThread extends Thread {
  */
 public class Roboto {
 
-	private static boolean touchingFront = false;
-	private static boolean touchingRear = false;
 	private static boolean waiting = false;
 
 	/**
@@ -171,34 +169,24 @@ public class Roboto {
 				try {
 					// Check for sensors when idle
 					if (touchLeft.isPressed() || touchRight.isPressed()) {
-						if (!touchingFront) {
-							touchingFront = true;
-							waiting = true;
-							controller.backward(controller
-									.getMaximumWheelSpeed());
-							drawMessage("Obstacle in front!");
-							Thread.sleep(150);
-							controller.stop();
-							touchingFront = false;
-							waiting = false;
-						}
-						continue;
+						waiting = true;
+						controller.backward(controller
+								.getMaximumWheelSpeed());
+						drawMessage("Obstacle in front!");
+						Thread.sleep(150);
+						controller.stop();
+						waiting = false;
 					}
 
 					// Check for back sensors as well
 					if (touchBackLeft.isPressed() || touchBackRight.isPressed()) {
-						if (!touchingRear) {
-							touchingRear = true;
-							waiting = true;
-							controller.forward(controller
-									.getMaximumWheelSpeed());
-							drawMessage("Obstacle behind!");
-							Thread.sleep(150);
-							controller.stop();
-							touchingRear = false;
-							waiting = false;
-						}
-						continue;
+						waiting = true;
+						controller.forward(controller
+								.getMaximumWheelSpeed());
+						drawMessage("Obstacle behind!");
+						Thread.sleep(150);
+						controller.stop();
+						waiting = false;
 					}
 
 					if (!listener.available())
