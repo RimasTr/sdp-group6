@@ -6,7 +6,7 @@ class Filter:
         self.lastRobotCoords = [-1, -1, -1]
         self.dribbler = '-'
         self.minDist = 2000
-        self.dribblingDist = 300 # TODO: test this value
+        self.dribblingDist = 250 # TODO: test this value
         self.disable = disable
         pass
 
@@ -59,6 +59,9 @@ class Filter:
         realDist = self.findDist(ballCoords, robotCoords)
         if (realDist == 0):
             # Do not move the ball
+            return ballCoords
+        if (realDist < self.dribblingDist):
+            # Close enough
             return ballCoords
         k = self.dribblingDist*1.0/realDist
         # relative coordinates:
