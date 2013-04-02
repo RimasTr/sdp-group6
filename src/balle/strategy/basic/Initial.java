@@ -3,11 +3,13 @@ package balle.strategy.basic;
 import org.apache.log4j.Logger;
 
 import balle.controller.Controller;
+import balle.misc.Globals;
 import balle.strategy.ConfusedException;
 import balle.strategy.FactoryMethod;
-import balle.strategy.executor.movement.GoToObjectExecutor;
+import balle.strategy.executor.movement.SimpleGoToExecutor;
 import balle.strategy.executor.turning.FaceAngle;
 import balle.strategy.planner.AbstractPlanner;
+import balle.world.Coord;
 import balle.world.Snapshot;
 import balle.world.objects.Ball;
 import balle.world.objects.Robot;
@@ -16,14 +18,11 @@ public class Initial extends AbstractPlanner {
 
 	private static final Logger LOG = Logger.getLogger(Initial.class);
 
-	GoToObjectExecutor goto_executor;
-	FaceAngle turning_executor;
-	public static Boolean finished = false;
-	Boolean arrived_at_ball = false;
+	public static boolean finished = false;
+
+	private static Coord initialCoord = null;
 
 	public Initial() {
-		turning_executor = new FaceAngle();
-		goto_executor = new GoToObjectExecutor(turning_executor);
 	}
 
 	@Override
@@ -32,14 +31,19 @@ public class Initial extends AbstractPlanner {
 		Robot ourRobot = snapshot.getBalle();
 		Robot oppRobot = snapshot.getOpponent();
 		Ball ball = snapshot.getBall();
-
+		
+		if (initialCoord == null) {
+			initialCoord = ourRobot.getPosition();
+		}
+		
 		if (finished || ourRobot.getPosition() == null || oppRobot.getPosition() == null || ball.getPosition() == null) {
+			LOG.info("Finished!");
 			return;
 		}
 
-		if (oppRobot.possessesBall(ball) || ourRobot.getPosition().dist(ball.getPosition()) < 0.4) {
+		if (ourRobot.getPosition().dist(initialCoord) >= 0.50) {
 
-			goto_executor.stop(controller);
+			controller.forward(200);
 			finished = true;
 
 			if (oppRobot.possessesBall(ball)) {
@@ -50,7 +54,7 @@ public class Initial extends AbstractPlanner {
 
 			return;
 		} else {
-			goto_executor.step(controller, snapshot);
+			controller.forward(750);
 			return;
 		}
 
@@ -58,8 +62,7 @@ public class Initial extends AbstractPlanner {
 
 	@Override
 	public void stop(Controller controller) {
-		goto_executor.stop(controller);
-		turning_executor.stop(controller);
+		controller.stop();
 	}
 
 	@FactoryMethod(designator = "Initial", parameterNames = {})

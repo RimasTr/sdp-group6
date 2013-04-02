@@ -79,12 +79,13 @@ public class Game2 extends AbstractPlanner {
         if (initial == false)
             return false;
 
+        LOG.info("isInitial(): "+initial);
+        
         Ball ball = snapshot.getBall();
 
-        Coord centerOfPitch = new Coord(Globals.PITCH_WIDTH / 2,
-                Globals.PITCH_HEIGHT / 2);
         Robot ourRobot = snapshot.getBalle();
-
+        Robot oppRobot = snapshot.getOpponent();
+        
         // If we have the ball, turn off initial strategy
 		if (ourRobot.possessesBall(ball))
         {
@@ -92,13 +93,14 @@ public class Game2 extends AbstractPlanner {
             setInitial(false);
         }
         // else If ball has moved 5 cm, turn off initial strategy
-        else if (ball.getPosition().dist(centerOfPitch) > 0.05) {
-            LOG.info("Ball has moved. Turning off initial strategy");
+        else if (oppRobot.possessesBall(ball)) {
+            LOG.info("Opp has ball. Turning off initial strategy");
             setInitial(false);
 		} else if (Initial.finished) {
 			setInitial(false);
         }
         
+		
         return initial;
 
     }

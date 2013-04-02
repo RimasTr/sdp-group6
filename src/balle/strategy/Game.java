@@ -113,7 +113,7 @@ public class Game extends AbstractPlanner {
         turningExecutor = new IncFaceAngle();
 		kickingStrategy = new GoToObjectSafeProportional();
 		initialStrategy = new Initial();
-		goToBallPFN = new GoToBallSafeProportional();
+		goToBallPFN = new GoToObjectSafeProportional(); // Was goToBallSafeProportional (2/4/12)
 		goToBallBezier = new SimpleGoToBallFaceGoal(new BezierNav(
                 new SimplePathFinder(new CustomCHI())));
 		goToBallPrecision = new GoToBall(new GoToObjectPFN(0), false);
@@ -140,6 +140,8 @@ public class Game extends AbstractPlanner {
         else if (ball.getPosition().dist(centerOfPitch) > 0.05) {
             LOG.info("Ball has moved. Turning off initial strategy");
             setInitial(false);
+        } else if (Initial.finished) {
+        	setInitial(false);
         }
         
         return initial;
@@ -153,6 +155,7 @@ public class Game extends AbstractPlanner {
     public Game(boolean startWithInitial) {
         this();
         initial = startWithInitial;
+        Initial.finished = !startWithInitial;
         LOG.info("Starting game strategy with initial strategy turned on");
     }
 

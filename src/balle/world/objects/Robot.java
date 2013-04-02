@@ -155,7 +155,7 @@ public class Robot extends RectangularObject {
             return false;
 
 		// TODO: should this just be getGoalLine()?
-		Line goalLine = goal.getAccurateGoalLine();
+		Line goalLine = goal.getGoalLine();
         Line facingLine = getFacingLine();
 
         return facingLine.intersects(goalLine);

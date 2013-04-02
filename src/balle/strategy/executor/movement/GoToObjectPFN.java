@@ -197,7 +197,7 @@ public class GoToObjectPFN implements MovementExecutor {
 			return true;
 		}
 		
-		boolean closeToTarget = (ourRobot.getPosition().dist(target.getPosition()) < 0.1);
+		boolean closeToTarget = (ourRobot.getPosition().dist(target.getPosition()) < 0.2);
 
 		return slowDownCloseToTarget && closeToTarget;
 	}
